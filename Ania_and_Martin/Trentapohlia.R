@@ -24,8 +24,8 @@ tapply(envir$F_moisture, envir$Trentepohlia_photobiont,median, na.rm=TRUE)
 length(unique(new.harm.db$Species[new.harm.db$Species%in%hastrent]))/length(unique(new.harm.db$Species))
 length(unique(old.harm.db$Species[old.harm.db$Species%in%hastrent]))/length(unique(old.harm.db$Species))
 
-newfrq<-as.data.frame.matrix(table(new.harm.db$Frequency, new.harm.db$Species %in% hastrent))
-oldfrq<-as.data.frame.matrix(table(old.harm.db$Frequency, old.harm.db$Species %in% hastrent))#needs a more sensible way of looking at it. Proportion of 3's that were Tp? Actually a teeny bit higher in old set (need a suitable test)
+newfrq <- as.data.frame.matrix(table(new.harm.db$Frequency, new.harm.db$Species %in% hastrent))
+oldfrq <- as.data.frame.matrix(table(old.harm.db$Frequency, old.harm.db$Species %in% hastrent))#needs a more sensible way of looking at it. Proportion of 3's that were Tp? Actually a teeny bit higher in old set (need a suitable test)
 
 x11(7,5); par(mfrow=c(1,2), mar=c(4,4,3,0.1), las=1, xpd=NA)
 barplot(c(table(!old.harm.db$Species%in%hastrent),table(!new.harm.db$Species%in%hastrent)), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Total records", ylab="Count")
