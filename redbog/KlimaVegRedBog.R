@@ -15,16 +15,16 @@ read.tvexport <- function(file, time){
   list(plants = plants, env = env)
 }
 
-t1<-read.tvexport("redbog/data/TVEXPORT_1.csv", time = 1)
-t2<-read.tvexport("redbog/data/TVEXPORT_2.csv", time = 2)
-t3<-read.tvexport("redbog/data/TVEXPORT_3.csv", time = 3)
+t1 <- read.tvexport("redbog/data/TVEXPORT_1.csv", time = 1)
+t2 <- read.tvexport("redbog/data/TVEXPORT_2.csv", time = 2)
+t3 <- read.tvexport("redbog/data/TVEXPORT_3.csv", time = 3)
 
 ###env data###
-env<-rbind(t1$env, t2$env, t3$env)
-names(env)<-c("Relevee.number","Field.number","Archive.number","Year","Month","Day","Relevee.area","total.cover.percent","tree.cover.percent","shrub.cover.percent","herb.cover.percent","moss.cover.percent","lichen.cover.percent","algae.cover.percent","litter.cover.percent","water.cover.percent","rock.cover.percent","height.tallest.trees","height.shortest.trees","height.tallest.shrubs","height.shortest.shrubs","avheight.tallest.herbs","avheight.shortest.herbs", "max.height.herb","max.height.crypto","Long","Lat","n.spp")
+env <- rbind(t1$env, t2$env, t3$env)
+names(env) <- c("Relevee.number", "Field.number", "Archive.number","Year", "Month", "Day", "Relevee.area", "total.cover.percent", "tree.cover.percent", "shrub.cover.percent","herb.cover.percent", "moss.cover.percent", "lichen.cover.percent", "algae.cover.percent", "litter.cover.percent", "water.cover.percent", "rock.cover.percent","height.tallest.trees", "height.shortest.trees", "height.tallest.shrubs", "height.shortest.shrubs", "avheight.tallest.herbs", "avheight.shortest.herbs", "max.height.herb", "max.height.crypto", "Long", "Lat", "n.spp")
 env[, 7:ncol(env)] <- lapply(env[, 7:ncol(env)], function(x) as.numeric(x))
 env[, -2] <- lapply(env[, -2], function(x) as.numeric(x))
-env$Lat[env$Lat>55]<-env$Lat[env$Lat>55]-2#correct one latitude of 55.65
+env$Lat[env$Lat > 55] <- env$Lat[env$Lat > 55] - 2#correct one latitude of 55.65
 env$Long[env$Long == 0] <- NA
 env$Lat[env$Lat == 0] <- NA
 env$decade<-factor(floor(env$Year/10)*10)
@@ -106,8 +106,8 @@ plantspc[is.na(plantspc)]<-0
 rbind(plantsall[1,], plantspc[1,])#check
 
 #merge different layers
-mergedplants<-as.data.frame(t(aggregate(plantspc, by = list(layers$Table.number), FUN = sum) [,-1]))
-names(mergedplants)<-unique(layers$Table.number)
+mergedplants <- as.data.frame(t(aggregate(plantspc, by = list(layers$Table.number), FUN = sum) [,-1]))
+names(mergedplants) <- unique(layers$Table.number)
 
 #cleanup
 rm(t1, t2, t3, plants1, plants2, plants3, plantsall)
