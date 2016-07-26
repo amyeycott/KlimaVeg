@@ -1,0 +1,62 @@
+---
+title: "Initial Analyses of Red Bog"
+author: "Richard J. Telford"
+date: "20th February 2016"
+output: pdf_document
+---
+
+Data have been imported into R, converted into "percent", and the different layers merged. Duplicate taxa-layer pairs have been merged (after checking for overlap between entries). One plot had its latitude changed by 2° to put it in Red Bog.
+
+```{r, echo = TRUE, cache = FALSE, results = "hide"}
+source("redbog/KlimaVegRedBog.R")
+```
+
+# Plot locations
+
+Most of the plots are clustered over Red Bog, but some are far from the main set. Are these correct?
+
+```{r, echo = TRUE, fig.cap="Plot locations", cache=TRUE, message=FALSE}
+#some plots
+library(ggmap)
+map <- get_googlemap(center = c(median(env$Long, na.rm = TRUE), median(env$Lat, na.rm = TRUE)), zoom = 11)
+ggmap(map) +
+  geom_point(aes(x = Long, y = Lat, colour = as.factor(Year)), data = env[!is.na(env$Long),], size = 2) +
+  xlab("Longitude °E") + ylab("Latitude °N") + guides(colour=guide_legend(title="Year"))
+
+```
+
+
+
+# Species distributions
+
+Focusing on the main cluster of sites, _Pinus sylvestris_ only reaches high abundances in the central region. Such figures can easily be made for other species.
+
+```{r, echo = TRUE, fig.cap="Pinus sylvestris cover", cache=TRUE, warning=FALSE, message=FALSE}
+map2 <- get_googlemap(center = c(median(env$Long, na.rm = TRUE), median(env$Lat, na.rm = TRUE)), zoom = 13, maptype = "satellite")
+pinsyl<-cut(mergedplants$'Pinus sylvestris', breaks = c(0,.1,11,200), labels = c("0 %", "<11 %", ">11 %"), include.lowest = TRUE)
+ggmap(map2) +
+  geom_point(aes(x = Long, y = Lat, colour = pinsyl), data = env, size = 2) +
+  xlab("Longitude °E") + ylab("Latitude °N") + 
+  guides(colour=guide_legend(title="Pinus sylvestris"))
+```
+
+# Ordinations
+Below is an detrended correspondence analysis of all the data, coded by year and _Pinus sylvestris_ cover.
+```{r, echo = TRUE, fig.cap="Detrended correspondance analysis", message=FALSE}
+library(vegan)
+dca<-decorana(mergedplants)
+par(mar=c(3,3,1,1), mgp=c(1.5,.5,0))
+plot(dca, type = "n")
+points(dca, disp="sites", col=env$decade, pch=c(1,3,16)[pinsyl])
+legend("topleft", legend = levels(env$decade), pch=16, col=1:4, title = "Year")
+legend("bottomleft", legend = levels(pinsyl), pch=c(1,3,16), col=1, title = "Pinus cover")
+
+```
+It is clear that some communities have either been lost or have not been resampled, for example the 1960 plots on the far right of the figure. There appears to be a trend in the _Pinus_ dominated plots at the far left of the figure. This might be an interesting trend of vegetation change on the bog, but we need to exclude the possibility that it is simply a botanist effect.
+
+# Data needed
+
+* Confimation of location of stray 2000 plots.
+* Locations of the pre-2000 plots.
+* Delimitations of different habitats.
+* Ellenberg values.
