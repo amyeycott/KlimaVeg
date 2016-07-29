@@ -99,7 +99,7 @@ phenology2$decile <- revalue(phenology2$decile,
 phenology2$decile[phenology2$decile == ""] <- "."
 
 # remove remaining oddities
-phenology2 <- phenology2[!phenology2$decile %in% c(".", "+", 1:10, "x"), ]
+phenology2 <- phenology2[phenology2$decile %in% c(".", "+", 1:10, "x"), ]
 phenology2
 
 #. to 0
