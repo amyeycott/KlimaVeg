@@ -105,3 +105,9 @@ ggplot(firstflowerSnowCor, aes(x = month, y = correlation, fill = timing)) +
   geom_boxplot() +
   facet_grid(transect~variable, space = "free_x", scales = "free_x") +
   theme(axis.text.x = element_text(angle = 90))
+
+
+ggplot(firstflowerSnowCor, aes(x = month, y = correlation, fill = transect)) + 
+  geom_boxplot() +
+  facet_grid(timing~variable, space = "free_x", scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90))
