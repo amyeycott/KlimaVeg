@@ -74,7 +74,8 @@ first_flowering %>%
 
 
 first_flowering <- first_flowering %>% 
-  filter(stage == 3) %>% 
+  filter(stage == 3) %>%
+  group_by(species) %>% 
   mutate(median = median(first, na.rm = TRUE)) %>%
   ungroup() %>%
   mutate(timing = cut(median, breaks = quantile(first, probs = seq(0, 1, 1/3), na.rm = TRUE), labels = c("Early", "Mid", "Late"), include.lowest = TRUE))
@@ -90,6 +91,7 @@ firstflowerSnowCor <- ddply(first_floweringClim, .(species, variable, month, tim
       c(correlation = cor(x$first, x$value, use = "pair"))
     }
   })
+
 firstflowerSnowCor %>%
   mutate(correlation = round(correlation, 2)) %>% 
   spread(key = variable, value = correlation)
