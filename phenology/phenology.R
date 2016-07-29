@@ -111,3 +111,40 @@ ggplot(firstflowerSnowCor, aes(x = month, y = correlation, fill = transect)) +
   geom_boxplot() +
   facet_grid(timing~variable, space = "free_x", scales = "free_x") +
   theme(axis.text.x = element_text(angle = 90))
+
+###duration
+durationflowerSnowCor <- ddply(first_floweringClim, .(species, variable, month, timing, transect), function(x) {
+  if (sum(!is.na(x$duration)) > 10) {
+    c(correlation = cor(x$duration, x$value, use = "pair"))
+  }
+})
+
+ggplot(durationflowerSnowCor, aes(x = month, y = correlation, fill = timing)) + 
+  geom_boxplot() +
+  facet_grid(transect~variable, space = "free_x", scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+ggplot(durationflowerSnowCor, aes(x = month, y = correlation, fill = transect)) + 
+  geom_boxplot() +
+  facet_grid(timing~variable, space = "free_x", scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+###maxima
+maxflowerSnowCor <- ddply(first_floweringClim, .(species, variable, month, timing, transect), function(x) {
+  if (sum(!is.na(x$max)) > 10) {
+    c(correlation = cor(x$max, x$value, use = "pair"))
+  }
+})
+
+ggplot(maxflowerSnowCor, aes(x = month, y = correlation, fill = timing)) + 
+  geom_boxplot() +
+  facet_grid(transect~variable, space = "free_x", scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+ggplot(maxflowerSnowCor, aes(x = month, y = correlation, fill = transect)) + 
+  geom_boxplot() +
+  facet_grid(timing~variable, space = "free_x", scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 90))
