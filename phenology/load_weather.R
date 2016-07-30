@@ -23,6 +23,13 @@ monthly <- weather %>%
   summarise(temperature = mean(TMean, na.rm = TRUE), precipitation = sum(ppt)) %>%
   gather(key = "variable", value = "value", -year, -month)
 
+#climate of previous autumn
+monthlylag <- monthly %>% 
+  ungroup() %>%
+  mutate(year = ifelse(month %in% month.name[8:12], year - 1, year)) %>%
+  mutate(month = factor(month, level = month.name[c(8:12, 1:7)]))
+
+
 #last day of snow
 lastSnow <- weather %>%
   filter(yday(date) < 200, snowCover > 0) %>%
@@ -31,7 +38,7 @@ lastSnow <- weather %>%
   summarise(lastSnow = last(yday(date)))
 
 #combine temperature/ppt with snow
-monthlyClim <- monthly %>% 
+monthlyClim <- monthlylag %>% 
   rbind(lastSnow %>% 
           mutate(variable = "Snow", month = "lastSnow", value = lastSnow) %>% 
           select(-lastSnow)
