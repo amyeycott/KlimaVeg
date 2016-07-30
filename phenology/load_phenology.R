@@ -49,6 +49,14 @@ phenology <- ldply(phenfiles, function(transect){
   phen
 }, .id = "transect")
 
+##dictionary
+dictionary <- read.table("phenology/data/dictionary.tab", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+ #fill missing new names with old names
+dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""] 
+
+#update species names
+phenology$species <- mapvalues(phenology$species, dictionary$old, dictionary$new)
+phenology$species <- mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "GLYCERIA MANNA")#problems with escape characters
 
 phenology2 <- gather(phenology, key = "pentad", value = "decile", -species, -year, -stage, -transect) %>%
   filter(!decile %in% c("@", "@@"), !is.na(decile)) %>%
