@@ -15,8 +15,12 @@ ggplot(weather, aes(x = date, y = sunnyHours)) + geom_line()
 ggplot(weather, aes(x = date, y = sunlight)) + geom_line()#unit problem?
 
 # by day of year
+meanDay <- weather %>% mutate(doy = yday(date)) %>% group_by(doy) %>% summarise(meanDay = mean(TMean, na.rm = TRUE))
 ggplot(weather, aes(x = yday(date), y = TMean, colour = year(date), group = year(date))) + 
-  geom_line()
+  geom_line() +
+  geom_line(aes(x = doy, y = meanDay), meanDay, colour = "red", inherit.aes = FALSE)
+
+range(meanDay$meanDay)
 
 ggplot(weather, aes(x = yday(date), y = snowCover, colour = year(date), group = year(date))) + 
   geom_line()
