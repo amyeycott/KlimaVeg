@@ -46,7 +46,7 @@ comm %>%
 first_flowering <- phenology2 %>% 
   filter(decile > 0, stage < 6) %>% 
   group_by(year, species, stage, transect) %>% 
-  summarise(first = first(pentad), last = last(pentad), duration = last - first, max = max(decile)) %>%
+  summarise(first = first(pentad), last = last(pentad), duration = last - first, max = max(decile), maxDate = pentad[which.max(decile)]) %>%
   merge(
     with(phenology2,
       expand.grid(
