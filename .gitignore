@@ -33,8 +33,9 @@ vignettes/*.pdf
 *.dbf
 *.csv
 *.tab
-
+!dictionary.tab
 
 *.pdf
 *.zip
 *.tmp
+.Rproj.user
