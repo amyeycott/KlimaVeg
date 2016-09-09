@@ -1,6 +1,7 @@
 library("tidyr")
 library("dplyr")
 library("lubridate")
+library("ggplot2")
 
 #central England
 cet <- read.table("phenology/data/cetdl1772on.dat", header = FALSE)
@@ -22,8 +23,16 @@ meanDay_cetB <- cet_B %>% mutate(doy = yday(date)) %>% group_by(doy, station) %>
 ggplot(cet_B, aes(x = yday(date), y = temperature, colour = year(date), group = year(date))) + 
   geom_line() +
   geom_line(aes(x = doy, y = meanDay), meanDay_cetB, colour = "red", inherit.aes = FALSE) + 
-  facet_wrap(~station)
+  facet_wrap(~station) + 
+  labs(x = "Day of year", y = "Temperature ºC", colour = "Year")
 
-cet_B %>% mutate(month = month(date)) %>% group_by(month, station) %>% summarise(mMean = mean(temperature, na.rm = TRUE)) %>% spread(key = station, value = mMean) %>% ggplot(aes(x = Bialowieza, y  = CET)) + geom_path()
+cet_B %>% 
+  mutate(month = month(date)) %>% 
+  group_by(month, station) %>% 
+  summarise(mMean = mean(temperature, na.rm = TRUE)) %>% 
+  spread(key = station, value = mMean) %>% 
+  ggplot(aes(x = Bialowieza, y  = CET, colour = month)) + 
+    geom_smooth(method = "lm", se = FALSE, colour = "red") +
+    geom_path()
 
 
