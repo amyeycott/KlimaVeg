@@ -6,8 +6,17 @@ source("phenology/load_phenology.R")
 source("phenology/load_weather.R")
 
 #pheology plots
-ggplot(phenology2 %>% filter(species == "DAPHNE ME"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
-ggplot(phenology2 %>% filter(species == "ALLIUM UR"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
+ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
+ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
+
+#autumn flowers
+ggplot(phenology2 %>% filter(species == "Daphne mezereum", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+ggplot(phenology2 %>% filter(species == "Anemone nemorosa", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+ggplot(phenology2 %>% filter(species == "Oxalis acetosella", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+
+
+ggplot(phenology2 %>% filter(species == "Urtica dioica", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+ggplot(phenology2 %>% filter(species == "Urtica dioica", stage == 1, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
 
 phenology2 %>% 
   filter(stage == 3) %>%
@@ -146,7 +155,7 @@ ggplot(firstflowerSnowCor, aes(x = month, y = first, fill = timing)) +
   theme(axis.text.x = element_text(angle = 90))
 
 first_floweringClim %>% filter(variable == "temperature", month  == "March") %>% 
-  ggplot(aes(x = value, y = first, colour = transect)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + facet_wrap(~species)
+  ggplot(aes(x = value, y = first, colour = transect)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + facet_wrap(~species, scale = "free_y")
 
 ggplot(firstflowerSnowCor, aes(x = month, y = correlation, fill = transect)) + 
   geom_boxplot() +
