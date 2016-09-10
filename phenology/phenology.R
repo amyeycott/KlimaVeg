@@ -123,11 +123,9 @@ first_flowering %>%
   summarise(median = median(first, na.rm = TRUE))
 
 
-
-
 #merge with climate
 first_floweringClim <- first_flowering %>% 
-  merge(monthlyClim)
+  merge(monthlylag)
 
 #correlate climate with phenology
 firstflowerSnowCor <- first_floweringClim %>%
