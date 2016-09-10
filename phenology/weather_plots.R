@@ -2,6 +2,7 @@
 library("ggplot2")
 library("dplyr")
 library("tidyr")
+library("broom")
 
 # load weather data
 source("phenology/load_weather.R")
@@ -18,18 +19,24 @@ ggplot(weather, aes(x = date, y = sunlight)) + geom_line()#unit problem?
 meanDay <- weather %>% mutate(doy = yday(date)) %>% group_by(doy) %>% summarise(meanDay = mean(TMean, na.rm = TRUE))
 ggplot(weather, aes(x = yday(date), y = TMean, colour = year(date), group = year(date))) + 
   geom_line() +
-  geom_line(aes(x = doy, y = meanDay), meanDay, colour = "red", inherit.aes = FALSE)
+  geom_line(aes(x = doy, y = meanDay), meanDay, colour = "red", inherit.aes = FALSE) +
+  labs(x = "Day of year", y = "Temperature, °C", colour = "Year")
 
 range(meanDay$meanDay)
 
+#snow cover plot
 ggplot(weather, aes(x = yday(date), y = snowCover, colour = year(date), group = year(date))) + 
   geom_line()
 
+#Last dat of snow
 ggplot(lastSnow, aes(x = year, y = lastSnow)) + geom_bar(stat = "identity")  
 
+summary(lm(lastSnow~year, data = lastSnow))# negative trend not statistically significant
 
 #annual ppt
-weather %>% mutate(year = year(date)) %>% group_by(year) %>% summarise(ppt  = sum(ppt)) %>% ggplot(aes(x = year, y = ppt)) + geom_line()
+weather %>% mutate(year = year(date)) %>% group_by(year) %>% summarise(ppt  = sum(ppt)) %>% ggplot(aes(x = year, y = ppt)) + 
+  geom_line() + 
+  labs(x =  "Year", y = "Precipitation, mm")
 
 #monthly
 ggplot(monthly %>% filter(variable == "temperature"), aes(x = month, y = value, colour = year, group = year)) + geom_line()
@@ -45,3 +52,28 @@ monthlyClimFat <- monthlyClim %>%
 round(cor(monthlyClimFat), 2)
 PCA <- prcomp(monthlyClimFat, scale = TRUE)
 biplot(PCA)
+
+#regression by month
+monthly %>% filter(variable == "temperature") %>%
+  ggplot(aes(x = year, y = value, colour = month)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", formula = "y~x") +
+  labs(x = "Year", y = "Temperature, °C", colour = "Month") +
+  scale_color_hue(h.start = 180)
+
+monthly %>% 
+  filter(variable == "temperature") %>% 
+  group_by(month) %>%
+  do(mod = lm((value * 10) ~ year, data = .)) %>%
+  tidy(mod) %>%
+  filter(term == "year") %>%
+  ggplot(aes(x = month, y = estimate, ymax = estimate + 1.96 * std.error, ymin = estimate - 1.96 * std.error)) +
+  geom_hline(yintercept = 0, colour = "red", linetype = "dashed") +
+  geom_errorbar() + 
+  geom_point() + 
+  labs(x = "", y = "Temperature change, °C / decade") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+
+
+
