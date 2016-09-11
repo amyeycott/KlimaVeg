@@ -1,12 +1,17 @@
 #load libraries
 library("readxl")
 library("tidyr")
-library("plyr")
 library("dplyr")
 library("lubridate")
 
 #weather
-weather <- read_excel("phenology/data/Meteo Bialowieza 1948 2008.xls")
+if(interactive()){
+  path <- "phenology/"
+}else{
+  path <- ""  
+}
+weather <- read_excel(paste0(path, "data/Meteo Bialowieza 1948 2008.xls"))
+
 #ignore warnings - refer to rows deleted in next step
 weather <- weather[!is.na(weather$Date), ] 
 names(weather) <- c("date", "month", "TMean", "ppt", "snowCover", "sunnyHours", "sunlight")
