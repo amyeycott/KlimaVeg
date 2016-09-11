@@ -1,0 +1,56 @@
+---
+title: "Pheonological response of the Białowieża Forest understorey to climate change"
+author: "Bogdan  and Richard J. Telford"
+date: "September 11, 2016"
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE, echo = FALSE, cache = FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.5, fig.width = 8)
+knitr::read_chunk("weather_plots.R")
+knitr::read_chunk("phenology.R")
+```
+
+## Outline
+
+- Understorey herb pheonology
+- Białowieża Forest
+- Tilio – carpinetum
+- Four 2 x 50 m transects across a nutrient gradient
+- Recorded every (5) 10 days for 52 years  
+- Climate data from Białowieża
+
+## Weather
+
+```{r loadWeather, include = FALSE}
+
+```
+  
+```{r theme}
+#sets global theme for figures
+th <- theme_bw(base_size = 18)
+```
+
+```{r monthPlot}
+```
+<div class="notes">
+- regression for each month
+- 95 % confidence intervals in grey
+</div>
+
+
+
+## Warming is greatest January - August
+
+```{r tempChange}
+```
+
+<div class="notes">
+- Regression coeffients 
+- 95 % confidence intervals
+</div>
+
+
+## C
