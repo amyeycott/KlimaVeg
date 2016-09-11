@@ -36,8 +36,16 @@ range(meanDay$meanDay)
 ggplot(weather, aes(x = yday(date), y = snowCover, colour = year(date), group = year(date))) + 
   geom_line()
 
+weather %>% 
+  filter(month(date) < 7) %>% #spring snow
+  group_by(year = year(date)) %>% 
+  summarise(maxSnow = max(snowCover, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = maxSnow)) + 
+    geom_bar(stat = "identity")
+
 #Last dat of snow
 ggplot(lastSnow, aes(x = year, y = lastSnow)) + geom_bar(stat = "identity")  
+
 
 summary(lm(lastSnow~year, data = lastSnow))# negative trend not statistically significant
 
