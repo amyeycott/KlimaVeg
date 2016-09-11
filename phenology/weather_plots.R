@@ -1,12 +1,20 @@
+## ---- loadWeather
 #load libraries
 library("ggplot2")
 library("dplyr")
 library("tidyr")
 library("broom")
 
-# load weather data
-source("phenology/load_weather.R")
+#default theme
+th <- theme()
 
+# load weather data
+if(interactive()){
+  source("phenology/load_weather.R")
+}else{
+  source("load_weather.R")
+}
+## ----makeWeatherPlots
 ##weather
 #daily
 ggplot(weather, aes(x = date, y = TMean)) + geom_line()
@@ -53,15 +61,20 @@ round(cor(monthlyClimFat), 2)
 PCA <- prcomp(monthlyClimFat, scale = TRUE)
 biplot(PCA)
 
+
 #regression by month
-monthly %>% filter(variable == "temperature") %>%
+## ---- monthPlot
+monthlyRegressionPlot <- monthly %>% filter(variable == "temperature") %>%
   ggplot(aes(x = year, y = value, colour = month)) + 
   geom_point() + 
   geom_smooth(method = "lm", formula = "y~x") +
   labs(x = "Year", y = "Temperature, °C", colour = "Month") +
-  scale_color_hue(h.start = 180)
+  scale_color_hue(h.start = 180) +
+  th
+print(monthlyRegressionPlot)
 
-monthly %>% 
+## ---- tempChange
+tempEffectSize <- monthly %>% 
   filter(variable == "temperature") %>% 
   group_by(month) %>%
   do(mod = lm((value * 10) ~ year, data = .)) %>%
@@ -72,8 +85,9 @@ monthly %>%
   geom_errorbar() + 
   geom_point() + 
   labs(x = "", y = "Temperature change, °C / decade") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-
+  th +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+print(tempEffectSize)
 
 
 
