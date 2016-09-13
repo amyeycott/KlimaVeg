@@ -1,13 +1,19 @@
+## ---- loadPhenology
 #load libraries
 library("ggplot2")
 library("vegan")
 
-source("phenology/load_phenology.R")
-source("phenology/load_weather.R")
+if(interactive()){
+  source("phenology/load_phenology.R")
+  source("phenology/load_weather.R")
+} else {
+  source("load_phenology.R")
+}
 
+## ---- phenologyPlots
 #pheology plots
 ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
-ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
+ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names)))
 
 #autumn flowers
 ggplot(phenology2 %>% filter(species == "Daphne mezereum", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
