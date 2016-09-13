@@ -1,6 +1,6 @@
 ---
 title: "Pheonological response of the Białowieża Forest understorey to climate change"
-author: "Bogdan  and Richard J. Telford"
+author: "Bogdan Jaroszewicz and Richard J. Telford"
 date: "September 11, 2016"
 output: 
  ioslides_presentation:
@@ -11,6 +11,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.5, fig.width = 8)
 knitr::read_chunk("weather_plots.R")
 knitr::read_chunk("phenology.R")
+
 ```
 
 ## Outline
@@ -22,7 +23,51 @@ knitr::read_chunk("phenology.R")
 - Recorded every (5) 10 days for 52 years  
 - Climate data from Białowieża
 
-## Weather
+## Location
+```{r map}
+library("ggmap")
+library("grid")
+library("ggsn")
+source("R/scalebar.R")
+
+dat <- read.table(header = TRUE, sep = ",", text = "
+  Long, Lat, what
+  23.894614, 52.744313, Phenology plots
+  23.85,  52.71667, Climate station"
+)
+
+#main map
+map <- get_googlemap(center = unlist(dat[1, 1:2]), zoom = 12, maptype = "hybrid", style = 'feature:road|visibility:off&style=feature:administrative.locality|element:labels|visibility:on&style=feature:landscape|visibility&style=feature:landscape|element:labels|visibility:off&style=feature:poi|visibility:off&style=feature:transit|visibility:off')
+
+
+bb <- attr(map, "bb")
+bb2 <- data.frame(long = unlist(bb[c(2, 4)]), lat = unlist(bb[c(1,3)]))
+
+b <- ggmap(map) + 
+       geom_point(data = dat, aes(x = Long, y = Lat, colour = what), size = 3) +
+       labs(x = "", y = "", colour = "Location") +
+       scalebar(bb2, dist = 1, dd2km = TRUE, model  = "WGS84", location = "topleft", anchor = c(x = bb$ll.lon + 0.1 * (bb$ur.lon - bb$ll.lon), y = bb$ll.lat + 0.9 * (bb$ur.lat - bb$ll.lat)))
+
+#print(b)
+
+#insetmap
+insetmap <- map_data("world", "Poland")
+
+a <- ggplot() +
+      geom_map(data = insetmap, aes(x = long, y = lat, map_id = region), map = insetmap, colour = NA, fill = "grey60") +
+      geom_rect(data = bb, aes(xmin = ll.lon, xmax = ur.lon, ymin = ll.lat, ymax = ur.lat), colour = "red", fill = "red") +
+      coord_map() +
+      labs(x = NULL, y = NULL)
+
+#print maps
+grid.newpage()
+vp_b <- viewport(width = 1, height = 1, x = 0.5, y = 0.5)  # the larger map
+vp_a <- viewport(width = 0.4, height = 0.4, x = 0.8, y = 0.8)  # the inset in upper left
+print(b + theme_void(base_size = 18), vp = vp_b)
+print(a + theme_inset(), vp = vp_a)
+```
+
+## Climate change
 
 ```{r loadWeather, include = FALSE}
 
@@ -54,3 +99,6 @@ th <- theme_bw(base_size = 18)
 
 
 ## C
+
+```{r loadPhenology}
+```
