@@ -24,8 +24,14 @@ phenfiles <- list(
   t39 = list(file = "Phenology39.xlsx", names = "species list39.xlsx")
 )
 
+if(interactive()){
+  path <- "phenology/data/"
+} else {
+  path <- "data/"
+}
+
 phenology <- ldply(phenfiles, function(transect){
-  phen <- read_excel(paste0("phenology/data/", transect$file))
+  phen <- read_excel(paste0(path, transect$file))
   
   #rename ROK to year and process                                                  
   names(phen)[names(phen) %in% c("ROK", "Year")] <- "year"
@@ -115,4 +121,14 @@ phenology2$decile[phenology2$decile == "."] <- "0"
 phenology2$decile[phenology2$decile == "+"] <- "0.5"
 #x to NA
 phenology2$decile <- as.numeric(phenology2$decile)
+
+##phenology stages labels
+stage_names <- c(
+  '1'="Vegetative",
+  '2'="Budding",
+  '3'="Flowering",
+  '4'="Fruiting",
+  '5'="Dispersing",
+  '6'="Dormant"
+)
 
