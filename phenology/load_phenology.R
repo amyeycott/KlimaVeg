@@ -47,7 +47,7 @@ phenology <- ldply(phenfiles, function(transect){
   names(phen)[names(phen) %in% c("Nr gatunku", "N species")] <- "sppCode"
   #browser()
   #spp names 
-  sppNames <- read_excel(paste0("phenology/data/", transect$names))
+  sppNames <- read_excel(paste0(path, transect$names))
   sppNames <- as.data.frame(sppNames)
   phen$species <- sppNames[phen$sppCode, 2]# second col has spp data but multiple names
   phen$sppCode <- NULL
@@ -56,7 +56,7 @@ phenology <- ldply(phenfiles, function(transect){
 }, .id = "transect")
 
 ##dictionary
-dictionary <- read.table("phenology/data/dictionary.tab", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+dictionary <- read.table(paste0(path, "dictionary.tab"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
  #fill missing new names with old names
 dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""] 
 
@@ -75,8 +75,9 @@ as.matrix(table(phenology2$decile))
 
 oddities <- phenology2[!phenology2$decile %in% c(".", "+", 1:10, "x"), ]
 dim(oddities)
-write.csv2(oddities, "phenology/oddities.csv")
-
+if(interactive()){
+  write.csv2(oddities, "phenology/oddities.csv")
+}
 #replace oddities
 phenology2$decile <- revalue(phenology2$decile,
   c(
