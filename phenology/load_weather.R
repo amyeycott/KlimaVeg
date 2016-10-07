@@ -27,18 +27,18 @@ monthly <- weather %>%
   group_by(year, month) %>% 
   summarise(temperature = mean(TMean, na.rm = TRUE), precipitation = sum(ppt)) %>%
   gather(key = "variable", value = "value", -year, -month)
-
+message("line30")
 
 #last day of snow
 lastSnow <- weather %>%
   filter(yday(date) < 200, snowCover > 0) %>%
   mutate(year = year(date)) %>%
+  mutate(yday = yday(date)) %>%
   group_by(year) %>%
-  summarise(lastSnow = last(yday(date)))
+  summarise(lastSnow = last(yday))
 
 #combine temperature/ppt with snow
-monthlyClim <- monthly %>% 
-  rbind(lastSnow %>% 
+monthlyClim <- bind_rows(monthly, lastSnow %>% 
           mutate(variable = "Snow", month = "lastSnow") %>% 
           rename(value = lastSnow)
   )
