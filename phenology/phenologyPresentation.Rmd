@@ -16,12 +16,10 @@ knitr::read_chunk("phenology.R")
 
 ## Outline
 
-- Understorey herb pheonology
 - Białowieża Forest
-- Tilio – carpinetum
-- Four 2 x 50 m transects across a nutrient gradient
-- Recorded every (5) 10 days for 52 years  
-- Climate data from Białowieża
+- Climate
+- Understorey herb pheonology
+
 
 ## Location
 ```{r map}
@@ -73,6 +71,31 @@ print(b + theme_void(base_size = 18), vp = vp_b)
 print(a + theme_inset(), vp = vp_a)
 ```
 
+## Deadwood 
+
+```{r out.width= 700}
+knitr::include_graphics(path = 'photographs/P1050111.JPG')
+```
+
+## Slime Molds 
+
+```{r out.width= 700}
+knitr::include_graphics(path = 'photographs/P1050120.JPG')
+```
+
+## Swampy Hollows
+
+```{r out.width= 700}
+knitr::include_graphics(path = 'photographs/P1050113.JPG')
+```
+
+## Bark Beetles
+```{r out.width= 500, out.extra='angle=90'}
+knitr::include_graphics(path = 'photographs/P1050156.JPG')
+```
+
+
+
 ## Climate change
 
 ```{r loadWeather, include = FALSE}
@@ -104,7 +127,31 @@ th <- theme_bw(base_size = 18)
 </div>
 
 
-## C
+## Phenology data
+
+
+- Four 2 x 50 m transects across a nutrient/moisture gradient
+- Tilio – carpinetum
+- Recorded every (5) 10 days for 52 years  
+- Phenological stages: vegetative, budding, flowering, fruiting, dispersal, dormant
+- Proportion of each species in each stage
+- 1-10 scale
+
+- Also photographs every two metres
+- estimates of canopy openness
 
 ```{r loadPhenology}
+```
+
+## Phenology Plots
+```{r out.width= 700}
+knitr::include_graphics(path = 'photographs/P1050121.JPG')
+```
+
+
+
+
+## Obligatory Bison 
+```{r out.width= 700}
+knitr::include_graphics(path = 'photographs/P1050201.JPG')
 ```
