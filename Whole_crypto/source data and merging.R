@@ -3,3 +3,22 @@
 
 source("\\\\helix.klient.uib.no\\biohome\\aey022\\rdata\\KlimaVeg\\Ania and Martin\\AniaMartinLichens_dataloading.R")
 source("\\\\helix.klient.uib.no\\biohome\\aey022\\rdata\\KlimaVeg\\sylwia\\Bryophyte data loading.R")#in an ideal world, work out which step is printing a bunch of structure...
+library(readxl)
+VascOld.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
+VascNew.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
+VascOld.thin$Plot_number<-paste(VascOld.thin$Plot_number, "1992", sep="_")
+#replace spaces with underscores in all column names
+colnames(VascOld.thin)<-gsub(" ", "_",colnames(VascOld.thin))
+#check that each species has one, and only one, frequency score
+unique(VascOld.thin[4:6])
+rowSums(VascOld.thin[4:6])
+VascOld.thin$frequency_score<-
+
+
+library(tidyr)
+
+
+VascOld.fat<-spread(VascOld.thin, Species_name, )
+
+  
+  spread(ferns.thindf[,c(1,2,4,5)], SPECIES, FREQUENCE, fill=0)
