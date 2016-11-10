@@ -1,7 +1,7 @@
 ---
-title: "Pheonological response of the Białowieża Forest understorey to climate change"
-author: "Bogdan Jaroszewicz and Richard J. Telford"
-date: "September 11, 2016"
+title: "Phenological response of the Białowieża Forest understorey to climate change"
+author: "Richard J. Telford and Bogdan Jaroszewicz"
+date: "7th October 2016"
 output: 
  ioslides_presentation:
   widescreen: true
@@ -18,7 +18,7 @@ knitr::read_chunk("phenology.R")
 
 - Białowieża Forest
 - Climate
-- Understorey herb pheonology
+- Understorey herb phenology
 
 
 ## Location
@@ -91,7 +91,7 @@ knitr::include_graphics(path = 'photographs/P1050113.JPG')
 
 ## Bark Beetles
 ```{r out.width= 500, out.extra='angle=90'}
-knitr::include_graphics(path = 'photographs/P1050156.JPG')
+knitr::include_graphics(path = 'photographs/P1050156r.JPG')
 ```
 
 
@@ -101,10 +101,12 @@ knitr::include_graphics(path = 'photographs/P1050156.JPG')
 ```{r loadWeather, include = FALSE}
 
 ```
+```{r loadPhenology}
+```
   
 ```{r theme}
 #sets global theme for figures
-th <- theme_bw(base_size = 18)
+th <- theme_bw(base_size = 16)
 ```
 
 ```{r monthPlot}
@@ -122,7 +124,7 @@ th <- theme_bw(base_size = 18)
 ```
 
 <div class="notes">
-- Regression coeffients 
+- Regression coefficients 
 - 95 % confidence intervals
 </div>
 
@@ -140,16 +142,42 @@ th <- theme_bw(base_size = 18)
 - Also photographs every two metres
 - estimates of canopy openness
 
-```{r loadPhenology}
-```
 
 ## Phenology Plots
-```{r out.width= 700}
-knitr::include_graphics(path = 'photographs/P1050121.JPG')
+```{r out.width= 500}
+knitr::include_graphics(path = 'photographs/P1050121r.JPG')
+```
+
+## _Allium ursinum_
+```{r Allium_ursinum}
+```
+
+## Date of first flowering
+
+```{r first_flowering, include = FALSE}
+```
+
+```{r firstFloweringPlot}
+```
+
+## Correlation of first flowering with weather
+
+```{r mergeClimateCorrelate}
+```
+```{r firstfloweringCor, fig.width=10}
+```
+
+## Regression of first flowering against March temperature
+
+```{r climateRegression, fig.width=10}
 ```
 
 
+## Next steps
 
+1. Relationship of temperature with date of peak and last flowering
+2. Relationship between different phenological stages and temperature
+3. ????
 
 ## Obligatory Bison 
 ```{r out.width= 700}
