@@ -1,7 +1,7 @@
 #load libraries
 library("readxl")
 library("tidyr")
-library("plyr")
+#library("plyr")
 library("dplyr")
 library("lubridate")
 
@@ -30,7 +30,7 @@ if(interactive()){
   path <- "data/"
 }
 
-phenology <- ldply(phenfiles, function(transect){
+phenology <- plyr::ldply(phenfiles, function(transect){
   phen <- read_excel(paste0(path, transect$file))
   
   #rename ROK to year and process                                                  
@@ -61,8 +61,8 @@ dictionary <- read.table(paste0(path, "dictionary.tab"), header = TRUE, sep = "\
 dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""] 
 
 #update species names
-phenology$species <- mapvalues(phenology$species, dictionary$old, dictionary$new)
-phenology$species <- mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "GLYCERIA MANNA")#problems with escape characters
+phenology$species <- plyr::mapvalues(phenology$species, dictionary$old, dictionary$new)
+phenology$species <- plyr::mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "GLYCERIA MANNA")#problems with escape characters
 
 phenology2 <- gather(phenology, key = "pentad", value = "decile", -species, -year, -stage, -transect) %>%
   filter(!decile %in% c("@", "@@"), !is.na(decile)) %>%
@@ -79,7 +79,7 @@ if(interactive()){
   write.csv2(oddities, "phenology/oddities.csv")
 }
 #replace oddities
-phenology2$decile <- revalue(phenology2$decile,
+phenology2$decile <- plyr::revalue(phenology2$decile,
   c(
     "," = ".",
     ".." = ".",
