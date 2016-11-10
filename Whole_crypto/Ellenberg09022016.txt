@@ -1,0 +1,161 @@
+No	Species.name	L	T	K	F	R	Protected.species	Red.coded
+1	Amblystegium serpens	5	NA	5	4	6		
+2	Amblystegium varium	5	5	5	5	6		
+3	Anastrophyllum hellerianum	7	3	6	6	2	1	3
+4	Anastrophyllum michauxii	4	3	7	6	2		3
+5	Aneura pinguis	8		5	8	7		
+6	Anomodon attenuatus	5	5	7	5	7	1	
+7	Anomodon longifolius	4	3	6	5	8	1	1
+8	Anomodon viticulosus	4	3	5	4	8	1	
+9	Antitrichia curtipendula	6	3	4	4	6	1	4
+10	Atrichum undulatum	6		5	6	4		
+11	Aulacomnium palustre	7	2	6	7	3	1	
+12	Bazzania trilobata	5	4	6	6	2	1	
+13	Blepharostoma trichophyllum	5	3	6	6	3		
+14	Brachytheciastrum velutinum	5	3	5	4	6		
+15	Brachythecium rutabulum	5		5	4			
+16	Brachythecium salebrosum	6	4	5	4	6		
+17	Bryum argenteum	7				6		
+18	Bryum pseudotriquetrum	7		5	7	7		
+19	Buxbaumia aphylla	7	3	6	5	2	1	
+20	Callicladium haldanianum	6	4	7	6	2		
+21	Calliergon cordifolium	7	4	6	8	4		
+22	Calliergonella cuspidata	8	3	5	7	7	1	
+23	Calypogeia integristipula	4	3	5	6	2		
+24	Calypogeia muelleriana	5	3	6	5	3		
+25	Calypogeia trichomanis	4	3	6	6	3		
+26	Campylium stellatum	8	2	6	7	7		
+27	Cephalozia bicuspidata	5		5	5	3		
+28	Cephalozia catenulata	5	4	4	6	2	1	3
+29	Cephaloziella divaricata	9		5	2	4		
+30	Cephaloziella rubella	8	3	5	3	3		
+31	Ceratodon purpureus	8		2				
+32	Chiloscyphus pallescens	5	3	6	8	7		
+33	Cirriphyllum piliferum	7	3	6	5	6		
+34	Climacium dendroides	7	3	5	6	5	1	
+35	Conocephalum conicum	7	3	6	7	7		
+36	Dicranella cerviculata	8	3	6	6	1		
+37	Dicranella heteromalla	5	4	5	4	2		
+38	Dicranodontium denudatum	4	3	6	6	2		
+39	Dicranum fuscescens	7	2	6	6	2		
+40	Dicranum polysetum	6	3	6	4	5	1	
+41	Dicranum scoparium	5		5	4	4	1	
+42	Dicranum spurium	7	3	6	2	2		
+43	Dicranum viride	5	5	7	5	7	1	2
+44	Drepanocladus polycarpos	8	3	6	7	7		
+45	Eurhynchiastrum pulchellum	6	4	6	4	6		
+46	Eurhynchium angustirete	5	4	7	4	7	1	
+47	Eurhynchium striatum	5	6	3	5	6	1	
+48	Fissidens taxifolius	5	4	5	6	7		
+49	Frullania dilatata	8	3	5	4	5	1	
+50	Funaria hygrometrica	8		5	6	6		
+51	Geocalyx graveolens	4	3	5	6	3	1	3
+52	Herzogiella seligeri	5	4	6	5	4		
+53	Homalia trichomanoides	4	3	5	6	7	1	
+54	Homalothecium sericeum	8	3	5	2	7		
+55	Hylocomiadelphus triquetrus	7	3	6	4	5	1	
+56	Hylocomium splendens	6	3	6	4	5	1	
+57	Hypnum cupressiforme	5		5	4	4		
+58	Hypnum cupressiforme var. filiforme	4		5	5			
+59	Hypnum imponens	8	3	4	7	1		
+60	Hypnum pallescens	5	4	7	5	2		
+61	Isothecium alopecuroides	5	4	6	3	6		
+62	Jamesoniella autumnalis	6	4	5	4	1		
+63	Jungermannia leiantha	4	3		6	1		
+64	Lejeunea cavifolia	5	3	4	6	6		
+65	Lepidozia reptans	4	3	5	5	2		
+66	Leptobryum pyriforme							
+67	Leptodictyum riparium			5	7	5		
+68	Leucobryum glaucum	5	3	4	7	1	1	
+69	Leucodon sciuroides	8	5	5	4	6		
+70	Lophocolea bidentata	7	3	5	6	5		
+71	Lophocolea heterophylla	4	3	5	4	3		
+72	Lophozia attenuata	7	3	5	6	2		
+73	Lophozia incisa	6	2	6	6	2		
+74	Lophozia longidens	7	3	6	6	2	1	
+75	Lophozia lycopodioides	7	2	6	6	3		
+76	Marchantia aquatica	8		5	6	5		
+77	Marchantia polymorpha	8	2	5	8	5		
+78	Metzgeria furcata	5	3	5	4	6		
+79	Mnium hornum	5	3	4	6	3		
+80	Mnium stellare	4	3	6	5	7		
+81	Neckera complanata	4	3	5	4	7	1	
+82	Neckera crispa	3	3	5	4	7	1	
+83	Neckera pennata	5	4	6	5	6	1	4
+84	Nowellia curvifolia	5	4	4	6	1	1	3
+85	Odontoschisma denudatum	5	4	4	6	1	1	
+86	Orthodicranum flagellare	6	4	6	5	2		
+87	Orthodicranum montanum	6	3	6	5	2		
+88	Orthotrichum affine	8	4	5	4	6		
+89	Orthotrichum diaphanum	8	6	5	2	6		
+90	Orthotrichum lyellii	7	4	4	4	5	1	2
+91	Orthotrichum obtusifolium	7	2	6	4	8		
+92	Orthotrichum pumilum	8	4	5	4	7		
+93	Orthotrichum speciosum							
+94	Orthotrichum stramineum	7	4	4	3	6		3
+95	Oxyrrhynchium hians	7	4	5	5	7		
+96	Pellia endiviifolia		4	5	8	9		
+97	Pellia epiphylla		4	5	8	5		
+98	Physcomitrium pyriforme	8	4	5	7	6		
+99	Plagiochila asplenioides	4	4	5	6	6	1	
+100	Plagiochila porelloides	6	3	5	4	7		
+101	Plagiomnium affine	5	4	5	5	5		
+102	Plagiomnium cuspidatum	4	3	4	5	7		
+103	Plagiomnium elatum		2	4	7	6		
+104	Plagiomnium medium	5	1	6	7	5		
+105	Plagiomnium rostratum	4	3	5	6	8		
+106	Plagiomnium undulatum	4	3	5	6	6		
+107	Plagiothecium curvifolium	5	2	4	4	2		
+108	Plagiothecium denticulatum	5		4	4	5		
+109	Plagiothecium laetum	4	3	6	4	2		
+110	Plagiothecium latebricola	3	3	4	5	3		
+111	Plagiothecium nemorale	4	3	5	6	3		
+112	Plagiothecium ruthei		5	6	7	2		
+113	Platygyrium repens	6	5	6	4	6		
+114	Pleurozium schreberi	6	3	6	4	2	1	
+115	Pohlia nutans	5		6	4	2		
+116	Pohlia wahlenbergii	6		6	7	6		
+117	Polytrichastrum formosum	4	2	5	6	2		
+118	Polytrichum commune	6	2	6	7	2	1	
+119	Polytrichum juniperinum	8	2		4	3		
+120	Polytrichum piliferum	9	2	5	2	2		
+121	Pseudobryum cinclidioides		2	6	7	2	1	4
+122	Pseudoscleropodium purum	6	4	5	4	5	1	
+123	Pterigynandrum filiforme	6	2	6	5	4		
+124	Ptilidium pulcherrimum	7	3	6	5	2		
+125	Ptilium crista-castrensis	4	2	6	6	3	1	
+126	Pylasiella polyantha	8	3	6	5	7		
+127	Radula complanata	7	3	5	5	7		
+128	Rhizomnium punctatum	3	3	4	6	4		
+129	Rhodobryum roseum	4	3	6	6	7		
+130	Riccardia latifrons	4	3	6	6	1		
+131	Riccardia palmata	4	4	4	6	1		
+132	Riccia fluitans		6	5	8	4		
+133	Rosulabryum moravicum	5	5	5	5	6		
+134	Sanionia uncinata			6	7	3		
+135	Schistidium apocarpum	4		5	3	7		
+136	Schistostega pennata	1	3	4	6	1		
+137	Sciuro-hypnum oedipodium	3	4	7	6	3		
+138	Sciuro-hypnum reflexum	4	2	6	5	4		
+139	Sphagnum capillifolium		3	5	7	2	1	
+140	Sphagnum centrale	6	3		7	1	1	
+141	Sphagnum compactum	8	3	6	7	2	1	
+142	Sphagnum fallax	7	3	6	7	2	1	
+143	Sphagnum fimbriatum	5	3	6	7	2	1	
+144	Sphagnum girgensohnii	4	2	6	7	1	1	
+145	Sphagnum magellanicum	9	3	6	6	1	1	
+146	Sphagnum palustre	6	4		6	2	1	
+147	Sphagnum russowii	6	2	6	6	2	1	
+148	Sphagnum squarrosum	5		5	7	3	1	
+149	Sphagnum warnstorfii	7	2	6	8	3	1	
+150	Straminergon stramineum	8	2	6	8	2		
+151	Syntrichia ruralis	9		5	2	6		
+152	Tetraphis pellucida	3	3	5	6	1		
+153	Thuidium delicatulum	7	4	5	4	7	1	
+154	Thuidium tamariscinum	4	4	4	6	4	1	
+155	Tortula muralis	8	5	5	1			
+156	Trichocolea tomentella	6	4	4	8	6	1	
+157	Tritomaria exsecta	5	3	5	6	1		
+158	Ulota crispa	4	3	5	6	3	1	3
+159	Warnstorfia fluitans			6	8	1		
+160	Zygodon rupestris	6	4	4	5	7	1	4
