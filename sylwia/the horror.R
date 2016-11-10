@@ -1,3 +1,4 @@
+#this checks the data for mistakes and should be run whenever there is a new version of Baza.
 library(readxl)
 bryophytes<-read_excel("Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
 str(bryophytes) # teraz robię badanie konstrukcji całyej zawartości arkusza, który został wczytany
