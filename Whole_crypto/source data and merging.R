@@ -6,6 +6,7 @@ library(readxl)
 VascOld.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
 
 #Richard:  the col_types is not having any effect. I used it because the fourth column was returning 'text' when it is numeric, and the final column is returning numeric when it is made of text and so prints a whole bunch of warnings.
+#no good idea. Text when actually numeric suggests a non-numeric value in there somewhere. Can be converted aferwards with as.numeric(). Numeric when text suggests first 100 rows are blank/numeric
 
 VascNew.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
 VascOld.thin$Plot_number<-paste(VascOld.thin$Plot_number, "1992", sep="_")
@@ -17,6 +18,17 @@ unique(VascOld.thin[,4:6])#checks that there are no values that are not 1, and n
 
 #At this stage I have three columns, Frequency_1 Frequency_2 and Frequency_3, all containing binary information. I want the new column frequency_score to have a 1 if there's a 1 in Frequency_1, a 2 if there's a 1 in Frequency_2, and a 3 if there's a 1 in Frequency_3. I could maybe make it work with three lines and subsetting (first line as below), but that seems clunky. More elegant solution?
 #VascOld.thin$frequency_score[!is.na(VascOld.thin$Frequency_3),]<-(VascOld.thin$Frequency_3[!is.na(VascOld.thin$Frequency_3),])*3
+
+#Can be simplified to 
+VascOld.thin$frequency_score[VascOld.thin$Frequency_1] <- 1
+VascOld.thin$frequency_score[VascOld.thin$Frequency_2] <- 2
+VascOld.thin$frequency_score[VascOld.thin$Frequency_3] <- 3
+
+# Alternatively - assuming max one TRUE per row
+VascOld.thin$frequency_score <- rowSums(
+  mapply("*", VascOld.thin[, c("Frequency_1", "Frequency_2", "Frequency_3")], 1:3),
+  na.rm = TRUE
+)
 
 
 library(tidyr)
