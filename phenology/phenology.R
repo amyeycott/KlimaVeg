@@ -13,9 +13,13 @@ if(interactive()){
 ## ---- phenologyPlots
 #pheology plots
 ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
-ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names)))
+## ---- Allium_ursinum
+ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + 
+  geom_line() + 
+  facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) + 
+  th
 
-#autumn flowers
+## ---- autumn_flowers
 ggplot(phenology2 %>% filter(species == "Daphne mezereum", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
 ggplot(phenology2 %>% filter(species == "Anemone nemorosa", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
 ggplot(phenology2 %>% filter(species == "Oxalis acetosella", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
@@ -37,7 +41,7 @@ phenology2 %>%
   mutate(nyear = n_distinct(year)) %>%
   filter(nyear >10) %>%
   group_by(year, species, transect, pentad) %>% 
-  summarise(mdecile = mean(decile)) %>% 
+  summarise(mdecile = mean(decile, na.rm = TRUE)) %>% 
   filter(mdecile > 0) %>%
   ggplot(aes(x = pentad, y = species, colour = mdecile)) + 
     geom_point() + 
@@ -77,7 +81,7 @@ comm %>%
   group_by(year, stage, transect) %>%
   summarise(n = n()) %>% ggplot(aes(x = year, y = n, colour = as.factor(stage), linetype = transect)) + geom_line() + ylim(0, NA)
 
-##first flowering
+## ---- first_flowering
 first_phenology <- phenology2 %>% 
   filter(decile > 0, stage < 6) %>% 
   group_by(year, species, stage, transect) %>% 
@@ -89,7 +93,7 @@ first_phenology <- phenology2 %>%
         species = unique(species),
         stage = 1:5,
         transect = paste0("t", 36:39)
-      )
+      ) 
     ), all = TRUE)
 
 first_flowering <- first_phenology %>% 
@@ -107,6 +111,7 @@ first_flowering %>%
   group_by(species, transect) %>%
   summarise(min = min(first), max = max(first), delta = max - min)
 
+## ---- firstFloweringPlot
 first_flowering %>% 
   group_by(species, transect, first) %>% 
   mutate(n = n()) %>%
@@ -115,8 +120,9 @@ first_flowering %>%
   ungroup() %>%
   mutate(species = factor(species, levels = unique(species[order(median)]))) %>%
   ggplot(aes(x = first, y = species, size = n, colour = transect)) + 
-    geom_point(pch = 1) 
+    geom_point(pch = 1) + labs(x = "Pentad of first flowering", y = "")
 
+## ----x
 ggplot(first_flowering, aes(x = year, y = first, colour = species)) + 
     geom_line(show.legend = FALSE) + 
     geom_point(size = 0.5, show.legend = FALSE) +
@@ -130,7 +136,7 @@ first_flowering %>%
   group_by(transect) %>% 
   summarise(median = median(first, na.rm = TRUE))
 
-
+## ----mergeClimateCorrelate
 #merge with climate
 first_floweringClim <- first_flowering %>% 
   merge(monthlylag)
@@ -147,22 +153,35 @@ firstflowerSnowCor <- first_floweringClim %>%
   do(as.data.frame(t(cor(.[, !names(.) %in% c("species", "transect", "timing", "month", "variable", "value")], .$value, use = "pair"))))
 
 
+## ----x
 ggplot(firstflowerSnowCor, aes(x = month, y = first)) + 
   geom_boxplot() +
   facet_grid(transect~variable, space = "free_x", scales = "free_x") +
   theme(axis.text.x = element_text(angle = 90))
 
 ggplot(firstflowerSnowCor, aes(x = month, y = first, fill = timing)) + 
-  geom_boxplot() +
-  facet_grid(transect~variable, space = "free_x", scales = "free_x") +
-  theme(axis.text.x = element_text(angle = 90))
+     geom_boxplot() +
+     facet_grid(transect~variable, space = "free_x", scales = "free_x") +
+     theme(axis.text.x = element_text(angle = 90)) + th
 
+## ----firstfloweringCor
+firstflowerSnowCor %>% filter(variable != "precipitation") %>%
+  ggplot(aes(x = month, y = first, fill = timing)) + 
+  geom_boxplot() +
+  facet_grid(transect~variable, space = "free_x", scales = "free_x") + 
+  labs(x = "", y = "Correlation") +
+  th + theme(axis.text.x = element_text(angle = 90))
+
+
+## ---- climateRegression
 first_floweringClim %>% filter(variable == "temperature", month  == "March") %>% 
+  filter(species < "Carex") %>%
   ggplot(aes(x = value, y = first, colour = transect)) + 
     geom_point() + geom_smooth(method = "lm", se = FALSE) + 
-    facet_wrap(~species, scale = "free_y")
+    labs(x = "Temperature °C", y = "Pentad of first flowering") +
+    facet_wrap(~species, scale = "free_y") +th 
 
-
+## ---- x
 ###duration
 ggplot(firstflowerSnowCor, aes(x = month, y = duration, fill = timing)) + 
   geom_boxplot() +
