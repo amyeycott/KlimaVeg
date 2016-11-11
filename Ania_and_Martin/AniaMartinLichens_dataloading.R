@@ -28,7 +28,7 @@ olddb$Species<-as.factor(olddb$Species)
 olddb$Site<-as.factor(olddb$Site)
 
 #old.harm. is the 1992 sampling period with only the species comparable between 1992 and 2015 in it. 
-old.harm.db<-read_excel("LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=2)
+old.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=2)# need some filepath so that this still runs when used as 'source' in other folders
 old.harm.db<-as.data.frame(old.harm.db)
 old.harm.db[is.na(old.harm.db)] <-0
 colnames(old.harm.db)<-gsub(" ", "_", colnames(old.harm.db))
@@ -87,5 +87,6 @@ head(compz[,c(1:4, length(compz))])
 genus_comp<-aggregate(compz[,1:length(compz)-1], by=list(compz$genus), FUN=max)
 rownames(genus_comp)<-genus_comp$Group.1
 genus_comp<-as.data.frame(t(genus_comp[-1]))
+
 
 
