@@ -36,3 +36,4 @@ forindvalCWD[is.na(forindvalCWD)]<-0
 urkCWD<-multipatt(forindvalCWD[,4:length(forindvalCWD)], forindvalCWD$variable,  duleg=TRUE)
 summary(urkCWD, alpha=(1-(1-0.05)^(1/length(unique(CWDonly$Species_name))))) #CWD has 23 specialists, but I need to check which of these are actually specialists to other habs (14 are LS specialists, 1 is not specialist, and eight are CWD specialists). Should also drop some for multiple testing. Bonferroni/Sidak kills the lot. Holm-Bonferroni tests the lowest P value against the bonferroni correction then drops the k for each successive higher p value, but if the lowest p value fails, presumably so do all the others.
 
+#betadiv turnover 
