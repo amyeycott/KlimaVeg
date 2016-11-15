@@ -33,3 +33,7 @@ summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015
 
 ##Vascular plants##
 #I need a combined object of all years veg.
+
+
+
+##Final step will be to merge them all. I like merge but Richard likes something from dplyr
