@@ -36,3 +36,6 @@ VascOld.fat$Plot_number<-NULL
 VascNew.fat<-spread(VascNew.thin[,c(2,3,53)], Species_name_2015,frequency_score, fill=0)
 rownames(VascNew.fat)<-VascNew.fat$Plot_number_2015
 VascNew.fat$Plot_number_2015<-NULL
+
+##making a combined file for vegdist
+
