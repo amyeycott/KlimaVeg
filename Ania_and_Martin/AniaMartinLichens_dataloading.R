@@ -10,6 +10,10 @@ colnames(newdb)<-gsub(" ", "_", colnames(newdb))
 newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
+#needs Site harmonising with the other groups (P01 not P1). How do I make it pick up P1 and make P01, but not make P10 into P010?
+#gsub([:alpha:][:digit] AND NOTHING ELSE, [:alpha:]0[:digit], newdb$Site)
+#Note to myself: but this affects other lines. So far line 45 in this file, I checked the other files and I don't think there is anything but after the change they should be re-run to look for error messages.
+
 
 #new.harm. is the data with only the species comparable between 1992 and 2015 in it. Same data prep as above.
 new.harm.db<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
@@ -71,7 +75,7 @@ comp_old<-as.data.frame(unclass(xtabs(Frequency~Site+Species, data=old.harm.db))
 comp_old$Year<-1992
 comp_new<-as.data.frame(unclass(xtabs(Frequency~Site+Species, data=new.harm.db)))
 comp_new$Year<-2015
-comp<-as.data.frame(merge(t(comp_old), t(comp_new), by=0, all=TRUE)) # Merge in rioja package is neater
+comp<-as.data.frame(merge(t(comp_old), t(comp_new), by=0, all=TRUE)) # Merge in rioja package is neater, join in analogue is nice and easy to understand.
 rownames(comp)<-comp$Row.names
 comp[is.na(comp)]<-0
 compz<-as.data.frame(comp[,-1])#compz is for summarising to genus
