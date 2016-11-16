@@ -37,5 +37,7 @@ VascNew.fat<-spread(VascNew.thin[,c(2,3,53)], Species_name_2015,frequency_score,
 rownames(VascNew.fat)<-VascNew.fat$Plot_number_2015
 VascNew.fat$Plot_number_2015<-NULL
 
-##making a combined file for vegdist
+##making a combined file for vegdist: RT "Look at rioja::Merge or analogue::join"
+library(analogue)
+Vascall.df<-join(VascOld.fat, VascNew.fat, na.replace=TRUE, split=FALSE, type="outer")
 
