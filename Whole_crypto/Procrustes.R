@@ -41,10 +41,17 @@ lichen.crusty<-protest(lichen.nmds.1992, lichen.nmds.2015)
 #Bryophytes whole set
 bryo.nmds.1992<-metaMDS(easytabx[substr(rownames(easytabx),4,7)=="1992",])#converges
 bryo.nmds.2015<-metaMDS(easytabx[substr(rownames(easytabx),4,7)=="2015",])#converges
-moss.crusty<-protest(bryo.nmds.1992, bryo.nmds.2015)#very similar, r=0.98, P=0.001
+crusty.bryo<-protest(bryo.nmds.1992, bryo.nmds.2015)#very similar, r=0.98, P=0.001
 #vascular whole set
 vasc.nmds.1992<-metaMDS(VascOld.fat)#converges
 vasc.nmds.2015<-metaMDS(VascNew.fat)#converges
-vasc.crusty<-protest(vasc.nmds.1992, vasc.nmds.2015)#very similar
+crusty.vasc<-protest(vasc.nmds.1992, vasc.nmds.2015)#very similar
 crusty.2015.vascbryo<-protest(vasc.nmds.2015, bryo.nmds.2015)#still pretty similar: r=0.95, P=0.001
 crusty.1992.vascbryo<-protest(vasc.nmds.1992, bryo.nmds.1992)#very very slightly less similar, but unlikely to be a serious thing: r=0.94, P=0.001
+
+x11(); par(mfrow=c(2,2))
+plot(bryo.nmds.1992, main="Bryophytes 1992")
+plot(bryo.nmds.2015, main="Bryophytes 2015")
+plot(vasc.nmds.1992, main="Vascular plants 1992")
+plot(vasc.nmds.2015, main="Vascular plants 2015")
+savePlot("nmds bryo and vasc just for show.emf", type="emf")
