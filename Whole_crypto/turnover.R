@@ -45,15 +45,31 @@ summ.vascs$vasc.rich1992<-rowSums(VascOld.fat)
 summ.vascs$vasc.rich2015<-rowSums(VascNew.fat)
 rownames(summ.vascs)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")
 
-##Final step will be to merge them all. I like merge (nb there is a different merge in rioja library!) but Richard likes something from dplyr. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames)
+##Final step is to merge them all. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames) that does all three objects at once and gets rid of the superfluous row names-columns
 HDRmerge<- function(x, y){
   df<- merge(x, y, by= "row.names", all.x= TRUE, all.y= TRUE)
   rownames(df)  <- df$Row.names
   df$Row.names  <- NULL
   return(df)
 }
-Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))#264 lines.... because lichens have P4 and bryos and vascs P04.... this may call for a regular expression and should be fixed way back in lichens data prep, but I'm not sure if that will mess anything else up.
+Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
+#plots and summary data and a few little stats tests
+x11();par(mfrow=c(3,3), xpd=NA)
+sapply(Summaries, function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)})
+text("Vegdist",x=-450, y=175, cex=1.4)
+text("Richness in 1992",x=-150, y=175, cex=1.4)
+text("Richness in 2015",x=100, y=175, cex=1.4)
+text("Lichens",x=-550, y=150, cex=1.4, srt=90)
+text("Bryophytes",x=-550, y=85, cex=1.4, srt=90)
+text("Vascular plants",x=-550, y=15, cex=1.4, srt=90)
+savePlot("Distributions of values.emf", type="emf")
+t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
+t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
+t.test(Summaries$vasc.rich1992, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
 
-
-
+sapply(Summaries, mean)
+sapply(Summaries, sd)
+sapply (list(comp_old, comp_new, VascOld.fat, VascNew.fat, ), dim)
+sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])>0)#that's a long-winded way to get bryo richness...
+sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
