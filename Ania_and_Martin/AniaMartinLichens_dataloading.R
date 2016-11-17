@@ -7,19 +7,16 @@ newdb<-as.data.frame(newdb)
 newdb[is.na(newdb)] <-0
 #take spaces out of variable names
 colnames(newdb)<-gsub(" ", "_", colnames(newdb))
+newdb$Site[nchar(newdb$Site)==2]<-paste0(substr(newdb$Site[nchar(newdb$Site)==2], 1,1),"0", substr(newdb$Site[nchar(newdb$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. This affects other lines: line 49 in this fileis fixed.
 newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
-
-#needs Site harmonising with the other groups (P01 not P1). How do I make it pick up P1 and make P01, but not make P10 into P010?
-#gsub([:alpha:][:digit] AND NOTHING ELSE, [:alpha:]0[:digit], newdb$Site)
-#Note to myself: but this affects other lines. So far line 45 in this file, I checked the other files and I don't think there is anything but after the change they should be re-run to look for error messages.
-
 
 #new.harm. is the data with only the species comparable between 1992 and 2015 in it. Same data prep as above.
 new.harm.db<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
 new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
 colnames(new.harm.db)<-gsub(" ", "_", colnames(new.harm.db))
+new.harm.db$Site[nchar(new.harm.db$Site)==2]<-paste0(substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 1,1),"0", substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
 new.harm.db$Species<-as.factor(new.harm.db$Species)
 new.harm.db$Site<-as.factor(new.harm.db$Site)
 
@@ -28,6 +25,7 @@ olddb<-read_excel("LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet
 olddb<-as.data.frame(olddb)
 olddb[is.na(olddb)] <-0
 colnames(olddb)<-gsub(" ", "_", colnames(olddb))
+olddb$Site[nchar(olddb$Site)==2]<-paste0(substr(olddb$Site[nchar(olddb$Site)==2], 1,1),"0", substr(olddb$Site[nchar(olddb$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
 olddb$Species<-as.factor(olddb$Species)
 olddb$Site<-as.factor(olddb$Site)
 
@@ -36,6 +34,7 @@ old.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-198
 old.harm.db<-as.data.frame(old.harm.db)
 old.harm.db[is.na(old.harm.db)] <-0
 colnames(old.harm.db)<-gsub(" ", "_", colnames(old.harm.db))
+old.harm.db$Site[nchar(old.harm.db$Site)==2]<-paste0(substr(old.harm.db$Site[nchar(old.harm.db$Site)==2], 1,1),"0", substr(old.harm.db$Site[nchar(old.harm.db$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
 old.harm.db$Species<-as.factor(old.harm.db$Species)
 old.harm.db$Site<-as.factor(old.harm.db$Site)
 
@@ -47,7 +46,7 @@ S.in.inorganic<-c("1_stones", "2_concrete_","3_peat", "4_mineral_soil_-_humus_ho
 S.in.fineorganic<-c("7_broadleaved_or_mixed_litter","8_conifer_litter","20_shoots,_leaves_of_living_plants", "21_a_last_year_herb_shoots","22_excrements", "23_dead_animal_rests","24_other_substrata")
 
 #Peucedanum list
-PP<- c("B1","C1","C2","D1","D2","E1","E2","F1","F2","G1", "G2","G3","G4","H1","H2","H3","H4","H5","I1","I2","I3","I4","I5","K1","K2","K3","K4","K5","L1","L2","L3","M1","M2","M3")
+PP<- c("B01","C01","C02","D01","D02","E01","E02","F01","F02","G01", "G02","G03","G04","H01","H02","H03","H04","H05","I01","I02","I03","I04","I05","K01","K02","K03","K04","K05","L01","L02","L03","M01","M02","M03")
 
 #environmental indicator value data, plus some other traity stuff
 envir<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=4)
