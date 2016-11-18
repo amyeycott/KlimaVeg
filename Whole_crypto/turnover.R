@@ -1,5 +1,5 @@
 source("source data and merging.R")
-#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. 
+#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen.
 
 ####lichens###
 vegdist.lichens<-as.matrix(vegdist(comp))
@@ -16,6 +16,15 @@ summ.lichens$lich.rich2015<-rowSums(subset(comp_new, select=-Year))
 rownames(summ.lichens)<-rownames(comp_old)
 
 
+extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+summ.lichens$lich.extinct<-0
+for (i in 1:144)
+{summ.lichens$lich.extinct[i]<-(extinctions.lichens[i, i+144])}
+colonisations.lichens<-as.matrix(designdist(comp, method = "(B-J)/B", terms = "binary", abcd=FALSE, alphagamma=FALSE, "colonisations")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+summ.lichens$lich.colonise<-0
+for (i in 1:144)
+{summ.lichens$lich.colonise[i]<-(colonisations.lichens[i, i+144])}
+
 ###bryos###
 vegdist.bryos<-as.matrix(vegdist(easytabx))
 summ.bryos<-as.data.frame(0)#you have to set something up for the loop to feed into.
@@ -30,6 +39,14 @@ colnames(summ.bryos)<-"bryo.dist"
 summ.bryos$bryo.rich1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])
 summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])
 
+extinctions.bryos<-as.matrix(designdist(easytabx, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
+summ.bryos$bryo.extinct<-0
+for (i in 1:144)
+{summ.bryos$bryo.extinct[i]<-(extinctions.bryos[i*2-1, i*2])}
+colonisations.bryos<-as.matrix(designdist(easytabx, method = "(B-J)/B", terms = "binary", abcd=FALSE, alphagamma=FALSE, "colonisations")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+summ.bryos$bryo.colonise<-0
+for (i in 1:144)
+{summ.bryos$bryo.colonise[i]<-(colonisations.bryos[i*2-1, i*2])}
 
 ##Vascular plants##
 vegdist.vascs<-as.matrix(vegdist(Vascall.df))
@@ -45,6 +62,16 @@ summ.vascs$vasc.rich1992<-rowSums(VascOld.fat)
 summ.vascs$vasc.rich2015<-rowSums(VascNew.fat)
 rownames(summ.vascs)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")
 
+extinctions.vascs<-as.matrix(designdist(Vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
+summ.vascs$vasc.extinct<-0
+for (i in 1:144)
+{summ.vascs$vasc.extinct[i]<-(extinctions.vascs[i, i+144])}
+colonisations.vascs<-as.matrix(designdist(Vascall.df, method = "(B-J)/B", terms = "binary", abcd=FALSE, alphagamma=FALSE, "colonisations")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+summ.vascs$vasc.colonise<-0
+for (i in 1:144)
+{summ.vascs$vasc.colonise[i]<-(colonisations.vascs[i, i+144])}
+
+
 ##Final step is to merge them all. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames) that does all three objects at once and gets rid of the superfluous row names-columns
 HDRmerge<- function(x, y){
   df<- merge(x, y, by= "row.names", all.x= TRUE, all.y= TRUE)
@@ -53,10 +80,8 @@ HDRmerge<- function(x, y){
   return(df)
 }
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
-
-#plots and summary data and a few little stats tests
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries, function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)})
+sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}))) #Bad magic numbers because of new columns
 text("Vegdist",x=-450, y=175, cex=1.4)
 text("Richness in 1992",x=-150, y=175, cex=1.4)
 text("Richness in 2015",x=100, y=175, cex=1.4)
@@ -68,8 +93,13 @@ t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
 t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
 t.test(Summaries$vasc.rich1992, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
 
+x11(); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(3,0.5,0))
+plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion  plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8))
+
 sapply(Summaries, mean)
 sapply(Summaries, sd)
-sapply (list(comp_old, comp_new, VascOld.fat, VascNew.fat, ), dim)
+sapply (list(comp_old, comp_new, VascOld.fat, VascNew.fat), dim)
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])>0)#that's a long-winded way to get bryo richness...
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
+
+
