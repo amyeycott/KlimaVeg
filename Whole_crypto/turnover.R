@@ -16,7 +16,7 @@ summ.lichens$lich.rich2015<-rowSums(subset(comp_new, select=-Year))
 rownames(summ.lichens)<-rownames(comp_old)
 
 
-extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species). I need to get someone to check this.
 summ.lichens$lich.extinct<-0
 for (i in 1:144)
 {summ.lichens$lich.extinct[i]<-(extinctions.lichens[i, i+144])}
@@ -81,7 +81,7 @@ HDRmerge<- function(x, y){
 }
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}))) #Bad magic numbers because of new columns
+sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)})) #Bad magic numbers because of new columns
 text("Vegdist",x=-450, y=175, cex=1.4)
 text("Richness in 1992",x=-150, y=175, cex=1.4)
 text("Richness in 2015",x=100, y=175, cex=1.4)
@@ -93,8 +93,11 @@ t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
 t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
 t.test(Summaries$vasc.rich1992, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
 
-x11(); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(3,0.5,0))
-plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion  plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8))
+x11(); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0))
+plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
+plot(Summaries$bryo.extinct, Summaries$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
+plot(Summaries$vasc.extinct, Summaries$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
+savePlot("Colonisations vs extinctions.emf", type="emf")
 
 sapply(Summaries, mean)
 sapply(Summaries, sd)
