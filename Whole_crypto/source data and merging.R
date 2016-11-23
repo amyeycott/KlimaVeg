@@ -5,6 +5,7 @@ source("../sylwia/Bryophyte data loading.R")#in an ideal world, work out which s
 library(readxl)
 VascOld.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
 VascNew.thin<-as.data.frame(read_excel("KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
+phytosoc<-as.data.frame(read_excel("habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
 
 ##Sanity checks and tidying in vascular data
 colnames(VascOld.thin)<-gsub(" ", "_",colnames(VascOld.thin))
@@ -41,4 +42,9 @@ VascNew.fat$Plot_number_2015<-NULL
 library(analogue)
 Vascall.df<-join(VascOld.fat, VascNew.fat, na.replace=TRUE, split=FALSE, type="outer")
 
-#phytosociological communities
+#phytosociological file from falinski: data tidying and matching plot name format
+colnames(phytosoc)<-gsub(" ", "_",colnames(phytosoc))#takes spaces out of column names
+phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2]<-paste0(substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 1,1),"0", substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. 
+phytosoc[is.na(phytosoc)]<-0
+phytosoc$ncomms<-rowSums(phytosoc[,2:7]>0)#magic numbers are very bad, but subset wasn't working
+phytosoc$dominant<-colnames(phytosoc[,2:7])[max.col(phytosoc[,2:7], ties.method = 'first')]  #return the column name of the column with the highest value. Should probably check how many ties there are though.
