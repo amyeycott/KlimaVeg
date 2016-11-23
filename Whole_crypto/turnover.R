@@ -15,7 +15,7 @@ summ.lichens$lich.rich1992<-rowSums(subset(comp_old, select=-Year))
 summ.lichens$lich.rich2015<-rowSums(subset(comp_new, select=-Year))
 rownames(summ.lichens)<-rownames(comp_old)
 
-
+library(vegan)
 extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species). I need to get someone to check this.
 summ.lichens$lich.extinct<-0
 for (i in 1:144)
@@ -80,8 +80,9 @@ HDRmerge<- function(x, y){
   return(df)
 }
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
+
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)})) #Bad magic numbers because of new columns
+sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}) #Bad magic numbers because of new columns
 text("Vegdist",x=-450, y=175, cex=1.4)
 text("Richness in 1992",x=-150, y=175, cex=1.4)
 text("Richness in 2015",x=100, y=175, cex=1.4)
@@ -105,4 +106,17 @@ sapply (list(comp_old, comp_new, VascOld.fat, VascNew.fat), dim)
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])>0)#that's a long-winded way to get bryo richness...
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
 
+#is turnover higher in certain communities? Or plots with more communities in?
+Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
+x11(); par(mfrow=c(3,5),mar=c(3,3,3,1), cex.axis=0.8, las=2)
+sapply(Summaries[,2:16], function (x) {
+  boxplot(x~dominant, data=Summaries, main=colnames(x), col=1:7)
+  })# how to make the individual figures have names? colnames isn't working
+       
+sapply(Summaries[,2:16], function (x) {
+  lm.x<-lm(x~dominant, data=Summaries)
+    print(summary(lm.x))
+     }) #should have different models for different data types. E.g. poissons for counts.
 
+#maybe do it in one loop per data type, and command the plots to fill in columnwise?
+   
