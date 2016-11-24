@@ -108,15 +108,56 @@ sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
 
 #is turnover higher in certain communities? Or plots with more communities in?
 Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
-x11(); par(mfrow=c(3,5),mar=c(3,3,3,1), cex.axis=0.8, las=2)
-sapply(Summaries[,2:16], function (x) {
-  boxplot(x~dominant, data=Summaries, main=colnames(x), col=1:7)
-  })# how to make the individual figures have names? colnames isn't working
-       
-sapply(Summaries[,2:16], function (x) {
-  lm.x<-lm(x~dominant, data=Summaries)
-    print(summary(lm.x))
-     }) #should have different models for different data types. E.g. poissons for counts.
+Summaries$Row.names<-NULL
 
-#maybe do it in one loop per data type, and command the plots to fill in columnwise?
-   
+x11()
+layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
+par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
+sapply(Summaries[,c(2,7,12)], function (x) { 
+  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 1992", main=colnames(x))
+  model.x<-aov(x~dominant, data=Summaries)
+    text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+    text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+   text(x=3, y=-20, labels=colnames(x))
+  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
+sapply(Summaries[,c(3,8,13)], function (x) { 
+  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 2015")
+  model.x<-aov(x~dominant, data=Summaries)
+  text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+}) 
+sapply(Summaries[,c(4,9,14)], function (x) { 
+  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot extinctions")
+  model.x<-aov(x~dominant, data=Summaries)
+  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+}) 
+sapply(Summaries[,c(5,10,15)], function (x) { 
+  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot colonisations")
+  model.x<-aov(x~dominant, data=Summaries)
+  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+}) 
+sapply(Summaries[,c(1,6,11)], function (x) { 
+  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,0.4), ylab="Bray-Curtis distance")
+  model.x<-aov(x~dominant, data=Summaries)
+  text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=0.36, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+})
+text(-17.5,1.8,"Lichens", cex=1.2)
+text(-17.5,1.15,"Bryophytes", cex=1.2)
+text(-17.5,0.5,"Vascular plants", cex=1.2)
+savePlot("Turnover and richness by phytosoc.emf", type="emf")
+
+#some stuff for messing about or spare code for if we go back to models
+model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
+text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
+text(x=4, y=180, labels=paste("P =", signif(model.x[1,5], 3)),cex=0.8)
+
+
+#check that the models chosen behave themselves. This should be commented out once completed
+dev.off()#takes out the settings used for the previous figures, but note risks loss of unsaved figures
+sapply(Summaries[,c(2,7,12)], function (x) { 
+    model.x<-aov(x~dominant, data=Summaries)
+    plot(model.x)
+})#they look ok (rich1992) but is it ok to anova count data? It wouldn't be ok to glm it. There is really no risk here of the sd crossing zero.
