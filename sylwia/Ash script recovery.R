@@ -220,11 +220,14 @@ ggplot(cbind(plothostrich, Fe_LS= plotFe_LSrich$V1), aes(x=V1, y = Fe_LS)) +
 x11(8,6); par(mfrow=c(2,3))
 hist(hostsall.1992$max[hostsall.1992$Fe_LS==1], xlab="Number of hosts for F. excelsior epiphyte species", main="1992", xlim=c(0,14), ylim=c(0,25), las=1)
 hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.LS2015$Species_name)], xlab="Number of hosts for F. excelsior epiphyte species", main="2015", xlim=c(0,14), ylim=c(0,25), las=1) #two different ways of the same thing... why?
-hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.CWD2015$Species_name)], xlab="Number of hosts for F. excelsior saproxylic species", main="CWD2015", xlim=c(0,14), ylim=c(0,25), breaks=14, las=1)
-#something seems wrong with hostsall.2015 - there can't be 70 epiphytic species on alnus glutinosa. But there is, there's 84, I checked using "bryophytes"!
+hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.CWD2015$Species_name)], xlab="Number of hosts for F. excelsior saproxylic species", main="CWD2015", xlim=c(0,14), ylim=c(0,25), breaks=14, las=1)## Two things seemed wrong with hostsall.2015 - there can't be 70 epiphytic species on alnus glutinosa. But there is, there's 84, I checked using "bryophytes"! And there is no UG or MS CWD.
 barplot(colSums(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]), names.arg =substr(colnames(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")
 barplot(colSums(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]), names.arg =substr(colnames(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")
+
+
 hostsall.CWD2015<-aggregate(bryophytes[bryophytes$Year==2015, substr(colnames(bryophytes),4,6)=="CWD"], by=list(bryophytes$Species_name[bryophytes$Year==2015]), max)
-barplot(colSums(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]), names.arg =substr(colnames(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")#hostsall.CWD2015 needs making
+
+
+barplot(colSums(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]), names.arg =substr(colnames(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")#hostsall.CWD2015 needs making. missing UG & MS in the file! Magic number fail.
 savePlot("Figure Hosts 3x2.emf", type="emf")
 savePlot("Figure Hosts 3x2.pdf", type="pdf")

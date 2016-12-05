@@ -1,5 +1,5 @@
 source("source data and merging.R")
-
+set.seed()
 library(vegan)
 #Lichens whole set.
 lichen.nmds.1992<-metaMDS(subset(comp_old[,colSums(comp_old>0)>1], select=-Year), trymax=100)# Not converging, even after 100 tries. There are between 26 and 153 species per plot, so removing plots by low species count doesn't make sense. Removing species with fewer than five ocurrences doesn't help, even though it takes out 99 species of the 212. Do the outliers have particularly high or low species counts? But hard to find outliers on an nmds. 

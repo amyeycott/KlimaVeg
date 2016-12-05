@@ -2,7 +2,7 @@ library(readxl)
 library(plyr)
 
 #load 2015 full data set
-newdb<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx")
+newdb<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx")
 newdb<-as.data.frame(newdb)
 newdb[is.na(newdb)] <-0
 #take spaces out of variable names
@@ -12,7 +12,7 @@ newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
 #new.harm. is the data with only the species comparable between 1992 and 2015 in it. Same data prep as above.
-new.harm.db<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
+new.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
 new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
 colnames(new.harm.db)<-gsub(" ", "_", colnames(new.harm.db))
@@ -21,7 +21,7 @@ new.harm.db$Species<-as.factor(new.harm.db$Species)
 new.harm.db$Site<-as.factor(new.harm.db$Site)
 
 #old is the 1992 sampling period
-olddb<-read_excel("LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=1)
+olddb<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=1)
 olddb<-as.data.frame(olddb)
 olddb[is.na(olddb)] <-0
 colnames(olddb)<-gsub(" ", "_", colnames(olddb))
@@ -49,7 +49,7 @@ S.in.fineorganic<-c("7_broadleaved_or_mixed_litter","8_conifer_litter","20_shoot
 PP<- c("B01","C01","C02","D01","D02","E01","E02","F01","F02","G01", "G02","G03","G04","H01","H02","H03","H04","H05","I01","I02","I03","I04","I05","K01","K02","K03","K04","K05","L01","L02","L03","M01","M02","M03")
 
 #environmental indicator value data, plus some other traity stuff
-envir<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=4)
+envir<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=4)
 
 #trim trailing spaces in species names. Don't do it for the whole file, that is very very crashy
 envir$Species<-trimws(envir$Species, which = "both")
@@ -90,6 +90,3 @@ head(compz[,c(1:4, length(compz))])
 genus_comp<-aggregate(compz[,1:length(compz)-1], by=list(compz$genus), FUN=max)
 rownames(genus_comp)<-genus_comp$Group.1
 genus_comp<-as.data.frame(t(genus_comp[-1]))
-
-
-

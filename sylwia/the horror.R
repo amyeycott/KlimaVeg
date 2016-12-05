@@ -1,6 +1,6 @@
 #this checks the data for mistakes and should be run whenever there is a new version of Baza.
 library(readxl)
-bryophytes<-read_excel("Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
+bryophytes<-read_excel("Baza recovery 30_11_16.xlsX", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
 str(bryophytes) # teraz robię badanie konstrukcji całyej zawartości arkusza, który został wczytany
 bryophytes<-as.data.frame(bryophytes)# we do this because otherwise read.excel makes three objects and code won't work.
 bryophytes[is.na(bryophytes)] <-0#replace NAs with zeros. this makes some later code a lot easier but I always put dataset preparation at the top

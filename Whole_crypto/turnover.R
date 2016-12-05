@@ -1,4 +1,4 @@
-source("source data and merging.R")
+source("../Whole_crypto/source data and merging.R")
 #turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen.
 
 ####lichens###
@@ -108,6 +108,7 @@ sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
 
 #is turnover higher in certain communities? Or plots with more communities in?
 Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
+rownames(Summaries)<-Summaries$Row.names
 Summaries$Row.names<-NULL
 
 x11()
@@ -150,9 +151,9 @@ text(-17.5,0.5,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc.emf", type="emf")
 
 #some stuff for messing about or spare code for if we go back to models
-model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
-text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
-text(x=4, y=180, labels=paste("P =", signif(model.x[1,5], 3)),cex=0.8)
+#model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
+#text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
+#text(x=4, y=180, labels=paste("P =", signif(model.x[1,5], 3)),cex=0.8)
 
 
 #check that the models chosen behave themselves. This should be commented out once completed

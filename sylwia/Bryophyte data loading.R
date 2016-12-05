@@ -1,5 +1,5 @@
 library(readxl)
-bryophytes<-read_excel("Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
+bryophytes<-read_excel("../sylwia/Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
 status<-read.table("Ellenberg09022016.txt", sep="\t")#I don't know why read xls wasn't working, but it wasn't.
 str(status)
 str(bryophytes) # teraz robię badanie konstrukcji całyej zawartości arkusza, który został wczytany
