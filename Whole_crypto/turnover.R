@@ -1,18 +1,21 @@
 source("../Whole_crypto/source data and merging.R")
-#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen.
+#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
 
 ####lichens###
-vegdist.lichens<-as.matrix(vegdist(comp))
-summ.lichens<-as.data.frame(0)#you have to set something up for the loop to feed into.
+BCdist.lichens<-as.matrix(vegdist(comp, method="bray"))
+Sodiss.lichens<-as.matrix(vegdist(comp, method="bray", binary="TRUE"))
+summ.lichens<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
   for (i in 1:144)
-  {summ.lichens[i,]<-(vegdist.lichens[i, i+144])}
+  {summ.lichens[i,1]<-(BCdist.lichens[i, i+144])
+    summ.lichens[i,2]<-(Sodiss.lichens[i, i+144])}
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.lichens[1:5, 145:149]
+BCdist.lichens[1:5, 145:149]
 summ.lichens[1:5,]
 head(comp_old[,1:5])#shows that comp/comp new/comp old have the same row order
-colnames(summ.lichens)<-"lich.dist"
-summ.lichens$lich.rich1992<-rowSums(subset(comp_old, select=-Year))
-summ.lichens$lich.rich2015<-rowSums(subset(comp_new, select=-Year))
+colnames(summ.lichens)<-c("lich.BCdiss", "lich.Sodiss")
+summ.lichens$lich.rich1992<-rowSums(subset(comp_old>0, select=-Year))
+summ.lichens$lich.rich2015<-rowSums(subset(comp_new>0, select=-Year))
+summ.lichens$richchange<-summ.lichens$lich.rich2015-summ.lichens$lich.rich1992
 rownames(summ.lichens)<-rownames(comp_old)
 
 library(vegan)
@@ -26,19 +29,21 @@ for (i in 1:144)
 {summ.lichens$lich.colonise[i]<-(colonisations.lichens[i, i+144])}
 
 ###bryos###
-vegdist.bryos<-as.matrix(vegdist(easytabx))
-summ.bryos<-as.data.frame(0)#you have to set something up for the loop to feed into.
+BCdist.bryos<-as.matrix(vegdist(easytabx, method="bray"))
+Sodist.bryos<-as.matrix(vegdist(easytabx, method="bray", binary=TRUE))
+summ.bryos<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
 for (i in (1:144))
-{summ.bryos[i,]<-(vegdist.bryos[i*2-1, i*2])}# Here I want odds combined with their folllowing evens.
+{summ.bryos[i,1]<-(BCdist.bryos[i*2-1, i*2])
+  summ.bryos[i,2]<-(Sodist.bryos[i*2-1, i*2])}# Here I want odds combined with their folllowing evens.
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
+BCdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
 summ.bryos[1:5,]
 head(easytabx[,1:5])#shows that bryo and the resulting objects have the same row order. BUT the are a different row order to lichens and vascular - goes A01, A02, A03 not A01, A10, A11.
 rownames(summ.bryos)<-substr(rownames(easytabx[substr(rownames(easytabx),4,7)=="1992",]),1,3)
-colnames(summ.bryos)<-"bryo.dist"
-summ.bryos$bryo.rich1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])
-summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])
-
+colnames(summ.bryos)<-c("bryo.BCdiss", "bryo.Sodiss")
+summ.bryos$bryo.rich1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",]>0)
+summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",]>0)
+summ.bryos$bryochange<-summ.bryos$bryo.rich2015-summ.bryos$bryo.rich1992
 extinctions.bryos<-as.matrix(designdist(easytabx, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
 summ.bryos$bryo.extinct<-0
 for (i in 1:144)
@@ -49,17 +54,20 @@ for (i in 1:144)
 {summ.bryos$bryo.colonise[i]<-(colonisations.bryos[i*2-1, i*2])}
 
 ##Vascular plants##
-vegdist.vascs<-as.matrix(vegdist(Vascall.df))
-summ.vascs<-as.data.frame(0)#you have to set something up for the loop to feed into.
+BCdist.vascs<-as.matrix(vegdist(Vascall.df, method="bray"))
+Sodiss.vascs<-as.matrix(vegdist(Vascall.df, method="bray", binary=TRUE))
+summ.vascs<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
 for (i in (1:144))
-{summ.vascs[i,]<-(vegdist.vascs[i, i+144])}# Like lichens, it goes 1-144 then 145-250
+{summ.vascs[i,1]<-(BCdist.vascs[i, i+144])
+  summ.vascs[i,2]<-(Sodiss.vascs[i, i+144])}# Like lichens, it goes 1-144 then 145-250
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.vascs[1:5, 145:149]
+BCdist.vascs[1:5, 145:149]
 summ.vascs[1:5,]
 head(Vascall.df[,1:5])#shows that bryo and the resulting objects have the same row order. They go A1, A2, A3 not A1, A10, A11.
-colnames(summ.vascs)<-"vasc.dist"
-summ.vascs$vasc.rich1992<-rowSums(VascOld.fat)
-summ.vascs$vasc.rich2015<-rowSums(VascNew.fat)
+colnames(summ.vascs)<-c("Vasc.BCdiss", "Vasc.Sodiss")
+summ.vascs$vasc.rich1992<-rowSums(VascOld.fat>0)
+summ.vascs$vasc.rich2015<-rowSums(VascNew.fat>0)
+summ.vascs$vascchange<-summ.vascs$vasc.rich2015-summ.vascs$vasc.rich1992
 rownames(summ.vascs)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")
 
 extinctions.vascs<-as.matrix(designdist(Vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
@@ -82,8 +90,8 @@ HDRmerge<- function(x, y){
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}) #Bad magic numbers because of new columns
-text("Vegdist",x=-450, y=175, cex=1.4)
+sapply(Summaries[,c(1,3,4,8,10,11,15,17,18)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}) #Bad magic numbers because of new columns
+text("BCdist",x=-200, y=175, cex=1.4)#needs fixing another day
 text("Richness in 1992",x=-150, y=175, cex=1.4)
 text("Richness in 2015",x=100, y=175, cex=1.4)
 text("Lichens",x=-550, y=150, cex=1.4, srt=90)
@@ -114,32 +122,32 @@ Summaries$Row.names<-NULL
 x11()
 layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
 par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
-sapply(Summaries[,c(2,7,12)], function (x) { 
+sapply(Summaries[,c(3,10,17)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 1992", main=colnames(x))
   model.x<-aov(x~dominant, data=Summaries)
     text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
     text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
    text(x=3, y=-20, labels=colnames(x))
-  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
-sapply(Summaries[,c(3,8,13)], function (x) { 
+  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values. See richard fix
+sapply(Summaries[,c(4,11,18)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 2015")
   model.x<-aov(x~dominant, data=Summaries)
   text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
   text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }) 
-sapply(Summaries[,c(4,9,14)], function (x) { 
+sapply(Summaries[,c(6,13,20)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot extinctions")
   model.x<-aov(x~dominant, data=Summaries)
   text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
   text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }) 
-sapply(Summaries[,c(5,10,15)], function (x) { 
+sapply(Summaries[,c(7,14,21)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot colonisations")
   model.x<-aov(x~dominant, data=Summaries)
   text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
   text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }) 
-sapply(Summaries[,c(1,6,11)], function (x) { 
+sapply(Summaries[,c(1,8,15)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,0.4), ylab="Bray-Curtis distance")
   model.x<-aov(x~dominant, data=Summaries)
   text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
