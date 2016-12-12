@@ -9,10 +9,11 @@ phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falins
 
 ##Sanity checks and tidying in vascular data
 colnames(VascOld.thin)<-gsub(" ", "_",colnames(VascOld.thin))
-VascOld.thin$Plot_number<-paste(VascOld.thin$Plot_number, "1992", sep="_") #spaces need to be replaced in column names otherwise it gets hard to refer to them by name
+VascOld.thin$Plot_number<-paste(substr(VascOld.thin$Plot_number,1,1),substr(VascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992 
 VascOld.thin$Frequency_1<-as.numeric(VascOld.thin$Frequency_1)
 
 colnames(VascNew.thin)<-gsub(" ", "_",colnames(VascNew.thin))
+VascNew.thin$Plot_number_2015<-paste(substr(VascNew.thin$Plot_number,1,1),substr(VascNew.thin$Plot_number,3,4), "2015", sep="")
 VascNew.thin$Frequency_1_2015<-as.numeric(VascNew.thin$Frequency_1_2015)
 
 #check that each species has one, and only one, frequency score
@@ -29,7 +30,7 @@ VascNew.thin$frequency_score <- rowSums(
   mapply("*", VascNew.thin[, c("Frequency_1_2015", "Frequency_2_2015", "Frequency_3_2015")], 1:3),  
   na.rm = TRUE)
 
-##making fat tables for ordinations##
+##making fat tables for distance matrices##
 library(tidyr)
 VascOld.fat<-spread(VascOld.thin[,c(2,3,53)], Species_name,frequency_score, fill=0)
 rownames(VascOld.fat)<-VascOld.fat$Plot_number
@@ -43,6 +44,13 @@ colnames(VascOld.fat)<-gsub(" ", "_",colnames(VascOld.fat))
 ##making a combined file for vegdist
 library(analogue)
 Vascall.df<-join(VascOld.fat, VascNew.fat, na.replace=TRUE, split=FALSE, type="outer")
+
+#fixing comp(lichens) rownames for merging with other datasets
+rownames(comp)<-gsub(".x",1992, rownames(comp))
+rownames(comp)<-gsub(".y",2015, rownames(comp))
+#fixing the seperate-by-year vasc data rownames for merging purposes. This step has to happen *AFTER* vascall
+rownames(VascOld.fat)<-substr(rownames(VascOld.fat),1,3)#broken
+rownames(VascNew.fat)<-substr(rownames(VascNew.fat),1,3)
 
 #phytosociological file from falinski: data tidying and matching plot name format
 colnames(phytosoc)<-gsub(" ", "_",colnames(phytosoc))#takes spaces out of column names

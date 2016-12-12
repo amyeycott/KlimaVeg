@@ -68,7 +68,7 @@ colnames(summ.vascs)<-c("Vasc.BCdiss", "Vasc.Sodiss")
 summ.vascs$vasc.rich1992<-rowSums(VascOld.fat>0)
 summ.vascs$vasc.rich2015<-rowSums(VascNew.fat>0)
 summ.vascs$vascchange<-summ.vascs$vasc.rich2015-summ.vascs$vasc.rich1992
-rownames(summ.vascs)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")
+rownames(summ.vascs)<-rownames(VascOld.fat)
 
 extinctions.vascs<-as.matrix(designdist(Vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
 summ.vascs$vasc.extinct<-0
@@ -165,8 +165,8 @@ savePlot("Turnover and richness by phytosoc.emf", type="emf")
 
 
 #check that the models chosen behave themselves. This should be commented out once completed
-dev.off()#takes out the settings used for the previous figures, but note risks loss of unsaved figures
-sapply(Summaries[,c(2,7,12)], function (x) { 
-    model.x<-aov(x~dominant, data=Summaries)
-    plot(model.x)
-})#they look ok (rich1992) but is it ok to anova count data? It wouldn't be ok to glm it. There is really no risk here of the sd crossing zero.
+#dev.off()#takes out the settings used for the previous figures, but note risks loss of unsaved figures
+#sapply(Summaries[,c(2,7,12)], function (x) { 
+#    model.x<-aov(x~dominant, data=Summaries)
+#    plot(model.x)
+#})#they look ok (rich1992) but is it ok to anova count data? It wouldn't be ok to glm it. There is really no risk here of the sd crossing zero.

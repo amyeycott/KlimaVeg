@@ -1,7 +1,6 @@
 source("../Whole_crypto/turnover.R")
 str(Summaries)
-rownames(VascOld.fat)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")#put this here for now, to make the row names match, but could consider moving it to the data loading file.
-rownames(VascNew.fat)<-paste(substr(rownames(VascNew.fat), 1,1), substr(rownames(VascNew.fat), 3,4), sep="")
+
 #next step is essential for preserving row names
 Picea1992<-subset(VascOld.fat, select="Picea_abies")
 Picea2015<-subset(VascNew.fat, select="Picea_abies")
@@ -20,3 +19,9 @@ SummariesPP$Transition[SummariesPP$Transition=="1 to 1"]<-"Stayed 1"
 x11(12,7); par(mfrow=c(3,7), las=2, mar=c(5,3,3,0.5), mgp=c(2,0.5,0))
 mapply(function(x, main){boxplot(x~Transition, data=SummariesPP, main=main, cex.main=0.8, ylim=ylim)}, x = Summaries[, 1:21], main = c("Lichen BC diss", "Lichen Sörensen diss","Lichen plot richness 1992", "Lichen plot richness 2015","Lichen change in plot richness","Lichen plot extinctions since 1992", "Lichen plot colonisations 2015", "Bryophyte BC diss","Bryophyte Sörensen diss", "Bryophyte plot richness 1992", "Bryophyte plot richness 2015","Bryophyte change in plot richness","Bryophyte plot extinctions since 1992", "Bryophyte plot colonisations 2015", "Vascular BC diss","Vascular Sörensen diss", "Vascular plot richness 1992", "Vascular plot richness 2015","Vascular change in plot richness","Vascular plot extinctions since 1992", "Vascular plot colonisations 2015"), ylim=cbind(as.vector(c(0,0.35)),as.vector(c(0,0.55)),as.vector(c(0,120)),as.vector(c(0,120)),as.vector(c(-10,50)),as.vector(c(0,0.8)),as.vector(c(0,0.8))))#data exploration. ylim argument is failing, have tried list, cbind, rbind..
 savePlot("Fuckyeah.pdf", type="pdf")
+
+#####ORDINATIONS#####
+
+giantdataset<-Reduce(HDRmerge, list(comp, easytabx, Vascall.df))#broken
+giantnmds<-metaMDS(giantdataset)#not converging
+giantdca<-decorana(giantdataset)
