@@ -17,9 +17,6 @@ SummariesPP$Transition[SummariesPP$Transition=="3 to 3"]<-"Stayed 3"
 SummariesPP$Transition[SummariesPP$Transition=="2 to 2"]<-"Stayed 2"
 SummariesPP$Transition[SummariesPP$Transition=="1 to 1"]<-"Stayed 1"
 
-x11(); par(mfrow=c(3,5), las=2, mar=c(5,3,3,0.5), mgp=c(2,0.5,0))
-mapply(function(x, main){boxplot(x~Transition, data=SummariesPP, main=main)}, x = Summaries[, 1:15], main = colnames(Summaries[,1:15]))#data exploration
+x11(12,7); par(mfrow=c(3,7), las=2, mar=c(5,3,3,0.5), mgp=c(2,0.5,0))
+mapply(function(x, main){boxplot(x~Transition, data=SummariesPP, main=main, cex.main=0.8, ylim=ylim)}, x = Summaries[, 1:21], main = c("Lichen BC diss", "Lichen Sörensen diss","Lichen plot richness 1992", "Lichen plot richness 2015","Lichen change in plot richness","Lichen plot extinctions since 1992", "Lichen plot colonisations 2015", "Bryophyte BC diss","Bryophyte Sörensen diss", "Bryophyte plot richness 1992", "Bryophyte plot richness 2015","Bryophyte change in plot richness","Bryophyte plot extinctions since 1992", "Bryophyte plot colonisations 2015", "Vascular BC diss","Vascular Sörensen diss", "Vascular plot richness 1992", "Vascular plot richness 2015","Vascular change in plot richness","Vascular plot extinctions since 1992", "Vascular plot colonisations 2015"), ylim=cbind(as.vector(c(0,0.35)),as.vector(c(0,0.55)),as.vector(c(0,120)),as.vector(c(0,120)),as.vector(c(-10,50)),as.vector(c(0,0.8)),as.vector(c(0,0.8))))#data exploration. ylim argument is failing, have tried list, cbind, rbind..
 savePlot("Fuckyeah.pdf", type="pdf")
-
-
-
