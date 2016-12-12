@@ -23,5 +23,14 @@ savePlot("Fuckyeah.pdf", type="pdf")
 #####ORDINATIONS#####
 
 giantdataset<-Reduce(HDRmerge, list(comp, easytabx, Vascall.df))#broken
-giantnmds<-metaMDS(giantdataset)#not converging
+giantnmds<-metaMDS(giantdataset)#converges! Will e interesting to see whether convergence is stable...
+giantnmds.sites<-as.data.frame(scores(giantnmds, display="sites"))
+merge(giantnmds.sites, SummariesPP[,c(31,32)], by.x=substr(row.names(giantnmds.sites),1,3), by.y=0)#Error in fix.by(by.x, x) : 'by' must specify uniquely valid columns
 giantdca<-decorana(giantdataset)
+
+x11();
+library(ggplot2)
+ggplot(giantnmds.sites, aes(NMDS1, NMDS2))+
+  geom_point()
++facet_grid()
+
