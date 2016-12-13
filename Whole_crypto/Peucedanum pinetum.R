@@ -17,21 +17,23 @@ SummariesPP$Transition[SummariesPP$Transition=="2 to 2"]<-"Stayed 2"
 SummariesPP$Transition[SummariesPP$Transition=="1 to 1"]<-"Stayed 1"
 
 x11(12,7); par(mfrow=c(3,7), las=2, mar=c(5,3,3,0.5), mgp=c(2,0.5,0))
-mapply(function(x, main){boxplot(x~Transition, data=SummariesPP, main=main, cex.main=0.8, ylim=ylim)}, x = Summaries[, 1:21], main = c("Lichen BC diss", "Lichen Sörensen diss","Lichen plot richness 1992", "Lichen plot richness 2015","Lichen change in plot richness","Lichen plot extinctions since 1992", "Lichen plot colonisations 2015", "Bryophyte BC diss","Bryophyte Sörensen diss", "Bryophyte plot richness 1992", "Bryophyte plot richness 2015","Bryophyte change in plot richness","Bryophyte plot extinctions since 1992", "Bryophyte plot colonisations 2015", "Vascular BC diss","Vascular Sörensen diss", "Vascular plot richness 1992", "Vascular plot richness 2015","Vascular change in plot richness","Vascular plot extinctions since 1992", "Vascular plot colonisations 2015"), ylim=cbind(as.vector(c(0,0.35)),as.vector(c(0,0.55)),as.vector(c(0,120)),as.vector(c(0,120)),as.vector(c(-10,50)),as.vector(c(0,0.8)),as.vector(c(0,0.8))))#data exploration. ylim argument is failing, have tried list, cbind, rbind..
+mapply(function(x, main, ylim){boxplot(x~Transition, data=SummariesPP, main=main, cex.main=0.8, ylim=ylim)}, x = Summaries[, 1:21], main = c("Lichen BC diss", "Lichen Sörensen diss","Lichen plot richness 1992", "Lichen plot richness 2015","Lichen change in plot richness","Lichen plot extinctions since 1992", "Lichen plot colonisations 2015", "Bryophyte BC diss","Bryophyte Sörensen diss", "Bryophyte plot richness 1992", "Bryophyte plot richness 2015","Bryophyte change in plot richness","Bryophyte plot extinctions since 1992", "Bryophyte plot colonisations 2015", "Vascular BC diss","Vascular Sörensen diss", "Vascular plot richness 1992", "Vascular plot richness 2015","Vascular change in plot richness","Vascular plot extinctions since 1992", "Vascular plot colonisations 2015"), ylim=list(c(0,0.35),c(0,0.55),c(0,120),c(0,120),c(-10,50),c(0,0.8),c(0,0.8)))#data exploration. ylim argument is failing, have tried list, cbind, rbind..
 savePlot("Fuckyeah.pdf", type="pdf")
 
 #####ORDINATIONS#####
 
 giantdataset<-Reduce(HDRmerge, list(comp, easytabx, Vascall.df))#broken
-giantnmds<-metaMDS(giantdataset)#converges! Will e interesting to see whether convergence is stable...
+giantnmds<-metaMDS(giantdataset)#converges some days and not others!
 giantnmds.sites<-as.data.frame(scores(giantnmds, display="sites"))
-merge(giantnmds.sites, SummariesPP[,c(31,32)], by.x=substr(row.names(giantnmds.sites),1,3), by.y=0)#Error in fix.by(by.x, x) : 'by' must specify uniquely valid columns
+giantnmds.sites$plot<-substr(row.names(giantnmds.sites),1,3)
+giantnmds.sites$year<-substr(row.names(giantnmds.sites),4,7)
+
+giantnmds.sites<-merge(giantnmds.sites, SummariesPP[,c(31,32)], by.x=3, by.y=0)#
 giantdca<-decorana(giantdataset)
 
-x11();
-library(ggplot2)
-ggplot(giantnmds.sites, aes(NMDS1, NMDS2))+
-  geom_point()
-+facet_grid()
 
-#demo change
+library(ggplot2)
+x11()
+plotty<-ggplot(giantnmds.sites, aes(NMDS1, NMDS2, colour=year))+  geom_point()
+plotty+facet_grid(Picea1992~Picea2015)
+savePlot("Fancy-ass figure_not quite there yet.pdf", type="pdf")#still needs to be done: mess with the aesthetics to get crosshairs, get the faceting variable on each side not just the values of the faceting variable, can it make blank space for facets containing no data?
