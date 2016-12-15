@@ -158,6 +158,19 @@ text(-17.5,1.15,"Bryophytes", cex=1.2)
 text(-17.5,0.5,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc.emf", type="emf")
 
+#for cambs presentation
+library(tidyr)
+test<-gather(Summaries[,c(3,4,10,11,17,18,30)], key=facet, value=species_richness, -dominant)
+test$Year<-substr(test$facet,10,13)
+test$Plants<-substr(test$facet,1,4)
+
+library(ggplot2)
+library(ggthemes)
+x11(5,4);
+plotty<-ggplot(test, aes(dominant, species_richness))+geom_boxplot()
+plotty+facet_grid(Plants~Year)+theme_igray()
+savePlot("Facets for Phytosoc.emf", type="emf")
+
 #some stuff for messing about or spare code for if we go back to models
 #model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
 #text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
