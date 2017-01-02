@@ -58,3 +58,15 @@ phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2]<-paste0(substr(phytosoc$Plot_No.[
 phytosoc[is.na(phytosoc)]<-0
 phytosoc$ncomms<-rowSums(phytosoc[,2:7]>0)#magic numbers are very bad, but subset wasn't working
 phytosoc$dominant<-colnames(phytosoc[,2:7])[max.col(phytosoc[,2:7], ties.method = 'first')]  #return the column name of the column with the highest value. Should probably check how many ties there are though.
+
+####Species characteristics - Indicator values and conservation status####
+#for bryophytes and lichens, the code is in their respective projects
+vasc.ellen<-read_excel("Sierhanowo_species_indicator_values.xlsx", skip=1)
+#sapply(vasc.ellen, FUN=unique)checks for sensible values
+vasc.ellen<-vasc.ellen[,1:8]#needs magic numbers because some of the columns are not named
+
+vasc.protected<-read_excel("Sierhanowo_protected_red_listed_vascular.xlsx", skip=1)[,1:3]#skip=1 because the column headings are on line 2, line 1 describes the contents of the worksheet. [1:3] because due to the title line, several blank column are registering.
+vasc.protected$Red_coded<-as.factor(vasc.protected$`Red coded`)
+vasc.protected<-vasc.protected[,-3]
+vasc.protected$Protected<-as.factor(vasc.protected$Protected)
+#
