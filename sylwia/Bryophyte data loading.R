@@ -1,7 +1,15 @@
 library(readxl)
 bryophytes<-read_excel("../sylwia/Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
-status<-read.table("Ellenberg09022016.txt", sep="\t")#I don't know why read xls wasn't working, but it wasn't.
-str(status)
+bryo.status<-read_excel("../sylwia/Baza Styczen 2016.xls", sheet="Ellenberg.protected")#works only if you index the sheet number by name, not by position.
+str(bryo.status)
+bryo.status$Red.coded[bryo.status$Red.coded==""]<-NA
+bryo.status$Any.status<-bryo.status$Red.coded
+bryo.status$Any.status[!is.na(bryo.status$Red.coded)]<-1
+bryo.status$Any.status[!is.na(bryo.status$Protected.species)]<-1
+bryo.status$Any.status[is.na(bryo.status$Any.status)]<-0
+
+
+
 str(bryophytes) # teraz robię badanie konstrukcji całyej zawartości arkusza, który został wczytany
 bryophytes<-as.data.frame(bryophytes)# we do this because otherwise read.excel makes three objects and code won't work.
 bryophytes[is.na(bryophytes)] <-0#replace NAs with zeros. this makes some later code a lot easier but I always put dataset preparation at the top
