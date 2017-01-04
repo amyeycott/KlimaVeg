@@ -1,7 +1,8 @@
 source("../Whole_crypto/source data and merging.R")
-#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
+#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1992, and does a few plots.
 
 ####lichens###
+#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
 BCdist.lichens<-as.matrix(vegdist(comp, method="bray"))
 Sodiss.lichens<-as.matrix(vegdist(comp, method="bray", binary="TRUE"))
 summ.lichens<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
@@ -27,6 +28,8 @@ colonisations.lichens<-as.matrix(designdist(comp, method = "(B-J)/B", terms = "b
 summ.lichens$lich.colonise<-0
 for (i in 1:144)
 {summ.lichens$lich.colonise[i]<-(colonisations.lichens[i, i+144])}
+summ.lichens$lich_threatened_1992<-rowSums(comp_old[,names(comp_old)%in%lich.protect$Species_name[lich.protect$Is_Redlisted==1]]>0)
+summ.lichens$lich_threatened_2015<-rowSums(comp_new[,names(comp_new)%in%lich.protect$Species_name[lich.protect$Is_Redlisted==1]]>0)
 
 ###bryos###
 BCdist.bryos<-as.matrix(vegdist(easytabx, method="bray"))
@@ -53,6 +56,9 @@ summ.bryos$bryo.colonise<-0
 for (i in 1:144)
 {summ.bryos$bryo.colonise[i]<-(colonisations.bryos[i*2-1, i*2])}
 
+summ.bryos$bryo_threatened_1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",names(easytabx[substr(rownames(easytabx),4,7)=="1992",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
+summ.bryos$bryo_threatened_2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",names(easytabx[substr(rownames(easytabx),4,7)=="2015",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
+
 ##Vascular plants##
 BCdist.vascs<-as.matrix(vegdist(Vascall.df, method="bray"))
 Sodiss.vascs<-as.matrix(vegdist(Vascall.df, method="bray", binary=TRUE))
@@ -78,7 +84,8 @@ colonisations.vascs<-as.matrix(designdist(Vascall.df, method = "(B-J)/B", terms 
 summ.vascs$vasc.colonise<-0
 for (i in 1:144)
 {summ.vascs$vasc.colonise[i]<-(colonisations.vascs[i, i+144])}
-
+summ.vascs$vasc_threatened_1992<-rowSums(VascOld.fat[,names(VascOld.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
+summ.vascs$vasc_threatened_2015<-rowSums(VascNew.fat[,names(VascNew.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
 
 ##Final step is to merge them all. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames) that does all three objects at once and gets rid of the superfluous row names-columns
 HDRmerge<- function(x, y){
@@ -90,19 +97,16 @@ HDRmerge<- function(x, y){
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries[,c(1,3,4,8,10,11,15,17,18)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}) #Bad magic numbers because of new columns
-text("BCdist",x=-200, y=175, cex=1.4)#needs fixing another day
-text("Richness in 1992",x=-150, y=175, cex=1.4)
-text("Richness in 2015",x=100, y=175, cex=1.4)
-text("Lichens",x=-550, y=150, cex=1.4, srt=90)
-text("Bryophytes",x=-550, y=85, cex=1.4, srt=90)
-text("Vascular plants",x=-550, y=15, cex=1.4, srt=90)
+mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","Vasc.BCdiss", "vasc.rich1992","vasc.rich2015")], ylab= c("BCdist","Richness in 1992","Richness in 2015")) # OBS! column subsetting needs mapply.
+text("Lichens",x=-150, y=180, cex=1.4)
+text("Bryophytes",x=-150, y=110, cex=1.4)
+text("Vascular plants",x=-150, y=35, cex=1.4)
 savePlot("Distributions of values.emf", type="emf")
 t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
 t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
 t.test(Summaries$vasc.rich1992, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
 
-x11(); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0))
+x11(); par(mfrow=c(1,3), pin=c(1.4,1.4), mgp=c(1.8,0.5,0))
 plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
 plot(Summaries$bryo.extinct, Summaries$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
 plot(Summaries$vasc.extinct, Summaries$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
@@ -128,7 +132,7 @@ sapply(Summaries[,c(3,10,17)], function (x) {
     text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
     text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
    text(x=3, y=-20, labels=colnames(x))
-  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values. See richard fix
+  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values. See richard fix implemented in subsets script
 sapply(Summaries[,c(4,11,18)], function (x) { 
   boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 2015")
   model.x<-aov(x~dominant, data=Summaries)
@@ -160,7 +164,7 @@ savePlot("Turnover and richness by phytosoc.emf", type="emf")
 
 #for cambs presentation
 library(tidyr)
-test<-gather(Summaries[,c(3,4,10,11,17,18,30)], key=facet, value=species_richness, -dominant)
+test<-gather(Summaries[,c(3,4,12,13,21,22,36)], key=facet, value=species_richness, -dominant)
 test$Year<-substr(test$facet,10,13)
 test$Plants<-substr(test$facet,1,4)
 
