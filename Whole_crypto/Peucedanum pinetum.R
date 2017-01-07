@@ -24,10 +24,35 @@ savePlot("Fuckyeah.pdf", type="pdf")
 savePlot("Fuckyeah.emf", type="emf")
 
 ##protected##
-x11(); par(mfrow=c(3,2))
-mapply(function(x, main, ylim){boxplot(x~Transition, data=Summaries.ss.PP, main=main, cex.main=0.8, ylim=ylim, las=2)}, x = Summaries.ss.PP[,c("lich_threatened_1992","lich_threatened_2015","bryo_threatened_1992","bryo_threatened_2015","vasc_threatened_1992","vasc_threatened_2015")], main=c("Threatened lichens 1992","Threatened lichens 2015","Threatened bryophytes 1992","Threatened bryophytes 2015","Threatened vascular 1992","Threatened vascular 2015"), ylim=list(c(0,50),c(0,50),c(0,10),c(0,10),c(0,2),c(0,2)))
+x11(); par(mfrow=c(3,1))
+mapply(function(x, z, main, ylim){
+  boxplot(x~Transition, data=Summaries.ss.PP, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue")
+  boxplot(z~Transition, data=Summaries.ss.PP, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+  x = Summaries.ss.PP[,c("lich_threatened_1992","bryo_threatened_1992","vasc_threatened_1992")], z=Summaries.ss.PP[,c("lich_threatened_2015","bryo_threatened_2015","vasc_threatened_2015")] , main=c("Threatened lichens","Threatened bryophytes","Threatened vascular"), ylim=list(c(0,50),c(0,10),c(0,2)))#note, ylim can't be moved back
 savePlot("redlist_tentative_subsetted.pdf", type="pdf")
 savePlot("redlist_tentative_subsetted.emf", type="emf")
+
+#test new verison of figure with 3x3 and side-by-sides
+x11(7,7)
+layout(matrix(c(1,2,3,4,5,6,7,8,9), 3, 3, byrow = FALSE))
+par(las=2, mar=c(4,3,3,0.1), tcl=-0.2, mgp=c(1,0.3,0))
+mapply(function(x, z, main, ylim){
+  boxplot(x~Transition, data=Summaries.ss.PP, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", cex.main=1)
+    boxplot(z~Transition, data=Summaries.ss.PP, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+    x = Summaries.ss.PP[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")], z=Summaries.ss.PP[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")] , main=c("Lichen richness","Bryophyte richness","Vascular plant richness"), list(c(0,100),c(0,100),c(0,100)))
+
+mapply(function(x, z, main, ylim){  
+  boxplot(x~Transition, data=Summaries.ss.PP, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", cex.main=1)
+  boxplot(z~Transition, data=Summaries.ss.PP, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+  x = Summaries.ss.PP[,c("lich_threatened_1992","bryo_threatened_1992","vasc_threatened_1992")], z=Summaries.ss.PP[,c("lich_threatened_2015","bryo_threatened_2015","vasc_threatened_2015")] , main=c("Threatened lichens","Threatened bryophytes","Threatened vascular"), ylim=list(c(0,50),c(0,10),c(0,2)))
+
+mapply(function(x, z, main, ylim){  
+  boxplot(x~Transition, data=Summaries.ss.PP, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", cex.main=1)
+  boxplot(z~Transition, data=Summaries.ss.PP, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+  x = Summaries.ss.PP[,c("lich.extinct","bryo.extinct","vasc.extinct")], z=Summaries.ss.PP[,c("lich.colonise","bryo.colonise","vasc.colonise")] , main=c("Lichens ext. vs. col.","Bryophytes ext. vs. col","Vascular ext. vs. col"), ylim=list(c(0,1),c(0,1),c(0,1)))
+legend("topright", fill=c("blue","yellow"), legend=c("1992","2015"), y.intersp=0.8)
+savePlot("Compound Figure comparing years better.pdf", type="pdf")
+
 
 #####ORDINATIONS#####
 
