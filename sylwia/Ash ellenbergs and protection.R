@@ -1,12 +1,5 @@
 library(readxl)
 source("Ash script recovery.R")#this runs the same code as in that file
-
-bryo.status$Red.coded[bryo.status$Red.coded==""]<-NA
-bryo.status$Any.status<-bryo.status$Red.coded
-bryo.status$Any.status[!is.na(bryo.status$Red.coded)]<-1
-bryo.status$Any.status[!is.na(bryo.status$Protected.species)]<-1
-bryo.status$Any.status[is.na(bryo.status$Any.status)]<-0
-
 #what I need is a total number of ocurrences of all the species in the on.ls.ash list.
 bryo.status$LS.Fe.2015<-0
 bryo.status$LS.Fe.2015[bryo.status$Species.name%in%hosts.LS2015$Species_name]<-1
