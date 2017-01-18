@@ -11,10 +11,12 @@ phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falins
 colnames(VascOld.thin)<-gsub(" ", "_",colnames(VascOld.thin))
 VascOld.thin$Plot_number<-paste(substr(VascOld.thin$Plot_number,1,1),substr(VascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992 
 VascOld.thin$Frequency_1<-as.numeric(VascOld.thin$Frequency_1)
+VascOld.thin$Species_name<-gsub(" ", "_",VascOld.thin$Species_name)
 
 colnames(VascNew.thin)<-gsub(" ", "_",colnames(VascNew.thin))
 VascNew.thin$Plot_number_2015<-paste(substr(VascNew.thin$Plot_number,1,1),substr(VascNew.thin$Plot_number,3,4), "2015", sep="")
 VascNew.thin$Frequency_1_2015<-as.numeric(VascNew.thin$Frequency_1_2015)
+VascNew.thin$Species_name_2015<-gsub(" ", "_",VascNew.thin$Species_name_2015)
 
 #check that each species has one, and only one, frequency score
 unique(VascOld.thin[,4:6]) #checks that there are no values that are not 1, and no record with a 1 in more than one frequency column. Right now 10552 has no frequency score. Actually 10551 should be the last line and there are 11883
