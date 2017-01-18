@@ -10,6 +10,7 @@ bryo.status$Any.status[!is.na(bryo.status$Protected_species)]<-1
 bryo.status$Any.status[is.na(bryo.status$Any.status)]<-0
 bryo.status$Protected_species<-as.factor(bryo.status$Protected_species)
 bryo.status$Red_coded<-as.factor(bryo.status$Red_coded)
+bryo.status[,c("L","T","K","F","R","Any.status")]<-apply(bryo.status[,c("L","T","K","F","R","Any.status")], 2, as.numeric)
 
 
 #str(bryophytes) # teraz robię badanie konstrukcji całyej zawartości arkusza, który został wczytany #commented out so that it's tidier when using this as source code
