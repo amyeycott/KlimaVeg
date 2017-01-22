@@ -58,10 +58,6 @@ old.harm.db$Species<-trimws(old.harm.db$Species, which = "both")
 newdb$Species<-trimws(newdb$Species, which = "both")
 new.harm.db$Species<-trimws(new.harm.db$Species, which = "both")
 
-#Wirth's values (like Ellenberg) for each year's ocurrences
-old.wirths<-merge(old.harm.db[1:2], envir, by="Species", all=TRUE)
-new.wirths<-merge(new.harm.db[1:2], envir, by="Species", all=TRUE)
-
 #all the frequencies in one column
 olddb$Frequency<-olddb$`1_rare` +  olddb$`2_frequent` * 2 + olddb$`3_common` *3
 old.harm.db$Frequency<-old.harm.db$`1_rare` +  old.harm.db$`2_frequent` * 2 + old.harm.db$`3_common` *3
@@ -97,3 +93,7 @@ names(lich.protect)<-c("Species_name","Is_protected","Protected_status","Is_Redl
 lich.protect<-lich.protect[!is.na(lich.protect$Species_name),]#list is 100 species long, contains only species which are NT-upwards on the redlist.
 lich.protect$Is_Redlisted[is.na(lich.protect$Is_Redlisted)]<-0
 lich.protect$Is_protected[is.na(lich.protect$Is_protected)]<-0#these are needed because the NAs crash a later step
+
+#Wirth's values (like Ellenberg) for each year's ocurrences. There are some species in there not in the main dataset for some reason.
+old.wirths<-merge(old.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
+new.wirths<-merge(new.harm.db[c("Species","Site","Frequency")], envir, by="Species",, all.x=TRUE, all.y=FALSE)
