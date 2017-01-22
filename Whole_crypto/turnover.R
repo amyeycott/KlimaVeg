@@ -1,5 +1,5 @@
 source("../Whole_crypto/source data and merging.R")
-#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1992, and does a few plots.
+#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1992 and weighted mean ellenberg values, and does a few plots on turnover.
 
 ####lichens###
 #turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
@@ -96,6 +96,62 @@ HDRmerge<- function(x, y){
 }
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
+####Add in Ellenbergs####
+####weighted mean ellenbergs for different species groups in the plots####
+
+#this could be done with a loop and weighted.mean but never mind.
+#merge thin tables with ellenberg values (already done for lichens)
+vascoldthin.withellens<-merge(VascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
+vascnewthin.withellens<-merge(VascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")
+bryothin.withellens<-merge(easytab, bryo.status, by.x="Species_name", by.y="Species_name")
+
+#weighted averages by plot
+library(dplyr)
+lich.weightmeanold<-old.wirths %>% 
+  group_by(Site) %>%
+  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)#the dot is because it means "use the object named in the previos line" in hadlyspeak. Think of pipe as "feed into"
+lich.weightmeannew<-new.wirths %>% 
+  group_by(Site) %>%
+  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)
+bryo.weightmean<-bryothin.withellens %>% 
+  group_by(Plot, Year) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$Frequency, na.rm=TRUE)
+vasc.weightmeanold<-vascoldthin.withellens %>% 
+  group_by(Plot_number) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
+vasc.weightmeannew<-vascnewthin.withellens %>% 
+  group_by(Plot_number_2015) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
+
+#make the plot names the row names in A01, A02 format. You can't manipulate rownames in vascoldell, and I want to leave it as rownames to be able to use the HDRmerge.
+lich.weightmeanold<-as.data.frame(lich.weightmeanold)
+rownames(lich.weightmeanold)<-lich.weightmeanold$Site
+names(lich.weightmeanold)<-paste("lich.old.",names(lich.weightmeanold), sep="")
+lich.weightmeannew<-as.data.frame(lich.weightmeannew)
+rownames(lich.weightmeannew)<-lich.weightmeannew$Site
+names(lich.weightmeannew)<-paste("lich.new.",names(lich.weightmeannew), sep="")
+bryo.weightmeanold<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="1992",])
+rownames(bryo.weightmeanold)<-bryo.weightmeanold$Plot
+names(bryo.weightmeanold)<-paste("bryo.old.",names(bryo.weightmeanold), sep="")
+bryo.weightmeannew<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="2015",])
+rownames(bryo.weightmeannew)<-bryo.weightmeannew$Plot
+names(bryo.weightmeannew)<-paste("bryo.new.",names(bryo.weightmeannew), sep="")
+
+vasc.weightmeanold<-as.data.frame(vasc.weightmeanold)
+rownames(vasc.weightmeanold)<-substr(vasc.weightmeanold$Plot_number,1,3)
+names(vasc.weightmeanold)<-paste("vasc.old.",names(vasc.weightmeanold), sep="")
+vasc.weightmeannew<-as.data.frame(vasc.weightmeannew)
+rownames(vasc.weightmeannew)<-substr(vasc.weightmeannew$Plot_number_2015,1,3)
+names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
+
+
+#A magic number for removing unecessary columns but [,-"Site"] wasn't working "invalid argument to unary operator"
+Summaries<- Reduce(HDRmerge, list(Summaries, lich.weightmeanold[-1], lich.weightmeannew[-1], bryo.weightmeanold[-c(1,2)], bryo.weightmeannew[-c(1,2)], vasc.weightmeanold[-1], vasc.weightmeannew[-1]))
+
+
+#####Some plots####
+
+
 x11();par(mfrow=c(3,3), xpd=NA)
 mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","Vasc.BCdiss", "vasc.rich1992","vasc.rich2015")], ylab= c("BCdist","Richness in 1992","Richness in 2015")) # OBS! column subsetting needs mapply.
 text("Lichens",x=-150, y=180, cex=1.4)
@@ -123,67 +179,3 @@ Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
 rownames(Summaries)<-Summaries$Row.names
 Summaries$Row.names<-NULL
 
-x11()
-layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
-par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
-sapply(Summaries[,c(3,10,17)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 1992", main=colnames(x))
-  model.x<-aov(x~dominant, data=Summaries)
-    text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-    text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-   text(x=3, y=-20, labels=colnames(x))
-  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values. See richard fix implemented in subsets script
-sapply(Summaries[,c(4,11,18)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 2015")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(6,13,20)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot extinctions")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(7,14,21)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot colonisations")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(1,8,15)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,0.4), ylab="Bray-Curtis distance")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.36, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-})
-text(-17.5,1.8,"Lichens", cex=1.2)
-text(-17.5,1.15,"Bryophytes", cex=1.2)
-text(-17.5,0.5,"Vascular plants", cex=1.2)
-savePlot("Turnover and richness by phytosoc.emf", type="emf")
-
-#for cambs presentation
-library(tidyr)
-test<-gather(Summaries[,c(3,4,12,13,21,22,36)], key=facet, value=species_richness, -dominant)
-test$Year<-substr(test$facet,10,13)
-test$Plants<-substr(test$facet,1,4)
-
-library(ggplot2)
-library(ggthemes)
-x11(5,4);
-plotty<-ggplot(test, aes(dominant, species_richness))+geom_boxplot()
-plotty+facet_grid(Plants~Year)+theme_igray()
-savePlot("Facets for Phytosoc.emf", type="emf")
-
-#some stuff for messing about or spare code for if we go back to models
-#model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
-#text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
-#text(x=4, y=180, labels=paste("P =", signif(model.x[1,5], 3)),cex=0.8)
-
-
-#check that the models chosen behave themselves. This should be commented out once completed
-#dev.off()#takes out the settings used for the previous figures, but note risks loss of unsaved figures
-#sapply(Summaries[,c(2,7,12)], function (x) { 
-#    model.x<-aov(x~dominant, data=Summaries)
-#    plot(model.x)
-#})#they look ok (rich1992) but is it ok to anova count data? It wouldn't be ok to glm it. There is really no risk here of the sd crossing zero.
