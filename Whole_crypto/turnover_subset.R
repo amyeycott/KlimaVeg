@@ -70,6 +70,21 @@ text(-22.5,1.3,"Bryophytes", cex=1.2)
 text(-22.5,0.5,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc_subset.emf", type="emf")
 
+###for powerpoint###
+x11(6,3);par(mfrow=c(1,3))
+mapply(function(x, z, main, ylim){
+  boxplot(x~dominant, data=summaries.ss, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", las=2)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+  x = summaries.ss[,c("lich_threatened_1992","bryo_threatened_1992","vasc_threatened_1992")], z=summaries.ss[,c("lich_threatened_2015","bryo_threatened_2015","vasc_threatened_2015")] , main=c("Threatened lichens","Threatened bryophytes","Threatened vascular"), ylim=list(c(0,50),c(0,10),c(0,2)))#note, ylim can't be moved back
+mapply(function(x, z, main, ylim){
+  boxplot(x~dominant, data=summaries.ss, main=main, ylim=ylim, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", las=2)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")}, 
+  x = summaries.ss[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")], z=summaries.ss[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")] , main=c("Lichen richness","Bryophyte richness","Vascular plant richness"), ylim=list(c(0,150),c(0,150),c(0,150)))
+legend("topright", fill=c("blue","yellow"), legend=c("1992","2015"), y.intersp=0.8)
+savePlot("Richness by phytosoc for powerpoint.png", type="png")
+
+
+
 ####ANALYSES and SUMMARIES####
 t.test(summaries.ss$lich.rich1992, summaries.ss$lich.rich2015, paired=TRUE)
 t.test(summaries.ss$bryo.rich1992, summaries.ss$bryo.rich2015, paired=TRUE)
