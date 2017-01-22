@@ -32,16 +32,16 @@ par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
 mapply(function (x) { 
   boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 1992", main=NA)
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=140, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=120, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
   text(x=3, y=-20, labels=colnames(x))
 }, x=summaries.ss[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")] ) #It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
 
 mapply(function (x) { 
   boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 2015")
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=140, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=120, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }, x=summaries.ss[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")]) 
 
 mapply(function (x) { 
