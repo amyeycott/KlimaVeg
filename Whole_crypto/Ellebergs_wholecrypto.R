@@ -1,33 +1,37 @@
-#this code tests whether the changes in ellenberg values are the same for different plant groups.
-source("../Whole_crypto/source data and merging.R")
-
-#what is loaded and useful? vasc.ellen is a thin table by species. vasc composition is in five different objects: vascall.df (sites are rows, species are columns), vascnew.fat, vascnew.thin, vascold.fat and vascold.thin. Lichens Wirth values are in old.wirths and new.wirths, which are thin tables of species and plot and wirth value. They are also in envir which is a table of species as rows. Lichen composition files are olddb and old.harm.db, newdb and new.harm.db - use the harmonised ones - for thin files, and comp, comp_new and comp_old for fat type. Bryophyte ellenbergs are in bryo.status. Bryophyte composition is in bryophytes for full thin data, easytab for trimmed thin data, easytabx for fat data.
-#Less useful are compz, vasc.protected and lich.protect. 
-
-#first make the subset of squares that are rectangles or are rivers.
+source("turnover.R")
+#the datasets are prepared in turnover.r. Here we use a subset excluding rectangles and rivers. The first two lines are exactly the same as in turnover_subset.r
 dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11")
+summaries.ss<-Summaries[!rownames(Summaries)%in%dodgysquares,]
 
-####weighted mean ellenbergs for different species groups in the plots####
+mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], y=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture" ,"lich.new.R_reaction","lich.new.N_nitrogen")])# Negative difference means value went UP. Light goes up significantly but only very slightly, temperature is ns (just - goes up by almost two points), continentality is ns, moisture goes up but only slightly, reaction goes up slightly but significantly, and nitrogen goes up significantly but still less than half a point.
+x11(12,7);par(mfrow=c(3,6))
+mapply(function(x,y, main){
+  hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
+  abline(v=0, col="red")
+  }, 
+  y= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], x=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture", "lich.new.R_reaction", "lich.new.N_nitrogen")] , main=c("Light (up**)","Temperature (ns)", "Continentality(ns)","Moisture (up***)","Reaction (up***)","Nitrogen (up***)"))  
 
-#this could be done with a loop and weighted.mean but never mind.
-#merge thin tables with ellenberg values (already done for lichens)
-vascoldthin.withellens<-merge(VascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
-vascnewthin.withellens<-merge(VascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")
-bryothin.withellens<-merge(easytab, bryo.status, by.x="Species_name", by.y="Species_name")
+mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], y=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")])# Light goes up significantly but only very slightly, temperature up significantly but only very slightly, continentality goes up slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly.
 
-#make several new columns at once
-vascoldthin.withellens[c("L.x.freq","T.x.freq","W.x.freq","Tr.x.freq","R.x.freq")] <- NA
+mapply(function(x,y, main){
+  hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
+  abline(v=0, col="red")
+  }, 
+  y= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], x=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")], main=c("Light (up***)","Temperature (up***)","Continentality (up**)","Moisture (ns)","Reaction (up***)"))#  
+plot(0,type='n',axes=FALSE,ann=FALSE)
 
-#multiply frequency by ellenberg to get a 'contribution' for that species in that plot. 
-vascoldthin.withellens[c("L.x.freq","T.x.freq","W.x.freq","Tr.x.freq","R.x.freq")]<-
-mapply(function(x)x*vascoldthin.withellens$frequency_score, vascoldthin.withellens[c("L","T","W","Tr","R")])
+mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T","vasc.new.W", "vasc.new.R","vasc.new.Tr")])# Light ns, temperature up just significantly* but only very slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly, trophism goes up slightly but significantly.
 
-#aggregate or ddply to make the plot weighted sum then divide the sum by the plot sum of frequencies to get a weighted average
-plotsums.vascoldell<-ddply(vascoldthin.withellens[,c("Plot_number","L.x.freq","T.x.freq","W.x.freq","Tr.x.freq","R.x.freq")], "Plot_number", function(x) colMeans(x, na.rm=TRUE) )# Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric 
-
-test<-0
-test$L<-ddply(vascoldthin.withellens[,c("Plot_number","L.x.freq")], "Plot_number", FUN=colMeans)#that's not right either, it just returns the input. 
-
-
-#pull out the unused plots(doing this last in case we want them back)
-
+mapply(function(x,y, main){
+  hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
+  abline(v=0, col="red") 
+  }, 
+  y= summaries.ss[,c("vasc.old.L" ,"vasc.old.T")], x=summaries.ss[,c("vasc.new.L" ,"vasc.new.T")], main=c("Light (na)","Temperature (up*)"))# 
+plot(0,type='n',axes=FALSE,ann=FALSE)
+mapply(function(x,y, main){
+  hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
+  abline(v=0, col="red")
+  }, y= summaries.ss[,c("vasc.old.W", "vasc.old.R","vasc.old.Tr")], x=summaries.ss[,c("vasc.new.W", "vasc.new.R","vasc.new.Tr")], main=c("Moisture (ns)","Reaction (up***)", "Nutrients (up***)"))# 
+savePlot("Ellenbergs all groups.emf", type="emf")
+savePlot("Ellenbergs all groups.pdf", type="pdf")
+savePlot("Ellenbergs all groups.png", type="png")
