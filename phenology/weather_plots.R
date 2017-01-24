@@ -33,8 +33,9 @@ ggplot(weather, aes(x = yday(date), y = TMean, colour = year(date), group = year
 range(meanDay$meanDay)
 
 #snow cover plot
-ggplot(weather, aes(x = yday(date), y = snowCover, colour = year(date), group = year(date))) + 
-  geom_line()
+ggplot(mutate(weather, year = year(date)), aes(x = yday(date), y = snowCover, colour = year, group = year)) + 
+  geom_line()+ 
+  facet_wrap(~year)
 
 weather %>% 
   filter(month(date) < 7) %>% #spring snow
@@ -98,4 +99,24 @@ tempEffectSize <- monthly %>%
 print(tempEffectSize)
 
 
+## ---- seasonalVelocity
+#mean climate by day
+library(zoo)
+seasonalwarming <- weather %>% 
+  mutate(doy = yday(date)) %>% 
+  group_by(doy) %>%
+  summarise(Tmean = mean(TMean, na.rm = TRUE)) %>%
+  do(cbind(., 
+           rollapply(data = ., width = 30, FUN = function(x){
+    coef(summary(lm(Tmean ~ doy, data = as.data.frame(x))))["doy", 1:2] 
+  },
+  by.column = FALSE, fill = NA)
+  )) %>% 
+  mutate(doy2 = as.Date(doy, origin = ymd("2017-01-01")))
+
+ggplot(seasonalwarming, aes(x = doy2, y = Estimate, ymax = Estimate + 1.96 * `Std. Error`, ymin = Estimate - 1.96 * `Std. Error`)) + 
+  geom_ribbon(alpha = .4)+
+  geom_line() +
+  scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
+  ylab("Rate of temperature change °C/day")
 
