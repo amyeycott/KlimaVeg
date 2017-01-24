@@ -1,18 +1,22 @@
 source("../Whole_crypto/source data and merging.R")
-#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen.
+#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1992 and weighted mean ellenberg values, and does a few plots on turnover.
 
 ####lichens###
-vegdist.lichens<-as.matrix(vegdist(comp))
-summ.lichens<-as.data.frame(0)#you have to set something up for the loop to feed into.
+#turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
+BCdist.lichens<-as.matrix(vegdist(comp, method="bray"))
+Sodiss.lichens<-as.matrix(vegdist(comp, method="bray", binary="TRUE"))
+summ.lichens<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
   for (i in 1:144)
-  {summ.lichens[i,]<-(vegdist.lichens[i, i+144])}
+  {summ.lichens[i,1]<-(BCdist.lichens[i, i+144])
+    summ.lichens[i,2]<-(Sodiss.lichens[i, i+144])}
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.lichens[1:5, 145:149]
+BCdist.lichens[1:5, 145:149]
 summ.lichens[1:5,]
 head(comp_old[,1:5])#shows that comp/comp new/comp old have the same row order
-colnames(summ.lichens)<-"lich.dist"
-summ.lichens$lich.rich1992<-rowSums(subset(comp_old, select=-Year))
-summ.lichens$lich.rich2015<-rowSums(subset(comp_new, select=-Year))
+colnames(summ.lichens)<-c("lich.BCdiss", "lich.Sodiss")
+summ.lichens$lich.rich1992<-rowSums(subset(comp_old>0, select=-Year))
+summ.lichens$lich.rich2015<-rowSums(subset(comp_new>0, select=-Year))
+summ.lichens$richchange<-summ.lichens$lich.rich2015-summ.lichens$lich.rich1992
 rownames(summ.lichens)<-rownames(comp_old)
 
 library(vegan)
@@ -24,21 +28,25 @@ colonisations.lichens<-as.matrix(designdist(comp, method = "(B-J)/B", terms = "b
 summ.lichens$lich.colonise<-0
 for (i in 1:144)
 {summ.lichens$lich.colonise[i]<-(colonisations.lichens[i, i+144])}
+summ.lichens$lich_threatened_1992<-rowSums(comp_old[,names(comp_old)%in%lich.protect$Species_name[lich.protect$Is_Redlisted==1]]>0)
+summ.lichens$lich_threatened_2015<-rowSums(comp_new[,names(comp_new)%in%lich.protect$Species_name[lich.protect$Is_Redlisted==1]]>0)
 
 ###bryos###
-vegdist.bryos<-as.matrix(vegdist(easytabx))
-summ.bryos<-as.data.frame(0)#you have to set something up for the loop to feed into.
+BCdist.bryos<-as.matrix(vegdist(easytabx, method="bray"))
+Sodist.bryos<-as.matrix(vegdist(easytabx, method="bray", binary=TRUE))
+summ.bryos<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
 for (i in (1:144))
-{summ.bryos[i,]<-(vegdist.bryos[i*2-1, i*2])}# Here I want odds combined with their folllowing evens.
+{summ.bryos[i,1]<-(BCdist.bryos[i*2-1, i*2])
+  summ.bryos[i,2]<-(Sodist.bryos[i*2-1, i*2])}# Here I want odds combined with their folllowing evens.
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
+BCdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
 summ.bryos[1:5,]
 head(easytabx[,1:5])#shows that bryo and the resulting objects have the same row order. BUT the are a different row order to lichens and vascular - goes A01, A02, A03 not A01, A10, A11.
 rownames(summ.bryos)<-substr(rownames(easytabx[substr(rownames(easytabx),4,7)=="1992",]),1,3)
-colnames(summ.bryos)<-"bryo.dist"
-summ.bryos$bryo.rich1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])
-summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])
-
+colnames(summ.bryos)<-c("bryo.BCdiss", "bryo.Sodiss")
+summ.bryos$bryo.rich1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",]>0)
+summ.bryos$bryo.rich2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",]>0)
+summ.bryos$bryochange<-summ.bryos$bryo.rich2015-summ.bryos$bryo.rich1992
 extinctions.bryos<-as.matrix(designdist(easytabx, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
 summ.bryos$bryo.extinct<-0
 for (i in 1:144)
@@ -48,19 +56,25 @@ summ.bryos$bryo.colonise<-0
 for (i in 1:144)
 {summ.bryos$bryo.colonise[i]<-(colonisations.bryos[i*2-1, i*2])}
 
+summ.bryos$bryo_threatened_1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="1992",names(easytabx[substr(rownames(easytabx),4,7)=="1992",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
+summ.bryos$bryo_threatened_2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",names(easytabx[substr(rownames(easytabx),4,7)=="2015",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
+
 ##Vascular plants##
-vegdist.vascs<-as.matrix(vegdist(Vascall.df))
-summ.vascs<-as.data.frame(0)#you have to set something up for the loop to feed into.
+BCdist.vascs<-as.matrix(vegdist(Vascall.df, method="bray"))
+Sodiss.vascs<-as.matrix(vegdist(Vascall.df, method="bray", binary=TRUE))
+summ.vascs<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
 for (i in (1:144))
-{summ.vascs[i,]<-(vegdist.vascs[i, i+144])}# Like lichens, it goes 1-144 then 145-250
+{summ.vascs[i,1]<-(BCdist.vascs[i, i+144])
+  summ.vascs[i,2]<-(Sodiss.vascs[i, i+144])}# Like lichens, it goes 1-144 then 145-250
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-vegdist.vascs[1:5, 145:149]
+BCdist.vascs[1:5, 145:149]
 summ.vascs[1:5,]
 head(Vascall.df[,1:5])#shows that bryo and the resulting objects have the same row order. They go A1, A2, A3 not A1, A10, A11.
-colnames(summ.vascs)<-"vasc.dist"
-summ.vascs$vasc.rich1992<-rowSums(VascOld.fat)
-summ.vascs$vasc.rich2015<-rowSums(VascNew.fat)
-rownames(summ.vascs)<-paste(substr(rownames(VascOld.fat), 1,1), substr(rownames(VascOld.fat), 3,4), sep="")
+colnames(summ.vascs)<-c("Vasc.BCdiss", "Vasc.Sodiss")
+summ.vascs$vasc.rich1992<-rowSums(VascOld.fat>0)
+summ.vascs$vasc.rich2015<-rowSums(VascNew.fat>0)
+summ.vascs$vascchange<-summ.vascs$vasc.rich2015-summ.vascs$vasc.rich1992
+rownames(summ.vascs)<-rownames(VascOld.fat)
 
 extinctions.vascs<-as.matrix(designdist(Vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
 summ.vascs$vasc.extinct<-0
@@ -70,7 +84,8 @@ colonisations.vascs<-as.matrix(designdist(Vascall.df, method = "(B-J)/B", terms 
 summ.vascs$vasc.colonise<-0
 for (i in 1:144)
 {summ.vascs$vasc.colonise[i]<-(colonisations.vascs[i, i+144])}
-
+summ.vascs$vasc_threatened_1992<-rowSums(VascOld.fat[,names(VascOld.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
+summ.vascs$vasc_threatened_2015<-rowSums(VascNew.fat[,names(VascNew.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
 
 ##Final step is to merge them all. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames) that does all three objects at once and gets rid of the superfluous row names-columns
 HDRmerge<- function(x, y){
@@ -81,20 +96,73 @@ HDRmerge<- function(x, y){
 }
 Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
+####Add in Ellenbergs####
+####weighted mean ellenbergs for different species groups in the plots####
+
+#this could be done with a loop and weighted.mean but never mind.
+#merge thin tables with ellenberg values (already done for lichens)
+vascoldthin.withellens<-merge(VascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
+vascnewthin.withellens<-merge(VascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")
+bryothin.withellens<-merge(easytab, bryo.status, by.x="Species_name", by.y="Species_name")
+
+#weighted averages by plot
+library(dplyr)
+lich.weightmeanold<-old.wirths %>% 
+  group_by(Site) %>%
+  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)#the dot is because it means "use the object named in the previos line" in hadlyspeak. Think of pipe as "feed into"
+lich.weightmeannew<-new.wirths %>% 
+  group_by(Site) %>%
+  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)
+bryo.weightmean<-bryothin.withellens %>% 
+  group_by(Plot, Year) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$Frequency, na.rm=TRUE)
+vasc.weightmeanold<-vascoldthin.withellens %>% 
+  group_by(Plot_number) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
+vasc.weightmeannew<-vascnewthin.withellens %>% 
+  group_by(Plot_number_2015) %>%
+  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
+
+#make the plot names the row names in A01, A02 format. You can't manipulate rownames in vascoldell, and I want to leave it as rownames to be able to use the HDRmerge.
+lich.weightmeanold<-as.data.frame(lich.weightmeanold)
+rownames(lich.weightmeanold)<-lich.weightmeanold$Site
+names(lich.weightmeanold)<-paste("lich.old.",names(lich.weightmeanold), sep="")
+lich.weightmeannew<-as.data.frame(lich.weightmeannew)
+rownames(lich.weightmeannew)<-lich.weightmeannew$Site
+names(lich.weightmeannew)<-paste("lich.new.",names(lich.weightmeannew), sep="")
+bryo.weightmeanold<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="1992",])
+rownames(bryo.weightmeanold)<-bryo.weightmeanold$Plot
+names(bryo.weightmeanold)<-paste("bryo.old.",names(bryo.weightmeanold), sep="")
+bryo.weightmeannew<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="2015",])
+rownames(bryo.weightmeannew)<-bryo.weightmeannew$Plot
+names(bryo.weightmeannew)<-paste("bryo.new.",names(bryo.weightmeannew), sep="")
+
+vasc.weightmeanold<-as.data.frame(vasc.weightmeanold)
+rownames(vasc.weightmeanold)<-substr(vasc.weightmeanold$Plot_number,1,3)
+names(vasc.weightmeanold)<-paste("vasc.old.",names(vasc.weightmeanold), sep="")
+vasc.weightmeannew<-as.data.frame(vasc.weightmeannew)
+rownames(vasc.weightmeannew)<-substr(vasc.weightmeannew$Plot_number_2015,1,3)
+names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
+
+
+#A magic number for removing unecessary columns but [,-"Site"] wasn't working "invalid argument to unary operator"
+Summaries<- Reduce(HDRmerge, list(Summaries, lich.weightmeanold[-1], lich.weightmeannew[-1], bryo.weightmeanold[-c(1,2)], bryo.weightmeannew[-c(1,2)], vasc.weightmeanold[-1], vasc.weightmeannew[-1]))
+
+
+#####Some plots####
+
+
 x11();par(mfrow=c(3,3), xpd=NA)
-sapply(Summaries[,c(1,2,3,6,7,8,11,12,13)], function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}) #Bad magic numbers because of new columns
-text("Vegdist",x=-450, y=175, cex=1.4)
-text("Richness in 1992",x=-150, y=175, cex=1.4)
-text("Richness in 2015",x=100, y=175, cex=1.4)
-text("Lichens",x=-550, y=150, cex=1.4, srt=90)
-text("Bryophytes",x=-550, y=85, cex=1.4, srt=90)
-text("Vascular plants",x=-550, y=15, cex=1.4, srt=90)
+mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","Vasc.BCdiss", "vasc.rich1992","vasc.rich2015")], ylab= c("BCdist","Richness in 1992","Richness in 2015")) # OBS! column subsetting needs mapply.
+text("Lichens",x=-150, y=180, cex=1.4)
+text("Bryophytes",x=-150, y=110, cex=1.4)
+text("Vascular plants",x=-150, y=35, cex=1.4)
 savePlot("Distributions of values.emf", type="emf")
 t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
 t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
 t.test(Summaries$vasc.rich1992, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
 
-x11(); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0))
+x11(); par(mfrow=c(1,3), pin=c(1.4,1.4), mgp=c(1.8,0.5,0))
 plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
 plot(Summaries$bryo.extinct, Summaries$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
 plot(Summaries$vasc.extinct, Summaries$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
@@ -111,54 +179,3 @@ Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
 rownames(Summaries)<-Summaries$Row.names
 Summaries$Row.names<-NULL
 
-x11()
-layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
-par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
-sapply(Summaries[,c(2,7,12)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 1992", main=colnames(x))
-  model.x<-aov(x~dominant, data=Summaries)
-    text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-    text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-   text(x=3, y=-20, labels=colnames(x))
-  }) #The titles aren't working with either of the two methods included here. It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
-sapply(Summaries[,c(3,8,13)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,200), ylab="Plot richness 2015")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=200, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=180, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(4,9,14)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot extinctions")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(5,10,15)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,1), ylab="Proportion plot colonisations")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}) 
-sapply(Summaries[,c(1,6,11)], function (x) { 
-  boxplot(x~dominant, data=Summaries, col=2:8, ylim=c(0,0.4), ylab="Bray-Curtis distance")
-  model.x<-aov(x~dominant, data=Summaries)
-  text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.36, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-})
-text(-17.5,1.8,"Lichens", cex=1.2)
-text(-17.5,1.15,"Bryophytes", cex=1.2)
-text(-17.5,0.5,"Vascular plants", cex=1.2)
-savePlot("Turnover and richness by phytosoc.emf", type="emf")
-
-#some stuff for messing about or spare code for if we go back to models
-#model.x<-as.data.frame(anova(glm(x~dominant, data=Summaries, family= poisson(link = "log"))))
-#text(x=4, y=200, labels=paste("F =", signif(model.x[1,4], 3)),cex=0.8)
-#text(x=4, y=180, labels=paste("P =", signif(model.x[1,5], 3)),cex=0.8)
-
-
-#check that the models chosen behave themselves. This should be commented out once completed
-dev.off()#takes out the settings used for the previous figures, but note risks loss of unsaved figures
-sapply(Summaries[,c(2,7,12)], function (x) { 
-    model.x<-aov(x~dominant, data=Summaries)
-    plot(model.x)
-})#they look ok (rich1992) but is it ok to anova count data? It wouldn't be ok to glm it. There is really no risk here of the sd crossing zero.

@@ -1,32 +1,22 @@
 library(readxl)
 source("Ash script recovery.R")#this runs the same code as in that file
-
-status<-read.table("Ellenberg09022016.txt", sep="\t", header=TRUE)#I don't know why read xls wasn't working, but it wasn't.
-str(status)
-status$Red.coded[status$Red.coded==""]<-NA
-str(hosts.LS2015)
-status$Any.status<-status$Red.coded
-status$Any.status[!is.na(status$Red.coded)]<-1
-status$Any.status[!is.na(status$Protected.species)]<-1
-status$Any.status[is.na(status$Any.status)]<-0
-
 #what I need is a total number of ocurrences of all the species in the on.ls.ash list.
-status$LS.Fe.2015<-0
-status$LS.Fe.2015[status$Species.name%in%hosts.LS2015$Species_name]<-1
-table(status$LS.Fe.2015, status$Any.status)#Of the 53 species which are protected or redlisted, 22 (41%, or two-fifths) were recorded on living ash in 2015. Of the 66 species found on living ash in 2015, 22 (33%, or one-third) were redlisted or protected.
-chisq.test(status$LS.Fe.2015, status$Any.status)#somehow not working
+bryo.status$LS.Fe.2015<-0
+bryo.status$LS.Fe.2015[bryo.status$Species.name%in%hosts.LS2015$Species_name]<-1
+table(bryo.status$LS.Fe.2015, bryo.status$Any.status)#Of the 53 species which are protected or redlisted, 22 (41%, or two-fifths) were recorded on living ash in 2015. Of the 66 species found on living ash in 2015, 22 (33%, or one-third) were redlisted or protected.
+chisq.test(bryo.status$LS.Fe.2015, bryo.status$Any.status)#somehow not working
 
 #not sure how useful the next bit is. First, it might reproduce code from the load data file but by a diufferent name, second it gives n alternative hosts per plot whereas maybe we just want n alternative hosts/substrates overall? 
 FeLS.byspp<-(unique(hosts.LS2015[,2:3]))
 Fetemp.byspp<-as.data.frame(unclass(by(hosts.LS2015[5], hosts.LS2015$Species_name, max)))
 FeLS.byspp<-merge(FeLS.byspp, Fetemp.byspp, by.x=2, by.y=0)
 names(FeLS.byspp)<-c("Species","Year","maxhosts")
-FeLS.byspp2<-merge(FeLS.byspp, status, by.x=1, by.y=2)
+FeLS.byspp2<-merge(FeLS.byspp, bryo.status, by.x=1, by.y=2)
 barplot(sort(FeLS.byspp2$maxhosts), col=FeLS.byspp2$Protected.species[order(FeLS.byspp2$maxhosts)], las=2)#The number of alternative hosts seems unrelated to protected status.
 barplot(sort(FeLS.byspp2$maxhosts), col=FeLS.byspp2$Any.status[order(FeLS.byspp2$maxhosts)], las=2)#The number of laternative hosts seems unrelated to protected status.
 # I pull out FeLS but if they're in a stand where they're not FeLS, they could have other hosts. This needs checking for other analyses.
 
-Ellens<-merge(bryophytes[c(1:4,66)], status, by.x=3, by.y=2, all=TRUE)
+Ellens<-merge(bryophytes[c(1:4,66)], bryo.status, by.x=3, by.y=2, all=TRUE)
 
 #weighted mean L value in 2015 for plots which had Fraxinus epiphytes in 1992 kept to test the order is coming out as expected:
 mean(rep(Ellens$L[!is.na(Ellens$L) &Ellens$Plot%in%hosts.LS1992$Plot &Ellens$Year==2015], Ellens$Frequency[!is.na(Ellens$L)&Ellens$Plot%in%hosts.LS1992$Plot &Ellens$Year==2015]))#5.134

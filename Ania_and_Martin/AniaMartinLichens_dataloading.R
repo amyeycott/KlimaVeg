@@ -7,7 +7,7 @@ newdb<-as.data.frame(newdb)
 newdb[is.na(newdb)] <-0
 #take spaces out of variable names
 colnames(newdb)<-gsub(" ", "_", colnames(newdb))
-newdb$Site[nchar(newdb$Site)==2]<-paste0(substr(newdb$Site[nchar(newdb$Site)==2], 1,1),"0", substr(newdb$Site[nchar(newdb$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. This affects other lines: line 49 in this fileis fixed.
+newdb$Site[nchar(newdb$Site)==2]<-paste0(substr(newdb$Site[nchar(newdb$Site)==2], 1,1),"0", substr(newdb$Site[nchar(newdb$Site)==2], 2,2))#makes format for Site match that used elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. This affects other lines: line 49 in this file is fixed.
 newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
@@ -58,10 +58,6 @@ old.harm.db$Species<-trimws(old.harm.db$Species, which = "both")
 newdb$Species<-trimws(newdb$Species, which = "both")
 new.harm.db$Species<-trimws(new.harm.db$Species, which = "both")
 
-#Wirth's values (like Ellenberg) for each year's ocurrences
-old.wirths<-merge(old.harm.db[1:2], envir, by="Species", all=TRUE)
-new.wirths<-merge(new.harm.db[1:2], envir, by="Species", all=TRUE)
-
 #all the frequencies in one column
 olddb$Frequency<-olddb$`1_rare` +  olddb$`2_frequent` * 2 + olddb$`3_common` *3
 old.harm.db$Frequency<-old.harm.db$`1_rare` +  old.harm.db$`2_frequent` * 2 + old.harm.db$`3_common` *3
@@ -90,3 +86,14 @@ head(compz[,c(1:4, length(compz))])
 genus_comp<-aggregate(compz[,1:length(compz)-1], by=list(compz$genus), FUN=max)
 rownames(genus_comp)<-genus_comp$Group.1
 genus_comp<-as.data.frame(t(genus_comp[-1]))
+
+####CONSERVATION STATUS####
+lich.protect<-read_excel("../Ania_and_Martin/Kopia Protected Red coded species.xlsx", sheet=2)
+names(lich.protect)<-c("Species_name","Is_protected","Protected_status","Is_Redlisted","Redlist_status")
+lich.protect<-lich.protect[!is.na(lich.protect$Species_name),]#list is 100 species long, contains only species which are NT-upwards on the redlist.
+lich.protect$Is_Redlisted[is.na(lich.protect$Is_Redlisted)]<-0
+lich.protect$Is_protected[is.na(lich.protect$Is_protected)]<-0#these are needed because the NAs crash a later step
+
+#Wirth's values (like Ellenberg) for each year's ocurrences. There are some species in there not in the main dataset for some reason.
+old.wirths<-merge(old.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
+new.wirths<-merge(new.harm.db[c("Species","Site","Frequency")], envir, by="Species",, all.x=TRUE, all.y=FALSE)
