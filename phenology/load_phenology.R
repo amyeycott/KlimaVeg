@@ -68,7 +68,8 @@ phenology2 <- gather(phenology, key = "pentad", value = "decile", -species, -yea
   filter(!decile %in% c("@", "@@"), !is.na(decile)) %>%
   mutate(decile = trimws(decile)) %>%
   mutate(decile = gsub('"', "", decile)) %>% # remove quote marks
-  mutate(pentad = as.numeric(pentad))
+  mutate(pentad = as.numeric(pentad)) %>%
+  mutate(doy = as.Date(pentad * 5, origin = ymd("2017-01-01")))
 
 #clean
 as.matrix(table(phenology2$decile))
