@@ -4,7 +4,7 @@ source("../Ania_and_Martin/AniaMartinLichens_dataloading.R")#the ../ is 'go up o
 source("../sylwia/Bryophyte data loading.R")#in an ideal world, work out which step is printing a bunch of structure...
 library(readxl)
 vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
-VascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
+vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
 phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
 
 ##Sanity checks and tidying in vascular data
@@ -12,6 +12,7 @@ colnames(vascOld.thin)<-gsub(" ", "_",colnames(vascOld.thin))
 vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992 
 vascOld.thin$Frequency_1<-as.numeric(vascOld.thin$Frequency_1)
 vascOld.thin$Species_name<-gsub(" ", "_",vascOld.thin$Species_name)
+
 
 colnames(vascNew.thin)<-gsub(" ", "_",colnames(vascNew.thin))
 vascNew.thin$Plot_number_2015<-paste(substr(vascNew.thin$Plot_number,1,1),substr(vascNew.thin$Plot_number,3,4), "2015", sep="")
