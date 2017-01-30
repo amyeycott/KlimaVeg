@@ -93,7 +93,7 @@ tempEffectSize <- monthly %>%
   geom_hline(yintercept = 0, colour = "red", linetype = "dashed") +
   geom_errorbar() + 
   geom_point() + 
-  labs(x = "", y = "Temperature change, °C / decade") +
+  labs(x = "", y = "Temperature change, °C / decade") + 
   th +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 print(tempEffectSize)
@@ -115,8 +115,10 @@ seasonalwarming <- weather %>%
   mutate(doy2 = as.Date(doy, origin = ymd("2017-01-01")))
 
 ggplot(seasonalwarming, aes(x = doy2, y = Estimate, ymax = Estimate + 1.96 * `Std. Error`, ymin = Estimate - 1.96 * `Std. Error`)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey60") +
   geom_ribbon(alpha = .4)+
   geom_line() +
   scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
-  ylab("Rate of temperature change °C/day")
+  ylab("Rate of temperature change °C/day") +
+  th
 
