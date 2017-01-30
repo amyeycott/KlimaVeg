@@ -13,11 +13,14 @@ if(interactive()){
 ## ---- phenologyPlots
 #pheology plots
 ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
+
 ## ---- Allium_ursinum
-ggplot(filter(phenology2, species ==  "Allium ursinum"), aes(x = doy, y = decile, colour = year)) + 
+ggplot(filter(phenology2, species ==  "Allium ursinum", stage < 6), aes(x = doy, y = decile, colour = year)) + 
   geom_line() + 
   facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) +   
-  scale_x_date(name = "Month", date_breaks = "3 month", date_labels = "%b") 
+  scale_x_date(name = "Month", date_breaks = "3 month", date_labels = "%b") +
+  th +
+  theme(axis.text.x  = element_text(angle = 45, hjust = 1)) 
 
 ## ---- autumn_flowers
 autumn <-ggplot(filter(phenology2, species == "Daphne mezereum", stage == 3, decile > 0), aes(x = doy, y = year, colour = decile)) + 
@@ -31,8 +34,8 @@ autumn %+% filter(phenology2, species == "Anemone nemorosa", stage == 3, decile 
 autumn %+% filter(phenology2, species == "Oxalis acetosella", stage == 3, decile > 0)
 
 #urtica dioica
-ggplot(phenology2 %>% filter(species == "Urtica dioica", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
-ggplot(phenology2 %>% filter(species == "Urtica dioica", stage == 1, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+autumn %+% filter(phenology2, species == "Urtica dioica", stage == 3, decile > 0)
+autumn %+% filter(phenology2, species == "Urtica dioica", stage == 1, decile > 0)
 
 #number of years
 phenology2 %>% 
@@ -85,13 +88,16 @@ ggplot(comm %>% filter(stage == 3), aes(x = year, y = species)) +
 #richness
 comm %>% 
   group_by(year, stage, transect) %>%
-  summarise(n = n()) %>% ggplot(aes(x = year, y = n, colour = as.factor(stage), linetype = transect)) + geom_line() + ylim(0, NA)
+  summarise(n = n()) %>% 
+  ggplot(aes(x = year, y = n, colour = as.factor(stage), linetype = transect)) +
+    geom_line() +
+    ylim(0, NA)
 
 ## ---- first_flowering
 first_phenology <- phenology2 %>% 
   filter(decile > 0, stage < 6) %>% 
   group_by(year, species, stage, transect) %>% 
-  summarise(first = first(pentad), last = last(pentad), duration = last - first, max = max(decile), maxDate = pentad[which.max(decile)]) %>%
+  summarise(first = first(doy), last = last(doy), duration = last - first, max = max(decile), maxDate = doy[which.max(decile)]) %>%
   merge(
     with(phenology2,
       expand.grid(
@@ -109,7 +115,7 @@ first_flowering <- first_phenology %>%
   filter(nyear > 10) %>%
   mutate(median = median(first, na.rm = TRUE)) %>%
   ungroup() %>%
-  mutate(timing = cut(median, breaks = quantile(first, probs = seq(0, 1, 1/3), na.rm = TRUE), labels = c("Early", "Mid", "Late"), include.lowest = TRUE)) %>%
+  mutate(timing = cut(as.vector(median), breaks = quantile(as.vector(median), probs = seq(0, 1, 1/3), na.rm = TRUE), labels = c("Early", "Mid", "Late"), include.lowest = TRUE)) %>%
   select(-stage)
 
     
@@ -126,7 +132,9 @@ first_flowering %>%
   ungroup() %>%
   mutate(species = factor(species, levels = unique(species[order(median)]))) %>%
   ggplot(aes(x = first, y = species, size = n, colour = transect)) + 
-    geom_point(pch = 1) + labs(x = "Pentad of first flowering", y = "")
+    geom_point(pch = 1) + 
+    labs(x = "Month of first flowering", y = "") +
+    scale_x_date(date_breaks = "1 month", date_labels = "%b")
 
 ## ----x
 ggplot(first_flowering, aes(x = year, y = first, colour = species)) + 
@@ -135,7 +143,8 @@ ggplot(first_flowering, aes(x = year, y = first, colour = species)) +
     facet_grid(transect~.)
 
 
-ggplot(first_flowering, aes(x = first, fill = transect)) + geom_histogram()
+ggplot(first_flowering, aes(x = first, fill = transect)) + 
+  geom_histogram()
 
 #median by transect
 first_flowering %>% 
@@ -150,11 +159,12 @@ first_floweringClim <- first_flowering %>%
 ##correlate climate with phenology
 firstflowerSnowCor <- first_floweringClim %>%
   group_by(species, variable, month, timing, transect) %>%
-  summarise(correlation = cor(first, value, use = "pair"))
+  summarise(correlation = cor(as.vector(first), value, use = "pair"))
 
 #all phenological 
 firstflowerSnowCor <- first_floweringClim %>%
   select(-nyear, - median, -year) %>%
+  mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
   group_by(species, variable, month, timing, transect) %>%
   do(as.data.frame(t(cor(.[, !names(.) %in% c("species", "transect", "timing", "month", "variable", "value")], .$value, use = "pair"))))
 
@@ -168,24 +178,26 @@ ggplot(firstflowerSnowCor, aes(x = month, y = first)) +
 ggplot(firstflowerSnowCor, aes(x = month, y = first, fill = timing)) + 
      geom_boxplot() +
      facet_grid(transect~variable, space = "free_x", scales = "free_x") +
-     theme(axis.text.x = element_text(angle = 90)) + th
+     theme(axis.text.x = element_text(angle = 90)) 
 
 ## ----firstfloweringCor
-firstflowerSnowCor %>% filter(variable != "precipitation") %>%
+firstflowerSnowCor %>% filter(variable == "temperature") %>% 
   ggplot(aes(x = month, y = first, fill = timing)) + 
   geom_boxplot() +
-  facet_grid(transect~variable, space = "free_x", scales = "free_x") + 
-  labs(x = "", y = "Correlation") +
-  th + theme(axis.text.x = element_text(angle = 90))
-
+  facet_grid(transect~., space = "free_x", scales = "free_x") + 
+  labs(x = "", y = "Correlation") + 
+  th +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ## ---- climateRegression
 first_floweringClim %>% filter(variable == "temperature", month  == "March") %>% 
   filter(species < "Carex") %>%
   ggplot(aes(x = value, y = first, colour = transect)) + 
     geom_point() + geom_smooth(method = "lm", se = FALSE) + 
-    labs(x = "Temperature °C", y = "Pentad of first flowering") +
-    facet_wrap(~species, scale = "free_y") +th 
+    labs(x = "Temperature °C", y = "Date of first flowering") +
+    facet_wrap(~species, scale = "free_y") +
+    th
+
 
 ## ---- x
 ###duration
@@ -200,3 +212,66 @@ ggplot(firstflowerSnowCor, aes(x = month, y = max, fill = timing)) +
   geom_boxplot() +
   facet_grid(transect~variable, space = "free_x", scales = "free_x") +
   theme(axis.text.x = element_text(angle = 90))
+
+
+## ---- keepingUp1
+#regression of phenology temperature in each month
+
+firstflowerReg <- first_floweringClim %>%
+  filter(variable == "temperature") %>%
+  select(-nyear, -year) %>%
+  mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
+  group_by(species, month, median, timing, transect) %>%
+  do(tidy(lm(first ~ value, data = .))[2, , drop = FALSE]) %>%
+  mutate(month2 = ymd(paste0("2017-", month, "-1")))
+
+
+
+    
+g <- filter(firstflowerReg, species == "Allium ursinum") %>% 
+     mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
+                               transect == "t37" ~ month2 - 1,
+                               transect == "t38" ~ month2 + 1,
+                               transect == "t39" ~ month2 + 3))%>% 
+     ggplot(aes(x = month2, y = estimate, ymax = estimate + 1.96 * std.error, min = estimate - 1.96 * std.error, colour = transect)) +
+  geom_pointrange() +
+  scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
+  labs(y = "Effect, days/°C", xlab = "Month") +
+  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median), colour = "grey50", linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") 
+  
+print(g + th)
+
+## ---- keepingUp2
+
+g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate, ymax = -1/(Estimate + 1.96 * `Std. Error`), ymin = -1/(Estimate - 1.96 * `Std. Error`)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
+  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate), colour = "red", inherit.aes = FALSE) +
+  coord_cartesian(ylim = c(-20, 5))
+
+print(g2 + th)
+
+h <- first_flowering %>%
+  filter(species == "Allium ursinum") %>%
+  ggplot(aes(x = first, fill = transect)) + 
+  geom_histogram() +
+  labs(y = "Number of years") +
+  scale_x_date(limits = range(firstflowerReg$month2), name = "", date_breaks = "1 month", date_labels = "%b")
+  
+cowplot::plot_grid(h + th, g2 + th,  nrow = 2, align = "v", rel_heights = c(1/3, 2/3))
+
+
+## ---- keepingUp3
+
+print(g2 %+%  (filter(firstflowerReg, species == "Urtica dioica") %>% 
+        mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
+                                  transect == "t37" ~ month2 - 1,
+                                  transect == "t38" ~ month2 + 1,
+                                  transect == "t39" ~ month2 + 3))) +
+        th
+)
+
+
+
+
+
+
