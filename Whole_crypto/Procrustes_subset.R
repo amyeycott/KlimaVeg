@@ -15,8 +15,8 @@ bryo.nmds.1992<-metaMDS(easytabx[substr(rownames(easytabx),4,7)=="1992"&!substr(
 bryo.nmds.2015<-metaMDS(easytabx[substr(rownames(easytabx),4,7)=="2015"&!substr(rownames(easytabx),1,3)%in%dodgysquares,])#
 crusty.bryo<-protest(bryo.nmds.1992, bryo.nmds.2015)#very similar, r=0.98, P=0.001
 #vascular whole set
-vasc.nmds.1992<-metaMDS(VascOld.fat[!rownames(VascOld.fat)%in%dodgysquares,])#converges
-vasc.nmds.2015<-metaMDS(VascNew.fat[!rownames(VascNew.fat)%in%dodgysquares,])#converges
+vasc.nmds.1992<-metaMDS(vascOld.fat[!rownames(vascOld.fat)%in%dodgysquares,])#converges
+vasc.nmds.2015<-metaMDS(vascNew.fat[!rownames(vascNew.fat)%in%dodgysquares,])#converges
 crusty.vasc<-protest(vasc.nmds.1992, vasc.nmds.2015)#very similar
 crusty.2015.vascbryo<-protest(vasc.nmds.2015, bryo.nmds.2015)# r=0.95, P=0.001
 crusty.1992.vascbryo<-protest(vasc.nmds.1992, bryo.nmds.1992)#very very slightly less similar, but unlikely to be a serious thing: r=0.93, P=0.001

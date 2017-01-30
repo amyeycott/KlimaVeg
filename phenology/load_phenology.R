@@ -56,7 +56,7 @@ phenology <- plyr::ldply(phenfiles, function(transect){
 }, .id = "transect")
 
 ##dictionary
-dictionary <- read.table(paste0(path, "dictionary.tab"), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+dictionary <- read.table(paste0(path, "dictionary.tab"), header = TRUE, sep = ",", stringsAsFactors = FALSE)
  #fill missing new names with old names
 dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""] 
 

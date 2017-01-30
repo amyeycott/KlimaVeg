@@ -17,6 +17,7 @@ new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
 colnames(new.harm.db)<-gsub(" ", "_", colnames(new.harm.db))
 new.harm.db$Site[nchar(new.harm.db$Site)==2]<-paste0(substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 1,1),"0", substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
+new.harm.db$Species[new.harm.db$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."#database correction
 new.harm.db$Species<-as.factor(new.harm.db$Species)
 new.harm.db$Site<-as.factor(new.harm.db$Site)
 

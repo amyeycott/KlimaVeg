@@ -7,7 +7,7 @@ dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "
 summaries.ss<-Summaries[!rownames(Summaries)%in%dodgysquares,]
 
 x11();par(mfrow=c(3,3), xpd=NA)
-mapply(function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}, x= summaries.ss[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","Vasc.BCdiss", "vasc.rich1992","vasc.rich2015")]) # OBS! column subsetting needs mapply.
+mapply(function(x){hist (x, main=NULL, ylab=NULL, xlab=NULL)}, x= summaries.ss[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","vasc.BCdiss", "vasc.rich1992","vasc.rich2015")]) # OBS! column subsetting needs mapply.
 text("Vegdist",x=-325, y=175, cex=1.4)
 text("Richness in 1992",x=-125, y=175, cex=1.4)
 text("Richness in 2015",x=75, y=175, cex=1.4)
@@ -63,7 +63,7 @@ mapply(function (x) {
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
   text(x=4, y=0.36, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
-}, x=summaries.ss[,c("lich.BCdiss","bryo.BCdiss","Vasc.BCdiss")])
+}, x=summaries.ss[,c("lich.BCdiss","bryo.BCdiss","vasc.BCdiss")])
 
 text(-22.5,2.05,"Lichens", cex=1.2)
 text(-22.5,1.3,"Bryophytes", cex=1.2)
@@ -82,13 +82,22 @@ mapply(function(x, z, main, ylim){
   x = summaries.ss[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")], z=summaries.ss[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")] , main=c("Lichen richness","Bryophyte richness","Vascular plant richness"), ylim=list(c(0,150),c(0,150),c(0,150)))
 legend("topright", fill=c("blue","yellow"), legend=c("1992","2015"), y.intersp=0.8)
 savePlot("Richness by phytosoc for powerpoint.png", type="png")
-
-
+x11(6,3);par(mfrow=c(1,3), las=2)
+mapply(function(x,main){
+  boxplot(x~dominant, data=summaries.ss, main=main)
+  testy<-aov(x~dominant, data=summaries.ss)
+  print(summary(testy))
+  TukeyHSD(testy)
+  }, 
+  x = summaries.ss[,c("lich.colonise","bryo.colonise","vasc.colonise")],main=c("Lichen colonists","Bryophyte colonists","Vascular plant richness"))
+savePlot("Colonists by community plain for ppt.png", type="png")
 
 ####ANALYSES and SUMMARIES####
 t.test(summaries.ss$lich.rich1992, summaries.ss$lich.rich2015, paired=TRUE)
 t.test(summaries.ss$bryo.rich1992, summaries.ss$bryo.rich2015, paired=TRUE)
 t.test(summaries.ss$vasc.rich1992, summaries.ss$vasc.rich2015, paired=TRUE)
+
+
 
 sapply(summaries.ss[1:21],FUN=mean )
 sapply(summaries.ss[1:21],FUN=sd)
@@ -97,7 +106,33 @@ dim(comp_old[!rownames(comp_old)%in%dodgysquares,colSums(comp_old[!rownames(comp
 dim(comp_new[!rownames(comp_new)%in%dodgysquares,colSums(comp_new[!rownames(comp_new)%in%dodgysquares]>0)])
 dim(easytabx[substr(rownames(easytabx),4,7)=="1992"&!substr(rownames(easytabx),1,3)%in%dodgysquares,colSums(easytabx[substr(rownames(easytabx),4,7)=="1992"&!substr(rownames(easytabx),1,3)%in%dodgysquares,]>0)])
 dim(easytabx[substr(rownames(easytabx),4,7)=="2015"&!substr(rownames(easytabx),1,3)%in%dodgysquares,colSums(easytabx[substr(rownames(easytabx),4,7)=="2015"&!substr(rownames(easytabx),1,3)%in%dodgysquares,]>0)])
-dim(VascOld.fat[!rownames(VascOld.fat)%in%dodgysquares,colSums(VascOld.fat[!rownames(VascOld.fat)%in%dodgysquares]>0)])
-dim(VascNew.fat[!rownames(VascNew.fat)%in%dodgysquares,colSums(VascNew.fat[!rownames(VascNew.fat)%in%dodgysquares]>0)])
+dim(vascOld.fat[!rownames(vascOld.fat)%in%dodgysquares,colSums(vascOld.fat[!rownames(vascOld.fat)%in%dodgysquares]>0)])
+dim(vascNew.fat[!rownames(vascNew.fat)%in%dodgysquares,colSums(vascNew.fat[!rownames(vascNew.fat)%in%dodgysquares]>0)])
+
 
 aggregate(lich.BCdiss~dominant, data=summaries.ss, FUN=mean)
+
+###observer effect?####
+x11(8,3); par(mfrow=c(1,3), pin=c(2,2))
+plot(summaries.ss$lich.colonise~summaries.ss$lich.BCdiss)
+plot(summaries.ss$bryo.colonise~summaries.ss$bryo.BCdiss)
+plot(summaries.ss$vasc.colonise~summaries.ss$vasc.BCdiss)
+
+##idea for another day: plot number of new-to-whole-crypto lichen spp against BC dist of only the existing list.
+
+####winners and losers####
+losers<-as.data.frame(head(sort(colSums(vascall.df.ss[128:254,]>0)-colSums(vascall.df.ss[1:127,]>0))))#losers: by total squares lost
+winners<-tail(sort(colSums(vascall.df.ss[128:254,]>0)-colSums(vascall.df.ss[1:127,]>0)))#winners: by total squares gained
+write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])==0)&(colSums(vascall.df.ss[1:127,])>1)]>0))), file="vasc.extinction.csv")
+write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])>0)&(colSums(vascall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="vasc colonisation.csv")               
+
+losers<-as.data.frame(head(sort(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",]>0)-colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1992",]>0))))#losers: by total squares lost
+winners<-tail(sort(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",]>0)-colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1992",]>0)))#winners: by total squares gained
+write.csv2(as.data.frame(sort(colSums(bryoall.df.ss[,(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",])==0)&(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1992",])>1)]>0))), file="bryo.extinction.csv")
+write.csv2(as.data.frame(sort(colSums(bryoall.df.ss[,(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",])>0)&(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1992",])==0)]>0), decreasing = TRUE)), file="bryo colonisation.csv")
+
+
+losers<-as.data.frame(head(sort(colSums(lichall.df.ss[128:254,]>0)-colSums(lichall.df.ss[1:127,]>0))))#losers: by total squares lost
+winners<-tail(sort(colSums(lichall.df.ss[128:254,]>0)-colSums(lichall.df.ss[1:127,]>0)))#winners: by total squares gained
+write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])==0)&(colSums(lichall.df.ss[1:127,])>1)]>0))), file="lich.extinction.csv")
+write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])>0)&(colSums(lichall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="lich colonisation.csv")
