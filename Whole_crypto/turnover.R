@@ -3,8 +3,8 @@ source("../Whole_crypto/source data and merging.R")
 
 ####lichens###
 #turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
-BCdist.lichens<-as.matrix(vegdist(comp, method="bray"))
-Sodiss.lichens<-as.matrix(vegdist(comp, method="bray", binary="TRUE"))
+BCdist.lichens<-as.matrix(vegdist(comp[,!names(comp)=="Year"], method="bray"))
+Sodiss.lichens<-as.matrix(vegdist(comp[,!names(comp)=="Year"], method="bray", binary="TRUE"))
 summ.lichens<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
   for (i in 1:144)
   {summ.lichens[i,1]<-(BCdist.lichens[i, i+144])
@@ -60,8 +60,8 @@ summ.bryos$bryo_threatened_1992<-rowSums(easytabx[substr(rownames(easytabx),4,7)
 summ.bryos$bryo_threatened_2015<-rowSums(easytabx[substr(rownames(easytabx),4,7)=="2015",names(easytabx[substr(rownames(easytabx),4,7)=="2015",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
 
 ##Vascular plants##
-BCdist.vascs<-as.matrix(vegdist(Vascall.df, method="bray"))
-Sodiss.vascs<-as.matrix(vegdist(Vascall.df, method="bray", binary=TRUE))
+BCdist.vascs<-as.matrix(vegdist(vascall.df, method="bray"))
+Sodiss.vascs<-as.matrix(vegdist(vascall.df, method="bray", binary=TRUE))
 summ.vascs<-as.data.frame(cbind(0,0))#you have to set something up for the loop to feed into.
 for (i in (1:144))
 {summ.vascs[i,1]<-(BCdist.vascs[i, i+144])
@@ -69,23 +69,23 @@ for (i in (1:144))
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
 BCdist.vascs[1:5, 145:149]
 summ.vascs[1:5,]
-head(Vascall.df[,1:5])#shows that bryo and the resulting objects have the same row order. They go A1, A2, A3 not A1, A10, A11.
-colnames(summ.vascs)<-c("Vasc.BCdiss", "Vasc.Sodiss")
-summ.vascs$vasc.rich1992<-rowSums(VascOld.fat>0)
-summ.vascs$vasc.rich2015<-rowSums(VascNew.fat>0)
+head(vascall.df[,1:5])#shows that bryo and the resulting objects have the same row order. They go A1, A2, A3 not A1, A10, A11.
+colnames(summ.vascs)<-c("vasc.BCdiss", "vasc.Sodiss")
+summ.vascs$vasc.rich1992<-rowSums(vascOld.fat>0)
+summ.vascs$vasc.rich2015<-rowSums(vascNew.fat>0)
 summ.vascs$vascchange<-summ.vascs$vasc.rich2015-summ.vascs$vasc.rich1992
-rownames(summ.vascs)<-rownames(VascOld.fat)
+rownames(summ.vascs)<-rownames(vascOld.fat)
 
-extinctions.vascs<-as.matrix(designdist(Vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
+extinctions.vascs<-as.matrix(designdist(vascall.df, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
 summ.vascs$vasc.extinct<-0
 for (i in 1:144)
 {summ.vascs$vasc.extinct[i]<-(extinctions.vascs[i, i+144])}
-colonisations.vascs<-as.matrix(designdist(Vascall.df, method = "(B-J)/B", terms = "binary", abcd=FALSE, alphagamma=FALSE, "colonisations")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
+colonisations.vascs<-as.matrix(designdist(vascall.df, method = "(B-J)/B", terms = "binary", abcd=FALSE, alphagamma=FALSE, "colonisations")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species)
 summ.vascs$vasc.colonise<-0
 for (i in 1:144)
 {summ.vascs$vasc.colonise[i]<-(colonisations.vascs[i, i+144])}
-summ.vascs$vasc_threatened_1992<-rowSums(VascOld.fat[,names(VascOld.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
-summ.vascs$vasc_threatened_2015<-rowSums(VascNew.fat[,names(VascNew.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
+summ.vascs$vasc_threatened_1992<-rowSums(vascOld.fat[,names(vascOld.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
+summ.vascs$vasc_threatened_2015<-rowSums(vascNew.fat[,names(vascNew.fat)%in%vasc.protected$Species.name[!vasc.protected$Red_coded=="NA"]]>0)
 
 ##Final step is to merge them all. I can't just cbind because the row orders are different. This is a neat function off stack overflow (http://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames) that does all three objects at once and gets rid of the superfluous row names-columns
 HDRmerge<- function(x, y){
@@ -101,8 +101,8 @@ Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 
 #this could be done with a loop and weighted.mean but never mind.
 #merge thin tables with ellenberg values (already done for lichens)
-vascoldthin.withellens<-merge(VascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
-vascnewthin.withellens<-merge(VascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")
+vascoldthin.withellens<-merge(vascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
+vascnewthin.withellens<-merge(vascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")
 bryothin.withellens<-merge(easytab, bryo.status, by.x="Species_name", by.y="Species_name")
 
 #weighted averages by plot
@@ -153,10 +153,10 @@ Summaries<- Reduce(HDRmerge, list(Summaries, lich.weightmeanold[-1], lich.weight
 
 
 x11();par(mfrow=c(3,3), xpd=NA)
-mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","Vasc.BCdiss", "vasc.rich1992","vasc.rich2015")], ylab= c("BCdist","Richness in 1992","Richness in 2015")) # OBS! column subsetting needs mapply.
+mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1992","lich.rich2015","bryo.BCdiss", "bryo.rich1992", "bryo.rich2015","vasc.BCdiss", "vasc.rich1992","vasc.rich2015")], ylab= c("BCdist","Richness in 1992","Richness in 2015")) # OBS! column subsetting needs mapply.
 text("Lichens",x=-150, y=180, cex=1.4)
 text("Bryophytes",x=-150, y=110, cex=1.4)
-text("Vascular plants",x=-150, y=35, cex=1.4)
+text("vascular plants",x=-150, y=35, cex=1.4)
 savePlot("Distributions of values.emf", type="emf")
 t.test(Summaries$lich.rich1992, Summaries$lich.rich2015, paired=TRUE)
 t.test(Summaries$bryo.rich1992, Summaries$bryo.rich2015, paired=TRUE)
@@ -170,7 +170,7 @@ savePlot("Colonisations vs extinctions.emf", type="emf")
 
 sapply(Summaries, mean)
 sapply(Summaries, sd)
-sapply (list(comp_old, comp_new, VascOld.fat, VascNew.fat), dim)
+sapply (list(comp_old, comp_new, vascOld.fat, vascNew.fat), dim)
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="1992",])>0)#that's a long-winded way to get bryo richness...
 sum(colSums(easytabx[substr(rownames(easytabx),4,7)=="2015",])>0)
 
