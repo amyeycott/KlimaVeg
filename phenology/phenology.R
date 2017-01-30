@@ -14,15 +14,21 @@ if(interactive()){
 #pheology plots
 ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
 ## ---- Allium_ursinum
-ggplot(phenology2 %>% filter(species ==  "Allium ursinum"), aes(x = pentad, y = decile, colour = year)) + 
+ggplot(filter(phenology2, species ==  "Allium ursinum"), aes(x = doy, y = decile, colour = year)) + 
   geom_line() + 
-  facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) + 
-  th
+  facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) +   
+  scale_x_date(name = "Month", date_breaks = "3 month", date_labels = "%b") 
 
 ## ---- autumn_flowers
-ggplot(phenology2 %>% filter(species == "Daphne mezereum", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
-ggplot(phenology2 %>% filter(species == "Anemone nemorosa", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
-ggplot(phenology2 %>% filter(species == "Oxalis acetosella", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
+autumn <-ggplot(filter(phenology2, species == "Daphne mezereum", stage == 3, decile > 0), aes(x = doy, y = year, colour = decile)) + 
+  geom_point() + 
+  facet_grid(transect~.) + 
+  scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") 
+
+  
+autumn
+autumn %+% filter(phenology2, species == "Anemone nemorosa", stage == 3, decile > 0)
+autumn %+% filter(phenology2, species == "Oxalis acetosella", stage == 3, decile > 0)
 
 #urtica dioica
 ggplot(phenology2 %>% filter(species == "Urtica dioica", stage == 3, decile > 0), aes(x = pentad, y = year, colour = decile)) + geom_point() + facet_grid(transect~.)
