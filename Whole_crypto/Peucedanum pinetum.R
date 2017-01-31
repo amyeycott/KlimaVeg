@@ -69,35 +69,35 @@ giantnmds.sites<-as.data.frame(scores(giantnmds, display="sites"))
 giantnmds.sites$plot<-substr(row.names(giantnmds.sites),1,3)
 giantnmds.sites$year<-substr(row.names(giantnmds.sites),4,7)
 
-lichnmds.ss<-metaMDS(lichall.df.ss)#this one reaches a solution... time is on axis 2, so what has it put on axis 1?
+set.seed(10)#seed was taken from rnorm*10 to make the code a bit more replicable
+lichnmds.ss<-metaMDS(lichall.df.ss, try=100)#may tries because solutions for bryo and vasc were unstable. time is on axis 2, so what has it put on axis 1?
 lichnmds.ss.sites<-as.data.frame(scores(lichnmds.ss, display="sites"))
 lichnmds.ss.sites$plot<-substr(row.names(lichnmds.ss.sites),1,3)
 lichnmds.ss.sites$year<-substr(row.names(lichnmds.ss.sites),4,7)
 names(lichnmds.ss.sites)[1:2]<-c("lichnmds1","lichnmds2")
-ords.ss.sites<-merge(lichnmds.ss.sites, Summaries.ss.PP[,c("Picea1992", "Picea2015","Transition")], by.x="plot", by.y=0) 
 
-set.seed(1)
-bryonmds.ss<-metaMDS(bryoall.df.ss)#I set the seed because the solution was unstable and did not converge 1 in every 5 runs. I could test a range of seeds and take the lowest stress solution.
+set.seed(2)#taken from rnorm*10
+bryonmds.ss<-metaMDS(bryoall.df.ss, try=100)#many tries because it was struggling to converge
 bryonmds.ss.sites<-as.data.frame(scores(bryonmds.ss, display="sites"))
 bryonmds.ss.sites$plot<-substr(row.names(bryonmds.ss.sites),1,3)
 bryonmds.ss.sites$year<-substr(row.names(bryonmds.ss.sites),4,7)
 names(bryonmds.ss.sites)[1:2]<-c("bryonmds1","bryonmds2")
 rownames(ords.ss.sites)<-paste(ords.ss.sites$plot, ords.ss.sites$year, sep="")
-ords.ss.sites<-merge(ords.ss.sites, bryonmds.ss.sites, by=0)
 
-set.seed(5)
-vascnmds.ss<-metaMDS(vascall.df.ss)#I set the seed because the solution was unstable and did not converge 4!! in every 5 runs. I had to test a range of seeds and take the lowest stress solution.
+
+set.seed(1)#taken from rnorm*10
+vascnmds.ss<-metaMDS(vascall.df.ss, try=100)#many tries because it was struggling to converge.
 vascnmds.ss.sites<-as.data.frame(scores(vascnmds.ss, display="sites"))
 vascnmds.ss.sites$plot<-substr(row.names(vascnmds.ss.sites),1,3)
 vascnmds.ss.sites$year<-substr(row.names(vascnmds.ss.sites),4,7)
 names(vascnmds.ss.sites)[1:2]<-c("vascnmds1","vascnmds2")
-rownames(ords.ss.sites)<-paste(ords.ss.sites$plot, ords.ss.sites$year, sep="")
+
+ords.ss.sites<-merge(lichnmds.ss.sites, Summaries.ss.PP[,c("Picea1992", "Picea2015","Transition")], by.x="plot", by.y=0)
+ords.ss.sites<-merge(ords.ss.sites, bryonmds.ss.sites, by=0)
+rownames(ords.ss.sites)<-paste(ords.ss.sites$plot, ords.ss.sites$year, sep="")#right now this doesn't run but the merge doesn't fail.
 ords.ss.sites<-merge(ords.ss.sites, vascnmds.ss.sites, by.x="Row.names", by.y=0)
 
-
-
 library(ggplot2)
-
 #first, all at once. this is currently not the subset!!
 x11()
 plotty<-ggplot(giantnmds.sites, aes(NMDS1, NMDS2, colour=year))+  geom_point()
@@ -105,17 +105,12 @@ plotty+facet_grid(-Picea1992~-Picea2015)
 savePlot("PP NMDS facets_all groups.emf", type="emf")
 savePlot("PP NMDS facets_all groups.pdf", type="pdf")#still needs to be done: mess with the aesthetics to get crosshairs, get the faceting variable on each side not just the values of the faceting variable, can it make blank space for facets containing no data? Lichens wise, does it plot axis 1 as the dominant? Because for lichens it plots time as axis 2. 
 
-#then a slightly crazy double-nested plot. Not working because facet overrides mfrow
-
+#then a slightly crazy double-nested plot. 
 plot.lich<-ggplot(ords.ss.sites, aes(lichnmds1, lichnmds2, colour=year))+  geom_point()+facet_grid(-Picea1992~-Picea2015)+ coord_fixed()
 plot.bryo<-ggplot(ords.ss.sites, aes(bryonmds1, bryonmds2, colour=year))+  geom_point()+facet_grid(-Picea1992~-Picea2015)+ coord_fixed()
 plot.vasc<-ggplot(ords.ss.sites, aes(vascnmds1, vascnmds2, colour=year))+geom_point()+facet_grid(-Picea1992~-Picea2015)+ coord_fixed()
-
-
-library(cowplot)
-x11(12,4)
-PP_three_nmds_ss<-plot_grid(plot.lich, plot.bryo, plot.vasc, ncol = 3, nrow = 1)
-#first problem: not drawing to x11. Second problem: therefore I can't see if I've got the positioning right. 
+library(cowplot)#cowplot is an extension to ggplot, particularly good for multiple plots
+PP_three_nmds_ss<-plot_grid(plot.lich, plot.bryo, plot.vasc, ncol = 3, nrow = 1)#does not plot visibly. This had to be used because facets overrides mfrow and it gets confused.
 save_plot("PP_three_nmds_ss.png", plot = PP_three_nmds_ss, ncol=3, nrow=1)# save_plot is cowplot's version of savePlot. It's very clever, it assumes all plots are 1:1 x:y ratio (you can change that) then works out the aspect ratio for the whole thing from there.
 
 ####exploratory analyses for ordination problems
