@@ -1,7 +1,7 @@
 #####################################################################################
 #tidy up suumitdiv
 
-summitdiv.df<-read.csv("C:\\Users\\SiriVH\\Dropbox\\KlimaVegFolder\\summits_gradient_siri.xlsx_only two recordings.csv", header=T, sep=';')
+summitdiv.df<-read.csv("data\\SummitDiv.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
 
 summitdiv.df<-summitdiv.df[!(summitdiv.df$Mountain_name==""),]
 summitdiv.df<-summitdiv.df[!is.na(summitdiv.df$find_altitude),]#why are there some NAs in find altitude?
@@ -12,148 +12,76 @@ library(dplyr)
 library(tidyr)
 
 
-step1 <- alps %>%
+alps <- alps %>%
   mutate(period_record = ifelse(year_of_record < 2000, "old", "new")) %>%
   select(-year_of_record) %>%
   group_by(Mountain_name, full_species_name, period_record) %>%
   slice(which.max(find_altitude)) %>%
   spread(key = period_record, value = find_altitude)
 
+colnames(alps)<-c("mountain", "species", "new", "old")
 
+alps<-alps[,1:4]  #UGLY 
 
-
+alps$diff <- alps$new - alps$old
 
 ################################################################################################
-#getting rid of diff.col
+#getting rid of diff.col in KlimaVeg
 
-klimaveg<-read.csv("C:\\Users\\SiriVH\\Dropbox\\KlimaVegFolder\\KlimaVeg.csv", header=T, sep=';')
+klimaveg<-read.csv("data\\KlimaVeg.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
 
-klimaveg.nod<-klimaveg[,!ends_with()]
-
-select()
-
-klimaveg.nod<-select(klimaveg, -ends_with("d"))
-
-names(klimaveg)
-
-#################################################################################################
-
-
-#first the endswith to pull out 'new' and 'old'
+klimaveg.nod<-select(klimaveg, -ends_with("d")) %>%
+  rename(species = Species)
 
 klimaveg.m <- select(klimaveg.nod, ends_with ("m"), ends_with("s"))
-klimaveg.f<-select(klimaveg.nod, ends_with ("f"), ends_with("s"))
-
-
-
+klimaveg.f <- select(klimaveg.nod, ends_with ("f"), ends_with("s"))
 
 names(klimaveg.m)<-substr(names(klimaveg.m),1,4)
 names(klimaveg.f)<-substr(names(klimaveg.f),1,4)                       
 
+new<-gather(klimaveg.m, key=mountain, value=score, -spec)
+old<-gather(klimaveg.f, key=mountain, value=score, -spec)
 
-new<-gather(klimaveg.m, key=mountain, value=score, -Spec)
-old<-gather(klimaveg.f, key=mountain, value=score, -Spec)
+colnames(new)[3]<-"new"
+colnames(old)[3]<-"old"
 
+scandes <- bind_cols(new, select(old, old)) %>%
+  rename(species = spec) %>%
+  mutate(old = gsub("\\+", "", old), old = as.integer(old))
 
-################################################################################################
+scandes$diff <- scandes$new - scandes$old
 
+###############################################################################################
+##Legge til metadata
 
+meta_scandes <- read.csv("data\\Meta_scandes.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
+elevation_scandes <- read.csv("data\\elevation.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
+intensity_scandes <- read.csv("data\\intensity.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
 
+meta_scandes <- unique(meta_scandes[,c("Fjell_name", "Turisme_mengde", "Område_name")])
+meta_scandes <- plyr::rename(meta_scandes, c("Fjell_name"="mountain", "Turisme_mengde"="tourism", "Område_name"="area"))
+elevation_scandes <- elevation_scandes[,c("mountain", "elevaton_summit")]
+meta_scandes <- merge(meta_scandes, elevation_scandes, by=c("mountain")) 
+meta_scandes <- merge(meta_scandes, intensity_scandes, by=c("mountain")) 
+meta_scandes <- plyr::rename(meta_scandes, c("elevaton_summit"="altitude", "grazing_intensity"="grazing"))
 
+meta_alps <- read.csv2("data\\Meta_alps.csv", header=TRUE, sep=';', stringsAsFactors = FALSE)
+meta_alps <- unique(meta_alps[,c("Mountain_name", "mtn_altitude", "visitor_freq", "Herbivore_freq")])
 
+meta_alps <- meta_alps[-c(66, 276, 346, 359), ] #UGLY magic numbers
 
+meta_alps <- plyr::rename(meta_alps, c("Mountain_name"="mountain", "mtn_altitude"="altitude", "visitor_freq"="tourism", "Herbivore_freq"="grazing"))
+meta_alps$area <- "ALPS"
 
 
 
+#############################################################################################
+## merging
 
-step2a<-step1 %>% 
-  group_by(Mountain_name,full_species_name,find_altitude) %>%
-  slice(which.min(year_of_record))#is not necessarily finding the oldest - see step2a[step2a$full_species_name=="Trisetum_distichophyllum",] which returns three years on one mountain.
+euro_scandes <- merge(scandes, meta_scandes, by=c("mountain"))
+euro_alps <- merge(alps, meta_alps, by=c("mountain"))
 
-step2b<-step1 %>% 
-  group_by(Mountain_name,full_species_name,find_altitude) %>%
-  slice(which.max(year_of_record))
+###WORKING FROM HERE AND DOWN####
 
+euro <- bind_rows(euro_alps, euro_scandes)
 
-step2a$fuckyou_r<-paste(step2a$Mountain_name, step2a$full_species_name)
-step2b$fuckyou_r<-paste(step2b$Mountain_name, step2b$full_species_name)
-
-step3<-merge(step2a,step2b, by="fuckyou_r")
-
-
-
-
-
-#####################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-eurodata<-read.csv("C:\\Users\\naz001\\Dropbox\\KlimaVegFolder\\EURODATA_RAW.csv", header=T, sep=';')
-colnames(eurodata)
-
-summitdiv.df<-read.csv("C:\\Users\\naz001\\Dropbox\\KlimaVegFolder\\SummitDiv.csv", header=T, sep=';')
-
-install.packages('tidyr')
-library(tidyr)
-install.packages('dplyr')
-library(dplyr)
-
-summitdiv<-data.frame(summitdiv.df$Mountain_name, summitdiv.df$find_altitude, summitdiv.df$year_of_record, summitdiv.df$full_species_name)
-
-year<-summitdiv$summitdiv.df.year_of_record
-
-summitdiv<-data.frame(mountain, year, species, recording)
-
-summitsummary<-aggregate(summitdiv, by=list(mountain, year, species), function (x){max(x)},x=summitdiv$recording)
-
-summitdiv<-unique(summitdiv)
-
-step1<-ddply(summitdiv[,c(1,2,3,4)], c("mountain","year","species"),function(df)max(df$recording, na.rm=TRUE))
-
-
-
-year<-paste(summitdiv$summitdiv.Mountain_name, summitdiv$summitdiv.year_of_record)
-
-summitdiv<-data.frame(summitdiv$summitdiv.find_altitude, summitdiv$summitdiv.full_species_name, year)
-
-spread(summitdiv, year, summitdiv.summitdiv.find_altitude)
-newdata<-spread(summitdiv, year, summitdiv.summitdiv.find_altitude)
-
-species<-summitdiv$summitdiv.summitdiv.full_species_name
-recording<-summitdiv$summitdiv.summitdiv.find_altitude
-
-summitdiv<-data.frame(recording, species, year)
-
-spread(summitdiv, year, recording)
-
-
-
-summitdiv<-unique(summitdiv)
-
-aggdata <-aggregate(mtcars, by=list(cyl,vs), FUN=mean, na.rm=TRUE)
-
-
-library(plyr)
-#example code: ddply(dd, c("dim1","dim2"), function(df)mean(df$v1))
-
-
-
-
-
-
-
-summitdiv<-unique(summitdiv[,c('species','year')])
-
-
-
-
-spread(summitdiv, year, recording)
