@@ -102,5 +102,12 @@ monthly_all_temperatures %>%
   facet_wrap(~month, scale = "free_y")
 
 
+Bialowieza_monthly_lag <- monthly_all_temperatures %>% 
+  filter(name == "Białowieża") %>%
+  ungroup() %>%
+  mutate(year = ifelse(month %in% month.name[8:12], year - 1, year),
+         month = factor(month, level = month.name[c(8:12, 1:7)]))
+
+
 ##save data
-save(regionalData, BialowiezaDaily, monthly_all_temperatures, file = "phenology/data/downloaded_weather.Rdata")
+save(regionalData, BialowiezaDaily, monthly_all_temperatures, Bialowieza_monthly_lag, file = "phenology/data/downloaded_weather.Rdata")
