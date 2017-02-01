@@ -5,30 +5,34 @@ library("vegan")
 
 if(interactive()){
   source("phenology/load_phenology.R")
-  source("phenology/load_weather.R")
+  load("phenology/data/downloaded_weather.Rdata")
 } else {
   source("load_phenology.R")
 }
 
 ## ---- phenologyPlots
-#pheology plots
-ggplot(phenology2 %>% filter(species == "Daphne mezereum"), aes(x = pentad, y = decile, colour = year)) + geom_line() + facet_grid(transect~stage)
 
 ## ---- Allium_ursinum
-ggplot(filter(phenology2, species ==  "Allium ursinum", stage < 6), aes(x = doy, y = decile, colour = year)) + 
-  geom_line() + 
-  facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) +   
-  scale_x_date(name = "Month", date_breaks = "3 month", date_labels = "%b") +
-  th +
-  theme(axis.text.x  = element_text(angle = 45, hjust = 1)) 
+#pheology plots
+pheno_plot <- filter(phenology2, species ==  "Allium ursinum", stage < 6) %>%
+  ggplot(aes(x = doy, y = decile, colour = year, group = year)) + 
+    geom_line() + 
+    facet_grid(transect~stage, labeller = labeller(stage = as_labeller(stage_names))) +   
+    scale_x_date(name = "Month", date_breaks = "3 month", date_labels = "%b") +
+    th +
+    theme(axis.text.x  = element_text(angle = 45, hjust = 1)) 
+print(pheno_plot)
+
+## ---- other_species_pheno
+pheno_plot %+% filter(phenology2, species == "Daphne mezereum", stage < 6) 
 
 ## ---- autumn_flowers
-autumn <-ggplot(filter(phenology2, species == "Daphne mezereum", stage == 3, decile > 0), aes(x = doy, y = year, colour = decile)) + 
+autumn <- filter(phenology2, species == "Daphne mezereum", stage == 3, decile > 0) %>%
+  ggplot(aes(x = doy, y = year, colour = decile)) + 
   geom_point() + 
-  facet_grid(transect~.) + 
+  facet_grid(transect ~ .) + 
   scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") 
 
-  
 autumn
 autumn %+% filter(phenology2, species == "Anemone nemorosa", stage == 3, decile > 0)
 autumn %+% filter(phenology2, species == "Oxalis acetosella", stage == 3, decile > 0)
@@ -41,14 +45,16 @@ autumn %+% filter(phenology2, species == "Urtica dioica", stage == 1, decile > 0
 phenology2 %>% 
   filter(stage == 3) %>%
   group_by(species, transect) %>% 
-  summarise(nyear = n_distinct(year)) %>% ggplot(aes(x = nyear)) + geom_histogram()
+  summarise(nyear = n_distinct(year)) %>% 
+  ggplot(aes(x = nyear, fill = transect)) + 
+  geom_histogram()
   
 #species phenology - infrequent taxa removed
 phenology2 %>% 
   filter(stage == 4) %>%
   group_by(species) %>% 
   mutate(nyear = n_distinct(year)) %>%
-  filter(nyear >10) %>%
+  filter(nyear > 10) %>%
   group_by(year, species, transect, pentad) %>% 
   summarise(mdecile = mean(decile, na.rm = TRUE)) %>% 
   filter(mdecile > 0) %>%
