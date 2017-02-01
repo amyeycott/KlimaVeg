@@ -104,15 +104,14 @@ first_phenology <- phenology2 %>%
   filter(decile > 0, stage < 6) %>% 
   group_by(year, species, stage, transect) %>% 
   summarise(first = first(doy), last = last(doy), duration = last - first, max = max(decile), maxDate = doy[which.max(decile)]) %>%
-  merge(
-    with(phenology2,
-      expand.grid(
-        year  = unique(year),
-        species = unique(species),
-        stage = 1:5,
-        transect = paste0("t", 36:39)
-      ) 
-    ), all = TRUE)
+  full_join(y = with(phenology2,
+                  expand.grid(
+                    year  = unique(year),
+                    species = unique(species),
+                    stage = 1:5,
+                    transect = paste0("t", 36:39)
+                  ) 
+    ))
 
 first_flowering <- first_phenology %>% 
   filter(stage == 3, !is.na(first)) %>%
@@ -121,7 +120,10 @@ first_flowering <- first_phenology %>%
   filter(nyear > 10) %>%
   mutate(median = median(first, na.rm = TRUE)) %>%
   ungroup() %>%
-  mutate(timing = cut(as.vector(median), breaks = quantile(as.vector(median), probs = seq(0, 1, 1/3), na.rm = TRUE), labels = c("Early", "Mid", "Late"), include.lowest = TRUE)) %>%
+  mutate(timing = cut(as.vector(median), 
+                      breaks = quantile(as.vector(median), probs = seq(0, 1, 1/3), na.rm = TRUE), 
+                      labels = c("Early", "Mid", "Late"), 
+                      include.lowest = TRUE)) %>%
   select(-stage)
 
     
