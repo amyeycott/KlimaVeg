@@ -97,3 +97,16 @@ all_temperatures <- meanTemperature %>%
 
 filter(all_temperatures, year(date) == 1970) %>% 
   ggplot(aes(x = date, y = tavg, colour = name)) +geom_line()
+
+#ALL MONTHLY
+monthly_all_temperatures <- all_temperatures %>% 
+  filter(date >= "1964-01-01", date <= "2015-12-31") %>%
+  mutate(month = month(date), year = year(date)) %>%
+  group_by(name, id, month, year) %>%
+  summarise(tavg = mean(tavg, na.rm = TRUE)) %>%
+  mutate(date = as.Date(paste(year, month, 15, sep = "-")))
+
+monthly_all_temperatures  %>% 
+  ggplot(aes(x = date, y = tavg, colour = name)) +
+  geom_line() + 
+  facet_wrap(~month, scale = "free_y")
