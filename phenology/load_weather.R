@@ -27,7 +27,6 @@ monthly <- weather %>%
   group_by(year, month) %>% 
   summarise(temperature = mean(TMean, na.rm = TRUE), precipitation = sum(ppt)) %>%
   gather(key = "variable", value = "value", -year, -month)
-message("line30")
 
 #last day of snow
 lastSnow <- weather %>%
