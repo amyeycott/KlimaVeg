@@ -44,20 +44,21 @@ levels(Bialystok$element)
 regionalData <- stations$Białowieża %>% 
   filter(distance < 100) %>%
   group_by(id) %>%
-  do(cbind(select(., name), ghcnd_search(.$id, var = "TAVG")$tavg)) 
+  do(cbind(select(., name), ghcnd_search(.$id, var = "TAVG")$tavg)) %>% 
+  mutate(tavg = tavg/10)
 
 regionalData %>% filter(year(date) == 2000) %>% 
-  ggplot(aes(x = date, y = tavg/100, colour = name, group = name)) + geom_line()
+  ggplot(aes(x = date, y = tavg, colour = name, group = name)) + geom_line()
 
 regionalData %>%  
-  ggplot(aes(x = date, y = tavg/100, colour = name, group = name)) + geom_line()
+  ggplot(aes(x = date, y = tavg, colour = name, group = name)) + geom_line()
 
 #monthly
 
 monthlyRegionalData <- regionalData %>% 
   mutate(month = month(date), year = year(date)) %>%
   group_by(name, id, month, year) %>%
-  summarise(tavg = mean(tavg, na.rm = TRUE)/100) %>%
+  summarise(tavg = mean(tavg, na.rm = TRUE)) %>%
   mutate(date = as.Date(paste(year, month, 15, sep = "-")))
 
 monthlyRegionalData %>% 
@@ -67,6 +68,32 @@ monthlyRegionalData %>%
 
 
 ## Bialowieza data from 
-library(rvest)
+library("RCurl")
+library("readr")
+#authentic <- "richard.telford@uib.no:Pa55w0rd"#not real password
+#save(authentic, file = "phenology/data/authentic.Rdata")
+load("phenology/data/authentic.Rdata")#
 
 
+meanTemperature <- plyr::ldply(seq(from = as.Date("1964-1-1"), to = as.Date("2015-12-31"), by = 7), function(D){
+  url <- paste0("https://dane.imgw.pl/1.0/pomiary/cbdh/252230120-B100B007CD/tydzien/", D,"?format=csv")
+  Sys.sleep(0.9)#don't hit server too hard
+  read_delim(getURL(url, userpwd = authentic), delim = ";")
+}, .progress = "text")
+
+save(meanTemperature, file = "phenology/data/BialowiezaMeanTemp.Rdata")
+
+
+
+meanTemperature %>% ggplot(aes(x = data, y = wartosc))  + geom_line()
+meanTemperature %>% ggplot(aes(x = wartosc))  + geom_histogram()
+
+## compare with regional data
+all_temperatures <- meanTemperature %>% 
+  rename(tavg = wartosc, date = data) %>% 
+  mutate(name = "Białowieża") %>%
+  mutate(date = as.Date(format(date, "%Y-%m-%d"))) %>%
+  bind_rows(regionalData)
+
+filter(all_temperatures, year(date) == 1970) %>% 
+  ggplot(aes(x = date, y = tavg, colour = name)) +geom_line()
