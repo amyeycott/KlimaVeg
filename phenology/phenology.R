@@ -198,7 +198,8 @@ firstflowerSnowCor %>% filter(variable == "tavg") %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ## ---- climateRegression
-first_floweringClim %>% filter(variable == "tavg", month  == "April") %>% 
+mo <- "April"
+first_floweringClim %>% filter(variable == "tavg", month  == mo) %>% 
   filter(species < "Carex") %>%
   ggplot(aes(x = value, y = first, colour = transect)) + 
     geom_point() + geom_smooth(method = "lm", se = FALSE) + 
