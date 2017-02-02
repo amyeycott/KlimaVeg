@@ -62,8 +62,9 @@ library("readr")
 #save(authentic, file = "phenology/data/authentic.Rdata")
 load("phenology/data/authentic.Rdata")#
 
-
-meanTemperature <- plyr::ldply(seq(from = as.Date("1964-1-1"), to = as.Date("2015-12-31"), by = 7), function(D){
+startDate <- as.Date("1964-1-1")
+endDate <- as.Date("2015-12-31")
+meanTemperature <- plyr::ldply(seq(from = startDate, to = endDate, by = 7), function(D){
   url <- paste0("https://dane.imgw.pl/1.0/pomiary/cbdh/252230120-B100B007CD/tydzien/", D,"?format=csv")
   Sys.sleep(0.9)#don't hit server too hard
   read_delim(getURL(url, userpwd = authentic), delim = ";")
@@ -73,6 +74,7 @@ save(meanTemperature, file = "phenology/data/BialowiezaMeanTemp.Rdata")
 
 BialowiezaDaily <- meanTemperature %>% 
   rename(value = wartosc, date = data) %>% 
+  filter(date >= startDate, date <= endDate) %>%
   mutate(name = "Białowieża",
          date = as.Date(format(date, "%Y-%m-%d")),
          variable = "tavg")
