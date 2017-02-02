@@ -161,8 +161,8 @@ first_flowering %>%
 
 ## ----mergeClimateCorrelate
 #merge with climate
-first_floweringClim <- first_flowering %>% 
-  merge(monthlylag)
+first_floweringClim <- left_join(first_flowering , Bialowieza_monthly_lag)%>%
+  select(-name, -id)
 
 ##correlate climate with phenology
 firstflowerSnowCor <- first_floweringClim %>%
@@ -171,7 +171,7 @@ firstflowerSnowCor <- first_floweringClim %>%
 
 #all phenological 
 firstflowerSnowCor <- first_floweringClim %>%
-  select(-nyear, - median, -year) %>%
+  select(-nyear, - median, -year, -date) %>%
   mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
   group_by(species, variable, month, timing, transect) %>%
   do(as.data.frame(t(cor(.[, !names(.) %in% c("species", "transect", "timing", "month", "variable", "value")], .$value, use = "pair"))))
@@ -189,16 +189,16 @@ ggplot(firstflowerSnowCor, aes(x = month, y = first, fill = timing)) +
      theme(axis.text.x = element_text(angle = 90)) 
 
 ## ----firstfloweringCor
-firstflowerSnowCor %>% filter(variable == "temperature") %>% 
+firstflowerSnowCor %>% filter(variable == "tavg") %>% 
   ggplot(aes(x = month, y = first, fill = timing)) + 
   geom_boxplot() +
-  facet_grid(transect~., space = "free_x", scales = "free_x") + 
+  facet_grid(transect~.) + 
   labs(x = "", y = "Correlation") + 
   th +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ## ---- climateRegression
-first_floweringClim %>% filter(variable == "temperature", month  == "March") %>% 
+first_floweringClim %>% filter(variable == "tavg", month  == "April") %>% 
   filter(species < "Carex") %>%
   ggplot(aes(x = value, y = first, colour = transect)) + 
     geom_point() + geom_smooth(method = "lm", se = FALSE) + 
@@ -211,14 +211,14 @@ first_floweringClim %>% filter(variable == "temperature", month  == "March") %>%
 ###duration
 ggplot(firstflowerSnowCor, aes(x = month, y = duration, fill = timing)) + 
   geom_boxplot() +
-  facet_grid(transect~variable, space = "free_x", scales = "free_x") +
+  facet_grid(transect ~ .) +
   theme(axis.text.x = element_text(angle = 90))
 
 
 ###maxima
 ggplot(firstflowerSnowCor, aes(x = month, y = max, fill = timing)) + 
   geom_boxplot() +
-  facet_grid(transect~variable, space = "free_x", scales = "free_x") +
+  facet_grid(transect ~ .) +
   theme(axis.text.x = element_text(angle = 90))
 
 
@@ -226,7 +226,7 @@ ggplot(firstflowerSnowCor, aes(x = month, y = max, fill = timing)) +
 #regression of phenology temperature in each month
 
 firstflowerReg <- first_floweringClim %>%
-  filter(variable == "temperature") %>%
+  filter(variable == "tavg") %>%
   select(-nyear, -year) %>%
   mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
   group_by(species, month, median, timing, transect) %>%
@@ -252,8 +252,8 @@ print(g + th)
 
 ## ---- keepingUp2
 
-g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate, ymax = -1/(Estimate + 1.96 * `Std. Error`), ymin = -1/(Estimate - 1.96 * `Std. Error`)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
-  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate), colour = "red", inherit.aes = FALSE) +
+g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
+  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "red", inherit.aes = FALSE) +
   coord_cartesian(ylim = c(-20, 5))
 
 print(g2 + th)
