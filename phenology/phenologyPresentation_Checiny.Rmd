@@ -1,0 +1,185 @@
+---
+title: "Phenological response of the Białowieża Forest understorey to climate change"
+author: "Richard J. Telford and Bogdan Jaroszewicz"
+date: "25th January 2017"
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE, echo = FALSE, cache = FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.4, fig.width = 8)
+knitr::read_chunk("weather_plots.R")
+knitr::read_chunk("phenology.R")
+
+```
+
+## Outline
+
+- Climate change in Białowieża Forest
+- Understorey herb phenology
+- Can species phenology keep up with climate change?
+
+
+## Location
+```{r map, cache = TRUE}
+library("ggmap")
+library("grid")
+library("ggsn")
+source("R/scalebar.R")
+library("rgdal")
+library("broom")
+
+parkBorder <- readOGR(dsn = "data/outline/WGS84/", layer = "strefy_ochrony_wgs84", verbose = FALSE)
+parkBorder <- tidy(parkBorder)
+
+dat <- read.table(header = TRUE, sep = ",", text = "
+  Long, Lat, what
+  23.894614, 52.744313, Phenology plots
+  23.85,  52.71667, Climate station"
+)
+
+#main map
+map <- get_googlemap(center = unlist(dat[1, 1:2]), zoom = 12, maptype = "hybrid", style = 'feature:road|visibility:off&style=feature:administrative.locality|element:labels|visibility:on&style=feature:landscape|visibility&style=feature:landscape|element:labels|visibility:off&style=feature:poi|visibility:off&style=feature:transit|visibility:off')
+
+
+bb <- attr(map, "bb")
+bb2 <- data.frame(long = unlist(bb[c(2, 4)]), lat = unlist(bb[c(1,3)]))
+
+b <- ggmap(map) + 
+       geom_polygon(data = parkBorder, mapping = aes(x = long, y = lat, fill = id, group = group), alpha = 0.2, show.legend = FALSE) +
+       geom_point(data = dat, aes(x = Long, y = Lat, colour = what), size = 3) +
+       labs(x = "", y = "", colour = "Location") +
+       scalebar(bb2, dist = 1, dd2km = TRUE, model  = "WGS84", location = "bottomright", anchor = c(x = bb$ll.lon + 0.9 * (bb$ur.lon - bb$ll.lon), y = bb$ll.lat + 0.1 * (bb$ur.lat - bb$ll.lat)))
+
+#print(b)
+
+#insetmap
+insetmap <- map_data("world", "Poland")
+
+a <- ggplot() +
+      geom_map(data = insetmap, aes(x = long, y = lat, map_id = region), map = insetmap, colour = NA, fill = "grey60") +
+      geom_rect(data = bb, aes(xmin = ll.lon, xmax = ur.lon, ymin = ll.lat, ymax = ur.lat), colour = "red", fill = "red") +
+      coord_map() +
+      labs(x = NULL, y = NULL)
+
+#print maps
+grid.newpage()
+vp_b <- viewport(width = 1, height = 1, x = 0.5, y = 0.5)  # the larger map
+vp_a <- viewport(width = 0.4, height = 0.4, x = 0.8, y = 0.8)  # the inset in upper left
+print(b + theme_void(base_size = 18), vp = vp_b)
+print(a + theme_inset(), vp = vp_a)
+```
+
+## Climate change
+
+```{r loadWeather, include = FALSE}
+
+```
+```{r loadPhenology}
+```
+  
+```{r theme}
+#sets global theme for figures
+th <- theme_bw(base_size = 15)
+```
+
+```{r monthPlot}
+```
+<div class="notes">
+- regression for each month
+- 95 % confidence intervals in grey
+</div>
+
+
+
+## Warming is greatest January - August
+
+```{r tempChange}
+```
+
+<div class="notes">
+- Regression coefficients 
+- 95 % confidence intervals
+</div>
+
+
+## Phenology data
+
+
+- Four 2 x 50 m transects across a nutrient/moisture gradient
+- Tilio – carpinetum
+- Recorded every (5) 10 days for 52 years  
+- Phenological stages: vegetative, budding, flowering, fruiting, dispersal, dormant
+- Proportion of each species in each stage
+- 1-10 scale
+
+- Also photographs every two metres
+- estimates of canopy openness
+
+
+## Phenology Plots
+```{r out.width= 500}
+knitr::include_graphics(path = 'photographs/P1050121r.JPG')
+```
+
+## _Allium ursinum_ (Czosnek niedźwiedzi)
+```{r Allium_ursinum}
+```
+
+## Date of first flowering
+
+```{r first_flowering, include = FALSE}
+```
+
+```{r firstFloweringPlot}
+```
+
+## Correlation of first flowering with temperature
+
+```{r mergeClimateCorrelate}
+```
+```{r firstfloweringCor, fig.width=10}
+```
+
+## Regression of first flowering against March temperature
+
+```{r climateRegression, fig.width=10}
+```
+
+## Can phenological change keep up with climate?
+
+Regression of first flowering of _Allium ursinum_ with monthly temperatures
+
+```{r keepingUp1, fig.height= 5}
+```
+
+## Seasonal velocity
+
+```{r seasonalVelocity}
+```
+
+## _Allium ursinum_ keeping up?
+
+```{r keepingUp2}
+```
+
+## _Urtica dioica_ (Pokrzywa zwyczajna) keeping up? 
+
+```{r keepingUp3}
+```
+
+
+## Conclusions
+
+1. Enormous amount of data
+2. Strong relationships between plant phenology and temperature
+3. Many plants nearly keep up with temperature changes  
+4. Some do not (or only partially so).
+
+## Acknowledgements
+
+```{r out.width= 800}
+knitr::include_graphics(path = 'photographs/Welcome slide Chęciny.png')
+```
+
