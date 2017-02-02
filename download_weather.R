@@ -52,7 +52,7 @@ monthlyRegionalData <- regionalData %>%
 monthlyRegionalData %>% 
   ggplot(aes(x = date, y = value, colour = name)) +
   geom_line() + 
-  facet_wrap(~month, scale = "free_y")
+  facet_wrap(. ~ month, scale = "free_y")
 
 
 ## Bialowieza data from 
@@ -101,7 +101,7 @@ monthly_all_temperatures <- all_temperatures %>%
 monthly_all_temperatures %>% 
   ggplot(aes(x = date, y = value, colour = name)) +
   geom_line() + 
-  facet_wrap(~month, scale = "free_y")
+  facet_wrap(. ~ month, scale = "free_y")
 
 
 Bialowieza_monthly_lag <- monthly_all_temperatures %>% 
