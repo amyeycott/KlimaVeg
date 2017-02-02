@@ -199,10 +199,11 @@ firstflowerSnowCor %>% filter(variable == "tavg") %>%
 
 ## ---- climateRegression
 mo <- "April"
-first_floweringClim %>% filter(variable == "tavg", month  == mo) %>% 
+g <- first_floweringClim %>% filter(variable == "tavg", month  == mo) %>% 
   filter(species < "Carex") %>%
   ggplot(aes(x = value, y = first, colour = transect)) + 
-    geom_point() + geom_smooth(method = "lm", se = FALSE) + 
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE) + 
     labs(x = "Temperature °C", y = "Date of first flowering") +
     facet_wrap(~species, scale = "free_y") +
     th
