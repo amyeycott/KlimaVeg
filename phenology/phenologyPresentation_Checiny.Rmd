@@ -9,7 +9,7 @@ output:
 
 ```{r setup, include=FALSE, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.4, fig.width = 8)
-knitr::read_chunk("weather_plots.R")
+knitr::read_chunk("weather_plots_newData.R")
 knitr::read_chunk("phenology.R")
 
 ```
@@ -74,7 +74,6 @@ print(a + theme_inset(), vp = vp_a)
 ## Climate change
 
 ```{r loadWeather, include = FALSE}
-
 ```
 ```{r loadPhenology}
 ```
@@ -142,9 +141,13 @@ knitr::include_graphics(path = 'photographs/P1050121r.JPG')
 ```{r firstfloweringCor, fig.width=10}
 ```
 
-## Regression of first flowering against March temperature
 
 ```{r climateRegression, fig.width=10}
+```
+## Regression of first flowering against `r mo` temperature
+
+```{r climateRegressionPlot, fig.width=10}
+print(g)
 ```
 
 ## Can phenological change keep up with climate?
