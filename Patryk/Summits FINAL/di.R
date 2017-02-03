@@ -1,18 +1,18 @@
-patryk.df<-read.table("clipboard",header=T)
-elev.df<-read.table("clipboard",header=T)
-impact.df<-read.table("clipboard",header=T)
-traits.df<-read.table("clipboard",header=T)
-setwd("C:\\Users\\abc\\Desktop")
+patryk.df <- read.table("clipboard", header = TRUE)
+elev.df <- read.table("clipboard", header = T)
+impact.df <- read.table("clipboard", header = T)
+traits.df <- read.table("clipboard", header = T)
+#setwd("C:\\Users\\abc\\Desktop")
 names(patryk.df)
 
 dim(patryk.df)
 
-summit<-patryk.df[1,]
-spec<-patryk.df[-1,]
-a20<-(1:14)*2
-a19<-a20-1
-spec19<-spec[,a19]
-spec20<-spec[,a20]
+summit <- patryk.df[1, ]
+spec <- patryk.df[-1, ]
+a20 <- (1:14) * 2
+a19 <- a20 - 1
+spec19 <- spec[, a19]
+spec20 <- spec[, a20]
 
 na19<-NULL
 for(i in 1:14){
