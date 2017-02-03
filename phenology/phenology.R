@@ -258,7 +258,7 @@ g <- filter(firstflowerReg, species == "Allium ursinum") %>%
   geom_pointrange() +
   scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
   labs(y = "Effect, days/°C", xlab = "Month") +
-  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median, colour = transect), colour = "grey50", linetype = "dashed") +
+  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median, colour = transect), linetype = "dashed") +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") +
   transect_colours 
   
