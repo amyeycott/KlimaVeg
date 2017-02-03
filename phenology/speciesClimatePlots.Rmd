@@ -7,9 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.4, fig.width = 8)
-knitr::read_chunk("weather_plots.R")
+knitr::read_chunk("weather_plots_newData.R")
 knitr::read_chunk("phenology.R")
-
 ```
 
 ## Climate change
@@ -17,14 +16,23 @@ knitr::read_chunk("phenology.R")
 ```{r loadWeather, include = FALSE}
 
 ```
-```{r loadPhenology}
+```{r loadPhenology, cache = TRUE}
 ```
   
 ```{r theme}
 #sets global theme for figures
-th <- theme_bw(base_size = 15)
+th <- theme_bw(base_size = 11)
 ```
 
+```{r Allium_ursinum, fig.keep = "none"}
+```
+
+```{r, cache = TRUE}
+for(i in sort(unique(phenology2$species))){
+  p <- pheno_plot %+% filter(phenology2, species == i, stage < 6) + ggtitle(i)
+  print(p)
+}
+```
 ## Date of first flowering
 
 ```{r first_flowering, include = FALSE}
@@ -43,41 +51,29 @@ th <- theme_bw(base_size = 15)
 
 
 ## Can phenological change keep up with climate?
-```{r regressions}
-firstflowerReg <- first_floweringClim %>%
-  filter(variable == "temperature") %>%
-  select(-nyear, -year) %>%
-  mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
-  group_by(species, month, median, timing, transect) %>%
-  do(tidy(lm(first ~ value, data = .))[2, , drop = FALSE]) %>%
-  mutate(month2 = ymd(paste0("2017-", month, "-1")))
+```{r keepingUp1, fig.keep="none"}
+```
+  
+```{r seasonalVelocity, fig.keep = "none"}
+```
+  
+```{r keepingUp2, fig.keep="none"}
+```
 
-```
-  
-```{r seasonalVelocity}
-```
-  
-  
-```{r}  
+
+
+```{r}
 for( i in unique(firstflowerReg$species)){
-g <- filter(firstflowerReg, species == i) %>% 
-     mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
-                               transect == "t37" ~ month2 - 1,
-                               transect == "t38" ~ month2 + 1,
-                               transect == "t39" ~ month2 + 3))%>% 
-     ggplot(aes(x = month2, y = estimate, ymax = estimate + 1.96 * std.error, min = estimate - 1.96 * std.error, colour = transect)) +
-  geom_pointrange() +
-  scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
-  labs(y = "Effect, days/°C", xlab = "Month") +
-  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median), colour = "grey50", linetype = "dashed") +
-  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") 
+  dat <- filter(firstflowerReg, species == i) %>% 
+       mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
+                                 transect == "t37" ~ month2 - 1,
+                                 transect == "t38" ~ month2 + 1,
+                                 transect == "t39" ~ month2 + 3))
   
-
-g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate, ymax = -1/(Estimate + 1.96 * `Std. Error`), ymin = -1/(Estimate - 1.96 * `Std. Error`)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
-  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/Estimate), colour = "red", inherit.aes = FALSE) +
-  coord_cartesian(ylim = c(-20, 5))
-
-print(g2 + th + ggtitle(i))
+  g3 <- g2 %+% dat
+  h2 <- h %+% filter(first_flowering, species == i) + ggtitle(i) 
+  
+  cowplot::plot_grid(h2, g3,  nrow = 2, align = "v", rel_heights = c(1/3, 2/3)) %>% print()
 }
 ```
 
