@@ -40,6 +40,7 @@ autumn <- filter(phenology2, species == "Daphne mezereum", stage == 3, decile > 
 autumn
 autumn %+% filter(phenology2, species == "Anemone nemorosa", stage == 3, decile > 0)
 autumn %+% filter(phenology2, species == "Oxalis acetosella", stage == 3, decile > 0)
+autumn %+% filter(phenology2, species == "Carpinus betulus", stage == 3, decile > 0)
 
 #urtica dioica
 autumn %+% filter(phenology2, species == "Urtica dioica", stage == 3, decile > 0)
@@ -237,11 +238,17 @@ firstflowerReg <- first_floweringClim %>%
   mutate(first = as.vector(first), last = as.vector(last), maxDate = as.vector(maxDate)) %>%
   group_by(species, month, median, timing, transect) %>%
   do(tidy(lm(first ~ value, data = .))[2, , drop = FALSE]) %>%
-  mutate(month2 = ymd(paste0("2017-", month, "-1")))
+  mutate(month2 = ymd(paste0("2017-", month, "-1"))) %>%
+  ungroup() %>%
+  mutate(transect = factor(transect))
 
 
 
 ## ---- keepingUp2    
+transect_colours <- scale_colour_discrete(drop = FALSE)
+transect_fill <- scale_fill_discrete(drop = FALSE)
+
+
 g <- filter(firstflowerReg, species == "Allium ursinum") %>% 
      mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
                                transect == "t37" ~ month2 - 1,
@@ -251,13 +258,14 @@ g <- filter(firstflowerReg, species == "Allium ursinum") %>%
   geom_pointrange() +
   scale_x_date(name = "Month", date_breaks = "1 month", date_labels = "%b") +
   labs(y = "Effect, days/°C", xlab = "Month") +
-  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median), colour = "grey50", linetype = "dashed") +
-  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") 
+  geom_segment(aes(x = median, y = -Inf, yend = Inf, xend = median, colour = transect), colour = "grey50", linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") +
+  transect_colours 
   
 print(g + th)
 
-g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
-  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "red", inherit.aes = FALSE) +
+g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "grey40", inherit.aes = FALSE) +
+  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "grey40", inherit.aes = FALSE) +
   coord_cartesian(ylim = c(-20, 5)) +
   th +
   theme(plot.margin=unit(c(-0.2,1,1,1), "cm"))
@@ -270,6 +278,7 @@ h <- first_flowering %>%
   geom_histogram() +
   labs(y = "Number of years") +
   scale_x_date(limits = range(firstflowerReg$month2), name = "", date_breaks = "1 month", date_labels = "%b") + 
+  transect_fill +
   th +
   theme(axis.text.x = element_blank(), plot.margin = unit(c(1,1,-0.2,1), "cm"))
 
