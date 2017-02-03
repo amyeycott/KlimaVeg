@@ -2,6 +2,10 @@
 #load libraries
 library("ggplot2")
 library("vegan")
+library("broom")
+
+#set default theme
+th <- theme()
 
 if(interactive()){
   source("phenology/load_phenology.R")
@@ -237,7 +241,7 @@ firstflowerReg <- first_floweringClim %>%
 
 
 
-    
+## ---- keepingUp2    
 g <- filter(firstflowerReg, species == "Allium ursinum") %>% 
      mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
                                transect == "t37" ~ month2 - 1,
@@ -252,11 +256,11 @@ g <- filter(firstflowerReg, species == "Allium ursinum") %>%
   
 print(g + th)
 
-## ---- keepingUp2
-
 g2 <- g +  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "red", inherit.aes = FALSE) +
   geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "red", inherit.aes = FALSE) +
-  coord_cartesian(ylim = c(-20, 5))
+  coord_cartesian(ylim = c(-20, 5)) +
+  th +
+  theme(plot.margin=unit(c(-0.2,1,1,1), "cm"))
 
 print(g2 + th)
 
@@ -265,9 +269,11 @@ h <- first_flowering %>%
   ggplot(aes(x = first, fill = transect)) + 
   geom_histogram() +
   labs(y = "Number of years") +
-  scale_x_date(limits = range(firstflowerReg$month2), name = "", date_breaks = "1 month", date_labels = "%b")
-  
-cowplot::plot_grid(h + th, g2 + th,  nrow = 2, align = "v", rel_heights = c(1/3, 2/3))
+  scale_x_date(limits = range(firstflowerReg$month2), name = "", date_breaks = "1 month", date_labels = "%b") + 
+  th +
+  theme(axis.text.x = element_blank(), plot.margin = unit(c(1,1,-0.2,1), "cm"))
+
+cowplot::plot_grid(h, g2,  nrow = 2, align = "v", rel_heights = c(1/3, 2/3))
 
 
 ## ---- keepingUp3
