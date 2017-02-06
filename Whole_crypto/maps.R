@@ -1,27 +1,17 @@
 #this is an attempt to re-create the maps of Falinski.
-head(summaries.ss)
-summaries.ss$byrow<-as.numeric(as.factor(substr(rownames(summaries.ss),1,1)))#yuck
-summaries.ss$bycol<-as.numeric(substr(rownames(summaries.ss),2,3))
-coloury<-cbind(c("CA","CelA","PP","PQ","QP","TC"),c("lightskyblue", "darkviolet","lightgoldenrod","firebrick2","orange","green4"))
+source("turover_subset.R")
 
-#mapbase I'm using for 'proper' programming
+coloury<-as.data.frame(cbind(c("CA","CelA","PP","PQ","QP","TC"),c("lightskyblue1", "darkorchid","lightgoldenrod","indianred3","darkgoldenrod2","forestgreen"),c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), c("lightskyblue", "darkviolet","lightgoldenrod","firebrick","orange","green4")))
+names(coloury)<-c("Phytosociology_Latin", "Colour_softer","Community in 1992", "Colour_bolder")
+
+#mapbase for the subset
 mapbase.ss<-summaries.ss
 mapbase.ss$plot<-rownames(mapbase.ss)
 mapbase.ss<-merge(mapbase.ss[,c("plot","dominant","byrow","bycol")], coloury, by.x="dominant", by.y=1)
-names(mapbase.ss)<-c("Dominant_community_1992","Plot","Row","Column","Colourcode")
+mapbase.ss$Picea1992<-vascOld.fat$Picea_abies[!rownames (vascOld.fat)%in%dodgysquares]
+mapbase.ss$Picea2015<-vascNew.fat$Picea_abies[!rownames (vascOld.fat)%in%dodgysquares]
 
-#summaries.ss.maps$Viola<-vascNew.fat$Viola_riviniana[!rownames(vascNew.fat)%in%dodgysquares]#this is risky - it depends on there being the same order of plots between vascNew.fat and summaries.ss. Always check first!
-#summaries.ss.maps$Viscum<-vascNew.fat$Viscum_album[!rownames(vascNew.fat)%in%dodgysquares]
-
-x11();par(pin=c(2.0,2.8))               
-plot(byrow~bycol, data=summaries.ss.maps, col=as.character(summaries.ss.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-points(byrow~bycol, data=summaries.ss.maps, cex=(summaries.ss.maps$Viola*0.75), pch=16)
-savePlot("Very basic viola map_subset.png", type="png")
-plot(byrow~bycol, data=summaries.ss.maps, col=as.character(summaries.ss.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-points(byrow~bycol, data=summaries.ss.maps, cex=(summaries.ss.maps$Viscum*0.75), pch=16)
-savePlot("Very basic viscum map_subset.png", type="png")
-
-#summaries.maps I'm using to play so that I don't break anything
+#summaries.maps for not using the subset
 Summaries$byrow<-as.numeric(as.factor(substr(rownames(Summaries),1,1)))#yuck
 Summaries$bycol<-as.numeric(substr(rownames(Summaries),2,3))
 summaries.maps<-merge(Summaries, coloury, by.x="dominant", by.y=1)
@@ -29,8 +19,6 @@ summaries.maps$Viola<-vascNew.fat$Viola_riviniana#this is risky - it depends on 
 summaries.maps$Viscum_new<-vascNew.fat$Viscum_album
 summaries.maps$Picea1992<-vascOld.fat$Picea_abies
 summaries.maps$Picea2015<-vascNew.fat$Picea_abies
-
-
 
 x11();par(pin=c(2.2,3.0))    
 plot(byrow~bycol, data=summaries.maps, col=as.character(summaries.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
@@ -41,16 +29,20 @@ points(byrow~bycol, data=summaries.maps, cex=(summaries.maps$Viscum*0.75), pch=1
 savePlot("Very basic viscum map_wholecrypto.png", type="png")
 
 #For PP
-x11();par(mfrow=c(1,2), pin=c(2.2,3.0), xpd=NA, mar=c(8,3,1,0.1), mgp=c(2,0.5,0))
-plot(byrow~bycol, data=summaries.maps, col=as.character(summaries.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-text(x=10, y=15, "1992")
-points(byrow~bycol, data=summaries.maps, cex=(summaries.maps$Picea1992*0.75), pch=16)
-plot(byrow~bycol, data=summaries.maps, col=as.character(summaries.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-points(byrow~bycol, data=summaries.maps, cex=(summaries.maps$Picea2015*0.75), pch=16)
-text(x=10, y=15, "2015")
-legend(x=-6, y=-2, legend=coloury[,1], fill=coloury[,2], ncol=3, title="Phytosociological classification in 1992")
+x11(6,5);par(mfrow=c(1,2), pin=c(2.0,2.8), xpd=NA, mar=c(8,2,1,1), mgp=c(1,0.2,0), las=1, tcl=0)
+plot(byrow~bycol, data=mapbase.ss, col=as.character(mapbase.ss$Colour_softer), pch=15, cex=2.5, cex.axis=0.8, xlab="", ylab="", yaxt="n", xaxp=c(1,max(mapbase.ss$bycol),9))
+text(x=8.5, y=14, "1992", adj=0)
+axis(side=2, at=1:max(mapbase.ss$byrow), labels=LETTERS[1:max(mapbase.ss$byrow)], cex.axis=0.8)
+points(byrow~bycol, data=mapbase.ss, cex=(mapbase.ss$Picea1992*0.66), pch=16)
+plot(byrow~bycol, data=mapbase.ss[mapbase.ss$Picea1992!=mapbase.ss$Picea2015,], col=as.character(mapbase.ss$Colour_softer[mapbase.ss$Picea1992!=mapbase.ss$Picea2015]), pch=15, cex=2.4,cex.axis=0.8, xlab="", ylab="", ylim=c(1,max(mapbase.ss$byrow)), yaxt="n", xaxp=c(1,max(mapbase.ss$bycol),9))
+axis(side=2, at=1:max(mapbase.ss$byrow), labels=LETTERS[1:max(mapbase.ss$byrow)], cex.axis=0.8)
+points(byrow~bycol, data=mapbase.ss[mapbase.ss$Picea1992!=mapbase.ss$Picea2015,], cex=(mapbase.ss$Picea2015[mapbase.ss$Picea1992!=mapbase.ss$Picea2015]*0.66), pch=16)
+text(x=4, y=14, "2015 (changes only)", adj=0)
+legend(x=-13, y=-1, legend=coloury[,"Community in 1992"], fill=as.character(coloury[,"Colour_softer"]), ncol=2, title="Phytosociological classification in 1992", cex=0.8)
+legend(x=4.5, y=-1, legend=c( "> 10 individuals", "6 - 10 individuals","5 or fewer individuals"), pch=16, title="Spruce frequency", cex=0.8, pt.cex=c(3*0.66, 2*0.66, 1*0.66))
 
-savePlot("PP Very basic Picea map_wholecrypto.png", type="png")
+savePlot("PP Picea map_new 5th feb 2017.png", type="png")
+savePlot("PP Picea map_new 5th feb 2017.pdf", type="pdf")
 
 
 #####loop to create all maps####
