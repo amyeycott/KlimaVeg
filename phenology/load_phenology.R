@@ -1,9 +1,9 @@
 #load libraries
 library("readxl")
 library("tidyr")
-#library("plyr")
 library("dplyr")
 library("lubridate")
+library("assertthat")
 
 #load phenology
 
@@ -49,6 +49,7 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   #spp names 
   sppNames <- read_excel(paste0(path, transect$names))
   sppNames <- as.data.frame(sppNames)
+  assert_that(are_equal(sppNames[, 1], 1:nrow(sppNames))) # check spp ID are sequential
   phen$species <- sppNames[phen$sppCode, 2]# second col has spp data but multiple names
   phen$sppCode <- NULL
   
