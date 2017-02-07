@@ -121,7 +121,7 @@ x11()
 plotty<-ggplot(giantnmds.sites, aes(NMDS1, NMDS2, colour=year))+  geom_point()
 plotty+facet_grid(-Picea1992~-Picea2015)
 savePlot("PP NMDS facets_all groups.emf", type="emf")
-savePlot("PP NMDS facets_all groups.pdf", type="pdf")#still needs to be done: mess with the aesthetics to get crosshairs, get the faceting variable on each side not just the values of the faceting variable, can it make blank space for facets containing no data? Lichens wise, does it plot axis 1 as the dominant? Because for lichens it plots time as axis 2. 
+savePlot("PP NMDS facets_all groups.pdf", type="pdf")# for lichens it plots time as axis 2. 
 
 #then a slightly crazy double-nested plot. 
 #plot.lich<-ggplot(ords.ss.sites, aes(lichnmds1, lichnmds2, colour=year))+  geom_point()+facet_grid(-Picea1992~-Picea2015)+ coord_fixed()
@@ -141,24 +141,15 @@ plot.bryo<-ggplot(ords.ss.sites, aes(bryonmds1, bryonmds2, colour=year))+
 plot.vasc<-plot.bryo %+% ords.ss.sites+aes(vascnmds1, vascnmds2, colour=year)+
   labs(x="NMDS axis 1", y="NMDS axis 2") #%+% is a magic pipe which means 'take the code for this'
 
-
-
 source("strippyfunction.R")
+PP_two_nmds_ss<-plot_grid(strippyfunction(p=plot.bryo+theme_cowplot(font_size = 11)+ theme(legend.position="none")), strippyfunction(p=plot.vasc+theme_cowplot(font_size = 11)+ theme(legend.position="none")), ncol = 2, nrow = 1, labels=c("a) Bryophytes", "b) Vascular plants"), label_size=11)#does not plot visibly. This had to be used because facets overrides mfrow and it gets confused.
 
-legend_b <- get_legend(plot.bryo + theme(legend.position="bottom"))
-
-# add the legend underneath the row we made earlier. Give it 10% of the height
-# of one plot (via rel_heights).
-
-PP_two_nmds_ss<-plot_grid(strippyfunction(p=plot.bryo+theme_cowplot(font_size = 11)+ theme(legend.position="none")), strippyfunction(p=plot.vasc+theme_cowplot(font_size = 11)+ theme(legend.position="none")), ncol = 2, nrow = 1, labels=c("a) Bryophytes", "b) Vascular plants"), label_size=11)
+legend_b <- get_legend(plot.bryo + theme(legend.position="bottom"))# add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
 p <- plot_grid(PP_two_nmds_ss, legend_b, ncol = 1, rel_heights = c(1, .03))
-
-
-#does not plot visibly. This had to be used because facets overrides mfrow and it gets confused.
 x11(12,6)
 p
-save_plot("PP_two_nmds_ss.png", plot = PP_two_nmds_ss, ncol=2, nrow=1)# save_plot is cowplot's version of savePlot. It's very clever, it assumes all plots are 1:1 x:y ratio (you can change that) then works out the aspect ratio for the whole thing from there.
-save_plot("PP_two_nmds_ss.pdf", plot = PP_two_nmds_ss, ncol=2, nrow=1)
+save_plot("PP_two_nmds_ss.png", plot = p, ncol=2, nrow=1)
+save_plot("PP_two_nmds_ss.pdf", plot = p, ncol=2, nrow=1)# save_plot is cowplot's version of savePlot. It's very clever, it assumes all plots are 1:1 x:y ratio (you can change that) then works out the aspect ratio for the whole thing from there. But it ignores what's going on in the actual plotting window, and this is leading to it smooshing the labels into the plot. savePlot breaks with this kind of object. If I save as pdf directly from the plotting window I get what I want, but that is a terrible, terrible solution.
 
 
 #I want to add strips for year, 
