@@ -20,7 +20,7 @@ d2005$year <- 2005
 d2016$year <- 2016
 
 #combine datasets
-dall <- rbind.fill(d1990, d1998, d2005, d2016)
+dall <- plyr::rbind.fill(d1990, d1998, d2005, d2016)
 head(dall)
 
 #fat to thin
@@ -70,7 +70,7 @@ savePlot("PP DBH 2 years all spp.png", type="png")
 #the same as the previous one but messing with how it looks.
 x11(7,4)
 ggplot(dall2[!dall2$year=="2005"&!dall2$year=="1998",], aes(x = DBHclass, y = number, colour  = as.factor(year), linetype = stage))+
-  geom_line()+
+  geom_line(size = 1)+
   scale_y_log10(limits=c(1,max(dall2$number[!dall2$year=="2005"&!dall2$year=="1998"])))+
   scale_x_continuous(limits=c(1, 80))+
   facet_wrap(~ species, scales = "free")+
@@ -78,8 +78,7 @@ ggplot(dall2[!dall2$year=="2005"&!dall2$year=="1998",], aes(x = DBHclass, y = nu
   theme(strip.text = element_text(face = "italic"))+
   labs(colour="Year of survey", linetype="", x="D.b.h. (cm)", y="Number of stems")+
   scale_linetype(labels=c("Living standing","Snag"))+
-  scale_color_manual(values=c("dodgerblue","darkred"))
+  scale_color_manual(values=c("#3873AE","#EF9335"))
 savePlot("PP DBH 2 years all spp_newformat.png", type="png")
-
-
-#note, we appear to have a -1 in dbh?
+savePlot("PP DBH 2 years all spp_newformat.pdf", type="pdf")
+savePlot("PP DBH 2 years all spp_newformat.eps", type="eps")
