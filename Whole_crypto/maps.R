@@ -1,8 +1,15 @@
+library("assertthat")
+
 #this is an attempt to re-create the maps of Falinski.
 source("turover_subset.R")
 
-coloury<-as.data.frame(cbind(c("CA","CelA","PP","PQ","QP","TC"),c("lightskyblue1", "darkorchid","lightgoldenrod","indianred3","darkgoldenrod2","forestgreen"),c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), c("lightskyblue", "darkviolet","lightgoldenrod","firebrick","orange","green4")))
-names(coloury)<-c("Phytosociology_Latin", "Colour_softer","Community in 1992", "Colour_bolder")
+coloury <- data.frame(
+  Phytosociology_Latin = c("CA","CelA","PP","PQ","QP","TC"),
+  Colour_softer = c("lightskyblue1", "darkorchid","lightgoldenrod","indianred3","darkgoldenrod2","forestgreen"),
+  Community_in_1992 = c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), 
+  Colour_bolder = c("lightskyblue", "darkviolet","lightgoldenrod","firebrick","orange","green4"), 
+  stringsAsFactors = FALSE
+  )
 
 #mapbase for the subset
 mapbase.ss<-summaries.ss
@@ -15,6 +22,8 @@ mapbase.ss$Picea2015<-vascNew.fat$Picea_abies[!rownames (vascOld.fat)%in%dodgysq
 Summaries$byrow<-as.numeric(as.factor(substr(rownames(Summaries),1,1)))#yuck
 Summaries$bycol<-as.numeric(substr(rownames(Summaries),2,3))
 summaries.maps<-merge(Summaries, coloury, by.x="dominant", by.y=1)
+
+assert_that(rownames(summaries.maps) == rownames(vascNew.fat)) # will throw error if rownames are not identical
 summaries.maps$Viola<-vascNew.fat$Viola_riviniana#this is risky - it depends on there being the same order of plots between vascNew.fat and summaries.ss. Always check first!
 summaries.maps$Viscum_new<-vascNew.fat$Viscum_album
 summaries.maps$Picea1992<-vascOld.fat$Picea_abies
@@ -38,7 +47,7 @@ plot(byrow~bycol, data=mapbase.ss[mapbase.ss$Picea1992!=mapbase.ss$Picea2015,], 
 axis(side=2, at=1:max(mapbase.ss$byrow), labels=LETTERS[1:max(mapbase.ss$byrow)], cex.axis=0.8)
 points(byrow~bycol, data=mapbase.ss[mapbase.ss$Picea1992!=mapbase.ss$Picea2015,], cex=(mapbase.ss$Picea2015[mapbase.ss$Picea1992!=mapbase.ss$Picea2015]*0.66), pch=16)
 text(x=4, y=14, "2015 (changes only)", adj=0)
-legend(x=-13, y=-1, legend=coloury[,"Community in 1992"], fill=as.character(coloury[,"Colour_softer"]), ncol=2, title="Phytosociological classification in 1992", cex=0.8)
+legend(x=-13, y=-1, legend=coloury$Community_in_1992, fill=coloury$Colour_softer, ncol=2, title="Phytosociological classification in 1992", cex=0.8)
 legend(x=4.5, y=-1, legend=c( "> 10 individuals", "6 - 10 individuals","5 or fewer individuals"), pch=16, title="Spruce frequency", cex=0.8, pt.cex=c(3*0.66, 2*0.66, 1*0.66))
 
 savePlot("PP Picea map_new 5th feb 2017.png", type="png")
