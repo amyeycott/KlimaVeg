@@ -109,7 +109,7 @@ bryothin.withellens<-merge(easytab, bryo.status, by.x="Species_name", by.y="Spec
 library(dplyr)
 lich.weightmeanold<-old.wirths %>% 
   group_by(Site) %>%
-  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)#the dot is because it means "use the object named in the previos line" in hadlyspeak. Think of pipe as "feed into"
+  summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)#the dot is because it means "use the object named in the previous line" in hadlyspeak. Think of pipe as "feed into", where a little robot on the previous line delivers its completed task to the next robot
 lich.weightmeannew<-new.wirths %>% 
   group_by(Site) %>%
   summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)

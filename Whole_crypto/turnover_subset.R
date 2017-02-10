@@ -93,15 +93,15 @@ mapply(function(x,main){
 savePlot("Colonists by community plain for ppt.png", type="png")
 
 ####ANALYSES and SUMMARIES####
+#did richness go up?
 t.test(summaries.ss$lich.rich1992, summaries.ss$lich.rich2015, paired=TRUE)
 t.test(summaries.ss$bryo.rich1992, summaries.ss$bryo.rich2015, paired=TRUE)
 t.test(summaries.ss$vasc.rich1992, summaries.ss$vasc.rich2015, paired=TRUE)
 
-
-
 sapply(summaries.ss[1:21],FUN=mean )
 sapply(summaries.ss[1:21],FUN=sd)
 
+#a long way to get the richnesses etc for the table in the whole crypto paper
 dim(comp_old[!rownames(comp_old)%in%dodgysquares,colSums(comp_old[!rownames(comp_old)%in%dodgysquares]>0)])
 dim(comp_new[!rownames(comp_new)%in%dodgysquares,colSums(comp_new[!rownames(comp_new)%in%dodgysquares]>0)])
 dim(easytabx[substr(rownames(easytabx),4,7)=="1992"&!substr(rownames(easytabx),1,3)%in%dodgysquares,colSums(easytabx[substr(rownames(easytabx),4,7)=="1992"&!substr(rownames(easytabx),1,3)%in%dodgysquares,]>0)])
@@ -109,8 +109,11 @@ dim(easytabx[substr(rownames(easytabx),4,7)=="2015"&!substr(rownames(easytabx),1
 dim(vascOld.fat[!rownames(vascOld.fat)%in%dodgysquares,colSums(vascOld.fat[!rownames(vascOld.fat)%in%dodgysquares]>0)])
 dim(vascNew.fat[!rownames(vascNew.fat)%in%dodgysquares,colSums(vascNew.fat[!rownames(vascNew.fat)%in%dodgysquares]>0)])
 
-
-aggregate(lich.BCdiss~dominant, data=summaries.ss, FUN=mean)
+#is the number of communities a good explainer? Of anything?
+mapply(function(x){
+  tempy<-aov(x~ncomms, data=summaries.ss)
+  summary(tempy)
+  },x=summaries.ss[,1:59])
 
 ###observer effect?####
 x11(8,3); par(mfrow=c(1,3), pin=c(2,2))
