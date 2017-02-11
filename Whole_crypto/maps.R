@@ -13,34 +13,29 @@ coloury <- data.frame(
   stringsAsFactors = FALSE
   )
 
+#set up the coordinates for the squares
 #mapbase for the subset
-mapbase.ss<-summaries.ss
+mapbase.ss<-summaries.ss[,c("dominant", "ncomms")]#two columns as a lazy way to get a df output
 mapbase.ss$plot<-rownames(mapbase.ss)
+mapbase.ss$byrow<-as.numeric(as.factor(substr(rownames(mapbase.ss),1,1)))#yuck
+mapbase.ss$bycol<-as.numeric(substr(rownames(mapbase.ss),2,3))
 library(dplyr)
-mapbase.ss<-left_join(mapbase.ss[,c("plot","dominant","byrow","bycol")], coloury, by = c("dominant" = "Phytosociology_Latin"))
+mapbase.ss<-left_join(mapbase.ss, coloury, by = c("dominant" = "Phytosociology_Latin"))
 assert_that(all(mapbase.ss$plot == rownames(vascNew.fat[!rownames (vascNew.fat)%in%dodgysquares,])))#If this does not retunr 'true' then the next steps are illegal
 mapbase.ss$Picea1992<-vascOld.fat$Picea_abies[!rownames (vascOld.fat)%in%dodgysquares]
 mapbase.ss$Picea2015<-vascNew.fat$Picea_abies[!rownames (vascNew.fat)%in%dodgysquares]
 
 #summaries.maps for not using the subset
-Summaries$byrow<-as.numeric(as.factor(substr(rownames(Summaries),1,1)))#yuck
-Summaries$bycol<-as.numeric(substr(rownames(Summaries),2,3))
-Summaries$plot<-rownames(Summaries)
-summaries.maps<-left_join(Summaries[,c("dominant","byrow","bycol","plot")], coloury, by = c("dominant" = "Phytosociology_Latin"))#left_join is nicer than merge as it preserved the row order (at least in this case) This is broken
-
+summaries.maps<-Summaries[,c("dominant", "ncomms")]#this step preserves row names
+summaries.maps$byrow<-as.numeric(as.factor(substr(rownames(summaries.maps),1,1)))#yuck
+summaries.maps$bycol<-as.numeric(substr(rownames(summaries.maps),2,3))
+summaries.maps$plot<-rownames(summaries.maps)
+summaries.maps<-left_join(summaries.maps, coloury, by = c("dominant" = "Phytosociology_Latin"))#left_join is nicer than merge. But today is is losing row names.
 assert_that(all(summaries.maps$plot == rownames(vascNew.fat))) # will throw error if rownames are not identical
 summaries.maps$Viola<-vascNew.fat$Viola_riviniana#this is risky - it depends on there being the same order of plots between vascNew.fat and summaries.ss. Always check first that the previous line returns TRUE!
 summaries.maps$Viscum_new<-vascNew.fat$Viscum_album
 summaries.maps$Picea1992<-vascOld.fat$Picea_abies
 summaries.maps$Picea2015<-vascNew.fat$Picea_abies
-
-x11();par(pin=c(2.2,3.0))    
-plot(byrow~bycol, data=summaries.maps, col=summaries.maps$Colour_softer, pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-points(byrow~bycol, data=summaries.maps, cex=(summaries.maps$Viola*0.75), pch=16)
-savePlot("Very basic viola map_wholecrypto.png", type="png")
-plot(byrow~bycol, data=summaries.maps, col=as.character(summaries.maps$V2), pch=15, pin=c(2,2), cex=2.4, xlab="", ylab="")
-points(byrow~bycol, data=summaries.maps, cex=(summaries.maps$Viscum*0.75), pch=16)
-savePlot("Very basic viscum map_wholecrypto.png", type="png")
 
 #For PP
 x11(6,5);par(mfrow=c(1,2), pin=c(2.0,2.8), xpd=NA, mar=c(8,2,1,1), mgp=c(1,0.2,0), las=1, tcl=0)
