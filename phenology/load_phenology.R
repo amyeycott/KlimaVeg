@@ -141,7 +141,7 @@ stage_names <- c(
 
 ##species traits
 
-traits <- read_excel("phenology/data/Indicator_values_phenology.xlsx", skip = 1)
+traits <- read_excel(paste0(path, "Indicator_values_phenology_2017.xlsx"), skip = 1)
 traits <- traits[, nchar(names(traits)) > 0]
 
 traits <- traits %>%
