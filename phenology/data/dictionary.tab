@@ -3,7 +3,8 @@ Calamagrostis arundincea,Calamagrostis arundinacea
 ACER PLAT,Acer platanoides
 ADOXA MOS,Adoxa moschatellina
 Adoxa moschatelina,Adoxa moschatellina
-AEGOP POD,Aegopodium poagraria
+AEGOP POD,Aegopodium podagraria
+Aegopodium poagraria,Aegopodium podagraria
 AJUGA REP,Ajuga reptans
 ALLIUM UR,Allium ursinum
 ANEMO NEM,Anemone nemorosa
@@ -19,7 +20,7 @@ CAREX DIG,Carex digitata
 CAREX LEP,Carex leporina
 CAREX PIL,Carex pilosa
 CAREX REM,Carex remota
-CAREX SYL,
+CAREX SYL,Carex sylvatica
 CAREX VES,
 CARPI BET,Carpinus betulus
 CEPHA RUBR,
@@ -41,6 +42,7 @@ DRYOP FIL,Dryopteris filix-mas
 EPILO ANG,Epilobium angustifolium
 EPILO MON,Epilobium montanum
 EQUIS PRA,Equisetum pratense
+Eqiusetum pratense,Equisetum pratense
 FESTU GIG,Festuca gigantea
 FRAGA VES,Fragaria vesca
 FRAXI EXC,Fraxinus excelsior
@@ -54,7 +56,7 @@ GEUM URBA,Geum urbanum
 GLECH HED,Glechoma hederacea
 GLECH HIR,Glechoma hirsuta
 GLYCERIA MANNA,
-GYMNO DRY,
+GYMNO DRY,Gymnocarpium dryopteris
 HEPAT NOB,Hepatica nobilis
 IMPAT NOL,Impatiens noli-tangere
 Juncuc effusus,Juncus effusus
@@ -70,6 +72,7 @@ LUZULA PI,Luzula pilosa
 MAIAN BIF,Maianthemum bifolium
 MERCU PER,Mercurialis perennis
 MILIUM EF,Millium effusum
+Milium effusum,Millium effusum
 MOEHR TRI,Moehringia trinervia
 MYCELIS MURALIS,Mycelis muralis
 MYCEL MUR,Mycelis muralis
