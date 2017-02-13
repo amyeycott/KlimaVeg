@@ -62,7 +62,7 @@ for(i in sort(unique(phenology2$species))){
 
 
 
-```{r}
+```{r plotFF, , dependson=c("keepingUp2", "keepingUp1", "seasonalVelocity")}
 for( i in unique(firstflowerReg$species)){
   dat <- filter(firstflowerReg, species == i) %>% 
        mutate(month2 = case_when(transect == "t36" ~ month2 - 3,

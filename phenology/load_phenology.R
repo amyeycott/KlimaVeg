@@ -1,9 +1,9 @@
 #load libraries
 library("readxl")
 library("tidyr")
-#library("plyr")
 library("dplyr")
 library("lubridate")
+library("assertthat")
 
 #load phenology
 
@@ -18,7 +18,7 @@ library("lubridate")
 # + single plants
 
 phenfiles <- list(
-  t36 = list(file = "Fenology36.xlsx", names = "Species names 36.xlsx"),
+  t36 = list(file = "Fenology36.xlsx", names = "species list36.xlsx"),
   t37 = list(file = "Phenology37.xlsx", names = "species list37.xlsx"),
   t38 = list(file = "Phenology38.xlsx", names = "species list38.xlsx"),
   t39 = list(file = "Phenology39.xlsx", names = "species list39.xlsx")
@@ -31,6 +31,7 @@ if(interactive()){
 }
 
 phenology <- plyr::ldply(phenfiles, function(transect){
+  message(transect$file)
   phen <- read_excel(paste0(path, transect$file))
   
   #rename ROK to year and process                                                  
@@ -49,6 +50,9 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   #spp names 
   sppNames <- read_excel(paste0(path, transect$names))
   sppNames <- as.data.frame(sppNames)
+  
+  message(paste(setdiff(phen$sppCode, sppNames[, 1]), collapse = " "))
+  assert_that(all(phen$sppCode %in% sppNames[, 1])) # check spp ID are sequential
   phen$species <- sppNames[phen$sppCode, 2]# second col has spp data but multiple names
   phen$sppCode <- NULL
   

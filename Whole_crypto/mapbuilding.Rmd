@@ -1,0 +1,20 @@
+---
+title: "Lichen_all_maps"
+output: html_document #to change to pdf change this bit but wait till it works and fix the default plage size. Might need more faffing.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=6, fig.width = 8, warning=FALSE)
+knitr::read_chunk("maps.R")
+```
+
+## Lichens are cool
+
+These are fancy lichen maps.
+
+```{r Maps}
+```
+
+```{r lichens_maps}
+
+```
