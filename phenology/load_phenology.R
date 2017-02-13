@@ -52,7 +52,8 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   sppNames <- as.data.frame(sppNames)
   
   message(paste(setdiff(phen$sppCode, sppNames[, 1]), collapse = " "))
-  assert_that(all(phen$sppCode %in% sppNames[, 1])) # check spp ID are sequential
+  assert_that(all(phen$sppCode %in% sppNames[, 1])) # check all IDs have names
+  assert_that(!any(duplicated(sppNames[, 1]))) # check no duplicated codes in dictionary
   phen$species <- sppNames[phen$sppCode, 2]# second col has spp data but multiple names
   phen$sppCode <- NULL
   
