@@ -26,6 +26,8 @@ vignettes/*.pdf
 *.ps
 *.png
 *.jpg
+*.bmp
+Thumbs.db
 
 #binary data files
 *.xls
@@ -39,3 +41,5 @@ vignettes/*.pdf
 *.zip
 *.tmp
 .Rproj.user
+*.doc
+*.html
