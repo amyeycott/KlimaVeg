@@ -9,7 +9,9 @@ AJUGA REP,Ajuga reptans
 ALLIUM UR,Allium ursinum
 ANEMO NEM,Anemone nemorosa
 ANEMO RAN,Anemone ranunculoides
+Angelica sylvetris,Angelica sylvestris
 ASARU EUR,Asarum europaeum
+Asarum europeum,Asarum europaeum
 ASPER ODO,Asperula odorata
 ATHYR FIL,Athyrium filix-femina
 CALAM ARU,Calamagrostis arundinacea
@@ -17,16 +19,18 @@ CARDA AMA,Cardamine amara
 CARDA HIR,Cardamine hirsuta
 CARDA IMP,Cardamine impatiens
 CAREX DIG,Carex digitata
-CAREX LEP,Carex leporina
+CAREX LEP,Carex ovalis
+Carex leporina,Carex ovalis
 CAREX PIL,Carex pilosa
 CAREX REM,Carex remota
 CAREX SYL,Carex sylvatica
-CAREX VES,
+CAREX VES,Carex vesicaria
 CARPI BET,Carpinus betulus
-CEPHA RUBR,
+CEPHA RUBR,Cephalanthera rubra
 CHRYS ALT,Chrysosplenium alternifolium
 CIRCA ALP,Circaea alpina
 CIRCA LUT,Circaea lutetiana
+Convallaria maialis,Convallaria majalis
 CORYD CAV,Corydalis cava
 CORYD SOL,Corydalis solida
 CORYL AVE,Corylus avellana
@@ -35,6 +39,7 @@ DACTYL GL,Dactylis glomerata
 DAPHNE ME,Daphne mezereum
 DENTA BUL,Dentaria bulbifera
 DESCH CES,Deschampsia caespitosa
+Dryopteris austriaca,Dryopteris dilatata
 DRYOP CAR,Dryopteris carthusiana
 Dryopteris carthusiaca,Dryopteris carthusiana
 DRYOP DIL,Dryopteris dilatata
@@ -55,24 +60,30 @@ Geranium robertia,Geranium robertianum
 GEUM URBA,Geum urbanum
 GLECH HED,Glechoma hederacea
 GLECH HIR,Glechoma hirsuta
+Glehoma hirsuta,Glechoma hirsuta
 GLYCERIA MANNA,
 GYMNO DRY,Gymnocarpium dryopteris
 HEPAT NOB,Hepatica nobilis
+Hieracium cfr. Lachenalii,Hieracium lachenalii
 IMPAT NOL,Impatiens noli-tangere
 Juncuc effusus,Juncus effusus
 ISOP THAL,
 JUNCUS EF,Juncus effusus
-JUNCUS FI,
+JUNCUS FI,Juncus filiformis
 LAMIA GAL,Lamiastrum galeobdolon
 LAPSA COM,Lapsana communis
-LATHR SQU,Lathrea squamaria
+LATHR SQU,Lathraea squamaria
+Lathyrus communis,Lathyrus vernus
+Lathrea squamaria,Lathraea squamaria
 LATH VERN,Lathyrus vernus
 LUZULA MU,Luzula multiflora
 LUZULA PI,Luzula pilosa
 MAIAN BIF,Maianthemum bifolium
+Melittis melisophyllum,Melittis melissophyllum
+Mellitis melisophyllum,Melittis melissophyllum
 MERCU PER,Mercurialis perennis
-MILIUM EF,Millium effusum
-Milium effusum,Millium effusum
+MILIUM EF,Milium effusum
+Millium effusum,Milium effusum
 MOEHR TRI,Moehringia trinervia
 MYCELIS MURALIS,Mycelis muralis
 MYCEL MUR,Mycelis muralis
@@ -80,35 +91,43 @@ NEOTTIA NIDUS-AVIS,Neottia nidus-avis
 OXALIS AC,Oxalis acetosella
 PARIS QUA,Paris quadrifolia
 PICEA ABI,Picea abies
+Plantago media,Plantago intermedia
 POA ANNUA,Poa annua
 POA NEMOR,Poa nemoralis
 POA TRIVI,Poa trivialis
 POLYG MUL,Polygonatum multiflorum
 POPUL TRE,Populus tremula
-PULMO OBS,
+PULMO OBS,Pulmonaria obscura
 Quercus robus,Quercus robur
 QUERC ROB,Quercus robur
 RANUN CAS,Ranunculus cassubicus
-RANUN FIC,Ranunculus ficaria
+RANUN FIC,Ficaria verna
+Ranunculus ficaria,Ficaria verna
 RANUN LAN,Ranunculus lanuginosus
 RANUN REP,Ranunculus repens
 RUBUS IDA,Rubus idaeus
 RUBUS SAX,Rubus saxatilis
 SALIX AUR,Salix aurita
-SANIC EUR,Sanicula europea
+SANIC EUR,Sanicula europaea
+Sanicula europea,Sanicula europaea 
 SORBUS AU,Sorbus aucuparia
-STACH SYL,Stachys silvatica
+Solidago virga-aurea,Solidago virgaurea
+STACH SYL,Stachys sylvatica
+Stachys silvatica,Stachys sylvatica
 STELL HOL,Stellaria holostea
 STELL MED.,Stellaria media
 STELL NEM,Stellaria nemorum
 TARAX OFF,Taraxacum officinale
 TILIA COR,Tilia cordata
 TRIFO,Trifolium sp.
+Trientalis europea,Trientalis europaea
 ULMUS GLA,Ulmus glabra
 ULMUS MIN,Ulmus minor
-UNCUS EF,
+UNCUS EF,Juncus effusus
 URTICA DI,Urtica dioica
 URTICA DIO,Urtica dioica
 VERON CHA,Veronica chamaedrys
+Veronica silvatica,Veronica officinalis
 VIOLA REI,Viola reichenbachiana
 VIOLA RIV,Viola riviniana
+
