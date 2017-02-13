@@ -67,7 +67,7 @@ dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""]
 
 #update species names
 phenology$species <- plyr::mapvalues(phenology$species, dictionary$old, dictionary$new)
-phenology$species <- plyr::mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "GLYCERIA MANNA")#problems with escape characters
+phenology$species <- plyr::mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "Glyceria manna")#problems with escape characters
 
 phenology2 <- gather(phenology, key = "pentad", value = "decile", -species, -year, -stage, -transect) %>%
   filter(!decile %in% c("@", "@@"), !is.na(decile)) %>%
@@ -139,3 +139,7 @@ stage_names <- c(
   '6'="Dormant"
 )
 
+##species traits
+
+traits <- read_excel("phenology/data/Indicator_values_phenology.xlsx", skip = 1)
+sort(setdiff(phenology2$species, traits$Species.name))
