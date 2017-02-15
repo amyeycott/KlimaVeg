@@ -55,6 +55,7 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   message(paste(setdiff(phen$sppCode, sppNames$ID), collapse = " "))
   assert_that(all(phen$sppCode %in% sppNames$ID)) # check all IDs have names
   assert_that(!any(duplicated(sppNames$ID))) # check no duplicated codes in dictionary
+  assert_that(!any(duplicated(sppNames$name))) # check no duplicated species in dictionary
   assert_that(all(sppNames$ID == 1:nrow(sppNames)))
   
   if(any(sppNames$name == "UNCUS EF")){#fixing glitch in t37 species list. Bogdan's email 2017-02-13
