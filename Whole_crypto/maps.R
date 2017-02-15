@@ -7,9 +7,9 @@ source("turnover_subset.R")
 
 coloury <- data.frame(
   Phytosociology_Latin = c("CA","CelA","PP","PQ","QP","TC"),
-  Colour_softer = c("lightskyblue1", "darkorchid","lightgoldenrod","indianred3","darkgoldenrod2","forestgreen"),
+  Colour_softer = c("#6CC8F0", "#AB66AD","#FCF19C","#B5634B","#E0A575","#76B588"),
   Community_in_1992 = c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), 
-  Colour_bolder = c("lightskyblue", "darkviolet","lightgoldenrod","firebrick","orange","green4"), 
+  Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
   stringsAsFactors = FALSE
   )
 
@@ -55,6 +55,7 @@ savePlot("PP Picea map_new 5th feb 2017.pdf", type="pdf")
 
 #sanity check, are these the right plots?
 rownames(vascOld.fat[vascOld.fat$Picea_abies-vascNew.fat$Picea_abies!=0,])
+
 #####loop to create all maps####
 #possible ways to proceed: merge mapbase onto each year, then call a loop of one year then the other. But how will this handle species in only one dataset? Other option, use the both-year data and merge mapbase on with repeats, then call a loop on one year subset then the other.
 comp$plot<-substr(rownames(comp), 1,3)
@@ -64,23 +65,55 @@ lichens.maps$byrow<-LETTERS[lichens.maps$byrow]
 #lichens.maps[lichens.maps==0]<-NA#needed to make the zero points disappear in scale_size_area
 names(lichens.maps)<-gsub(" ","_",names(lichens.maps))
 
+easytabx$plot<-substr(rownames(easytabx), 1,3)
+bryos.maps<-merge(easytabx, summaries.maps, by.x="plot", by.y="plot")
+bryos.maps$byrow<-LETTERS[bryos.maps$byrow]
+names(bryos.maps)<-gsub(" ","_",gsub("-","__",names(bryos.maps)))
+bryos.maps$Year<-substr(rownames(easytabx), 4,7)
+
+vascall.df$plot<-substr(rownames(vascall.df), 1,3)
+vascs.maps<-merge(vascall.df, summaries.maps, by.x="plot", by.y="plot")
+vascs.maps$byrow<-LETTERS[vascs.maps$byrow]
+vascs.maps$Year<-substr(rownames(vascall.df), 4,7)
+
 library(ggplot2)
 g<-ggplot(lichens.maps, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=as.factor(Acrocordia_gemmata)))+
   theme(panel.grid = element_blank(), panel.background = element_blank())+
   geom_tile(colour="black", size=0.5, linetype="dashed")+
   geom_point()+
   scale_fill_manual(limits=coloury$Phytosociology_Latin, values=coloury$Colour_softer, labels=coloury$Community_in_1992)+
-  scale_size_manual(breaks = c(1,2,3), limits=c(1,2,3), values=c(0.5,1.5,3))+#this stops it from displaying zeros and allows us to build our own size for the dots - the original had too similar between 2 and 3
+  scale_size_manual(breaks = c(1,2,3), limits=c(1,2,3), values=c(0.5,1.5,3))+#this stops it from displaying zeros and allows us to build our own size for the dots - the default was too similar between 2 and 3
   facet_wrap(~Year)+
   coord_equal()+
   labs(x="",y="",fill="Forest type in 1992", size="Frequency")+
   ggtitle("Acrocordia gemmata")
-g
+g#sets up the plot, using the first species as an example
+
 ## ---- lichens_maps
 for (i in gsub(" ","_", unique(c(new.harm.db$Species, old.harm.db$Species)))) {
-g+aes_string(size=paste0("as.factor(",i,")"))+
+h<-g+aes_string(size=paste0("as.factor(",i,")"))+
     ggtitle(gsub("_"," ", i))+
     labs(size="Frequency")
   #ggsave(paste0("Maps/",i,".png"))
-  print(g)
+  print(h)
+}
+
+## ---- bryophytes_maps
+
+for (i in gsub(" ","_", gsub("-","__",unique(bryophytes$Species_name)))) {
+  h<-g %+% bryos.maps+aes_string(size=paste0("as.factor(",i,")"))+
+    ggtitle(gsub("_"," ", gsub("-","__",i)))+
+    labs(size="Frequency")
+  #ggsave(paste0("Maps/",i,".png"))
+  print(h)
+}
+
+## ---- vascularplants_maps
+
+for (i in gsub(" ","_", gsub("-","__",unique(c(vascOld.thin$Species_name, vascNew.thin$Species_name_2015))))) {
+  h<-g %+% vascs.maps+aes_string(size=paste0("as.factor(",i,")"))+
+    ggtitle(gsub("_"," ", gsub("-","__",i)))+
+    labs(size="Frequency")
+  ggsave(paste0("Maps/",i,".png"))
+  #print(h)
 }
