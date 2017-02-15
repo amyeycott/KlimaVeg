@@ -57,15 +57,7 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   assert_that(!any(duplicated(sppNames$ID))) # check no duplicated codes in dictionary
   assert_that(!any(duplicated(sppNames$name))) # check no duplicated species in dictionary
   assert_that(all(sppNames$ID == 1:nrow(sppNames)))
-  
-  if(any(sppNames$name == "UNCUS EF")){#fixing glitch in t37 species list. Bogdan's email 2017-02-13
-    #THERE IS AN ERROR IN THE SPECIES LIST 37. PLEASE DELETE NAMES 70 UNCUS EF, 71 CAREX LEP AND 72 STELL MED AND MOVE ALL NAMES UP (RECENT 73PICEA ABIES SHOULD BECOME 70, 74 SHOULD BECOME 71 AND SO ON!)
-    print("removing UNCUS EF")
-    sppNames <- data.frame(
-      ID = sppNames$ID[1:(nrow(sppNames) - 3)], #drop last three numbers
-      name = sppNames$name[!sppNames$ID %in% 70:72] # drop taxa ID 70:72
-      )
-  }
+  assert_that(!any(sppNames$name == "UNCUS EF"))#checking no return of Uncus ef
 
   phen$species <- sppNames$name[phen$sppCode]
   phen$sppCode <- NULL
@@ -154,7 +146,7 @@ stage_names <- c(
 
 ##species traits
 
-traits <- read_excel(paste0(path, "Indicator_values_phenology_2017.xlsx"), skip = 1)
+traits <- read_excel(paste0(path, "Indicator_values_phenology_15022017.xlsx"), skip = 1)
 traits <- traits[, nchar(names(traits)) > 0]
 
 traits <- traits %>%
