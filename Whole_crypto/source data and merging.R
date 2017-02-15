@@ -64,7 +64,7 @@ phytosoc$dominant<-as.factor(colnames(phytosoc[,2:7])[max.col(phytosoc[,2:7], ti
 
 ####Species characteristics - Indicator values and conservation status####
 #for bryophytes and lichens, the code is in their respective projects
-vasc.ellen<-read_excel("Sierhanowo_species_indicator_values_final.xlsx", skip=1)
+vasc.ellen<-read_excel("Sierhanowo_species_indicator_values_final_final.xlsx", skip=1)
 vasc.ellen<-vasc.ellen[, colSums(!is.na(vasc.ellen)) != 0]#removes columns filled entirely with NA
 vasc.ellen$Species.name<-gsub(" ", "_",vasc.ellen$Species.name)
 
