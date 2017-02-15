@@ -1,5 +1,5 @@
 ---
-title: "Lichens all maps"
+title: "Bryophytes all maps"
 output: pdf_document
 documentclass: article
 classoption: a4paper
@@ -10,14 +10,14 @@ knitr::opts_chunk$set(echo = TRUE, fig.height=6, fig.width = 8, warning=FALSE)
 knitr::read_chunk("maps.R")
 ```
 
-## Lichens are cool
+## Bryophytes are cool
 
-These are fancy lichen maps.
+These are fancy bryophyte maps.
 
 ```{r Maps, include="false", fig.keep="none"}
 ```
 
-```{r lichens_maps, echo="false"}
+
+```{r bryophytes_maps, echo="false"}
 
 ```
-
