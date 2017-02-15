@@ -1,0 +1,23 @@
+---
+title: "Bryophytes all maps"
+output: pdf_document
+documentclass: article
+classoption: a4paper
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=6, fig.width = 8, warning=FALSE)
+knitr::read_chunk("maps.R")
+```
+
+## Bryophytes are cool
+
+These are fancy bryophyte maps.
+
+```{r Maps, include="false", fig.keep="none"}
+```
+
+
+```{r bryophytes_maps, echo="false"}
+
+```
