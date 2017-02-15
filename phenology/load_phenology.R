@@ -48,13 +48,26 @@ phenology <- plyr::ldply(phenfiles, function(transect){
   names(phen)[names(phen) %in% c("Nr gatunku", "N species")] <- "sppCode"
   #browser()
   #spp names 
-  sppNames <- read_excel(paste0(path, transect$names))
-  sppNames <- as.data.frame(sppNames)
+  sppNames <- read_excel(paste0(path, transect$names))[, 1:2]
+  names(sppNames) <- c("ID", "name")
+  sppNames <- arrange(sppNames, ID)
   
-  message(paste(setdiff(phen$sppCode, sppNames[, 1]), collapse = " "))
-  assert_that(all(phen$sppCode %in% sppNames[, 1])) # check all IDs have names
-  assert_that(!any(duplicated(sppNames[, 1]))) # check no duplicated codes in dictionary
-  phen$species <- sppNames[phen$sppCode, 2]# second col has spp data but multiple names
+  message(paste(setdiff(phen$sppCode, sppNames$ID), collapse = " "))
+  assert_that(all(phen$sppCode %in% sppNames$ID)) # check all IDs have names
+  assert_that(!any(duplicated(sppNames$ID))) # check no duplicated codes in dictionary
+  assert_that(!any(duplicated(sppNames$name))) # check no duplicated species in dictionary
+  assert_that(all(sppNames$ID == 1:nrow(sppNames)))
+  
+  if(any(sppNames$name == "UNCUS EF")){#fixing glitch in t37 species list. Bogdan's email 2017-02-13
+    #THERE IS AN ERROR IN THE SPECIES LIST 37. PLEASE DELETE NAMES 70 UNCUS EF, 71 CAREX LEP AND 72 STELL MED AND MOVE ALL NAMES UP (RECENT 73PICEA ABIES SHOULD BECOME 70, 74 SHOULD BECOME 71 AND SO ON!)
+    print("removing UNCUS EF")
+    sppNames <- data.frame(
+      ID = sppNames$ID[1:(nrow(sppNames) - 3)], #drop last three numbers
+      name = sppNames$name[!sppNames$ID %in% 70:72] # drop taxa ID 70:72
+      )
+  }
+
+  phen$species <- sppNames$name[phen$sppCode]
   phen$sppCode <- NULL
   
   phen

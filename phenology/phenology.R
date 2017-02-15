@@ -86,13 +86,13 @@ comm <- phenology2 %>%
     filter(present)
   
 ggplot(comm, aes(x = year, y = species)) + 
-  geom_point(data = comm %>% filter(stage == 1) %>% rename(stage2 = stage), colour = "grey70") + 
+  geom_point(data = filter(comm, stage == 1) %>% rename(stage2 = stage), colour = "grey70") + 
   scale_y_discrete(limits = levels(comm$species)) +
   geom_point() + 
   facet_grid(transect~stage, scales = "free_y")
 
 ggplot(comm %>% filter(stage == 3), aes(x = year, y = species)) + 
-  geom_point(data = comm %>% filter(stage == 1) %>% rename(stage2 = stage), colour = "grey70") + 
+  geom_point(data = filter(comm, stage == 1) %>% rename(stage2 = stage), colour = "grey70") + 
   geom_point() +
   facet_grid(transect~., scales = "free_y")
 
