@@ -72,7 +72,7 @@ names(bryos.maps)<-gsub(" ","_",gsub("-","__",names(bryos.maps)))
 bryos.maps$Year<-substr(rownames(easytabx), 4,7)
 
 vascall.df$plot<-substr(rownames(vascall.df), 1,3)
-vascs.maps<-merge(vascall.df, summaries.maps, by.x="plot", by.y="plot")
+vascs.maps<-plyr::join(vascall.df, summaries.maps, by="plot", type="full")
 vascs.maps$byrow<-LETTERS[vascs.maps$byrow]
 vascs.maps$Year<-substr(rownames(vascall.df), 4,7)
 
