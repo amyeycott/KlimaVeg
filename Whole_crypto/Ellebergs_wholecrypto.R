@@ -9,7 +9,7 @@ mapply(function(x,y, main){
   hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
   abline(v=0, col="red")
   }, 
-  y= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], x=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture", "lich.new.R_reaction", "lich.new.N_nitrogen")] , main=c("Light (up**)","Temperature (ns)", "Continentality(ns)","Moisture (up***)","Reaction (up***)","Nitrogen (up***)"))  
+  y= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], x=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture", "lich.new.R_reaction", "lich.new.N_nitrogen")] , main=c("Light (up**)","Temperature (ns)", "Continentality (ns)","Moisture (up***)","Reaction (up***)","Nitrogen (up***)"))  
 
 mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], y=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")])# Light goes up significantly but only very slightly, temperature up significantly but only very slightly, continentality goes up slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly.
 
@@ -20,18 +20,14 @@ mapply(function(x,y, main){
   y= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], x=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")], main=c("Light (up***)","Temperature (up***)","Continentality (up**)","Moisture (ns)","Reaction (up***)"))#  
 plot(0,type='n',axes=FALSE,ann=FALSE)
 
-mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T","vasc.new.W", "vasc.new.R","vasc.new.Tr")])# Light ns, temperature up just significantly* but only very slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly, trophism goes up slightly but significantly.
+mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T","vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")])# Light ns, temperature up just significantly* but only very slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly, trophism goes up slightly but significantly.
 
 mapply(function(x,y, main){
   hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
   abline(v=0, col="red") 
   }, 
-  y= summaries.ss[,c("vasc.old.L" ,"vasc.old.T")], x=summaries.ss[,c("vasc.new.L" ,"vasc.new.T")], main=c("Light (na)","Temperature (up*)"))# 
-plot(0,type='n',axes=FALSE,ann=FALSE)
-mapply(function(x,y, main){
-  hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
-  abline(v=0, col="red")
-  }, y= summaries.ss[,c("vasc.old.W", "vasc.old.R","vasc.old.Tr")], x=summaries.ss[,c("vasc.new.W", "vasc.new.R","vasc.new.Tr")], main=c("Moisture (ns)","Reaction (up***)", "Nutrients (up***)"))# 
+  y= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], x=summaries.ss[,c("vasc.new.L" ,"vasc.new.T", "vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")], main=c("Light (na)","Temperature (up*)","Continentality (down***)","Moisture (ns)","Reaction (up***)", "Nutrients (up***)"))
+
 savePlot("Ellenbergs all groups.emf", type="emf")
 savePlot("Ellenbergs all groups.pdf", type="pdf")
 savePlot("Ellenbergs all groups.png", type="png")
@@ -43,7 +39,7 @@ mapply(function(x,y,z){
   testy<-aov((x-y)~z)
   print(testy)
   print(TukeyHSD(testy))
-  }, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T","vasc.new.W", "vasc.new.R","vasc.new.Tr")], z=summaries.ss$dominant)# Error in model.frame.default(formula = (x - y) ~ z, drop.unused.levels = TRUE) : variable lengths differ (found for 'z') 
+  }, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T", "vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")], z=summaries.ss$dominant)# Error in model.frame.default(formula = (x - y) ~ z, drop.unused.levels = TRUE) : variable lengths differ (found for 'z') 
 mapply(function(x,y){
   testy<-aov((x-y)~z)
   print(testy)
@@ -70,11 +66,12 @@ lapply(list(testing7, testing8, testing11),FUN=function(x)TukeyHSD(x, bonferroni
 #Bonferroni would be 0.05/(2*15) 0.0017
 testing12<-aov(summaries.ss$vasc.old.L-summaries.ss$vasc.new.L~summaries.ss$dominant)
 testing13<-aov(summaries.ss$vasc.old.T-summaries.ss$vasc.new.T~summaries.ss$dominant)
-testing14<-aov(summaries.ss$vasc.old.W-summaries.ss$vasc.new.W~summaries.ss$dominant)
-testing15<-aov(summaries.ss$vasc.old.R-summaries.ss$vasc.new.R~summaries.ss$dominant)
-testing16<-aov(summaries.ss$vasc.old.Tr-summaries.ss$vasc.new.Tr~summaries.ss$dominant)
-lapply(list(testing12, testing13, testing14, testing15,testing16),FUN=summary)#L is ns, T is P=0.0003, W is P=0.002, R is P=0.0000000000015 and Tr even stronger.
-lapply(list(testing13, testing14, testing15, testing16),FUN=function(x)TukeyHSD(x, bonferroni=TRUE))# T is PP-CA P=0.008, pp-PQ P=0.0004287 (just misses), TC-PP P=0.005. W is PP-CelA 0.03, TC-PP 0.002. R is PP-CA 0.0009, PP-CelA 0.00006, QP-PP 0.000056, TC-PP <0.0000001, an TC-PQ 0.0006. Tr is PP-CA, PP-CelA, PP-QP and PP-TC <0.0000001, plus PP-PQ 0.0002, QP-PQ 0.03 and TC-PQ 0.02. Bonferroni on this set is 0.0010.
+testing14<-aov(summaries.ss$vasc.old.K-summaries.ss$vasc.new.K~summaries.ss$dominant)
+testing15<-aov(summaries.ss$vasc.old.W-summaries.ss$vasc.new.W~summaries.ss$dominant)
+testing16<-aov(summaries.ss$vasc.old.R-summaries.ss$vasc.new.R~summaries.ss$dominant)
+testing17<-aov(summaries.ss$vasc.old.Tr-summaries.ss$vasc.new.Tr~summaries.ss$dominant)
+lapply(list(testing12, testing13, testing14, testing15,testing16,testing17),FUN=summary)#L is ns, T is P=0.0003, W is P=0.002, R is P=0.0000000000015 and Tr even stronger.
+lapply(list(testing13, testing14, testing15, testing16,testing17),FUN=function(x)TukeyHSD(x, bonferroni=TRUE))# T is PP-CA P=0.008, pp-PQ P=0.0004287 (just misses), TC-PP P=0.005. W is PP-CelA 0.03, TC-PP 0.002. R is PP-CA 0.0009, PP-CelA 0.00006, QP-PP 0.000056, TC-PP <0.0000001, an TC-PQ 0.0006. Tr is PP-CA, PP-CelA, PP-QP and PP-TC <0.0000001, plus PP-PQ 0.0002, QP-PQ 0.03 and TC-PQ 0.02. Bonferroni on this set is 0.0010.
 #Bonferroni on all of them is 0.000417
 0.05/((12*4)+(12*2)+(12*4))
 #P values 'beat' bonferroni in bryophytes for temperature, vascular soil reaction and vascular trophism.

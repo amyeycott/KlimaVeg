@@ -26,22 +26,22 @@ plot(summaries.ss$bryo.extinct, summaries.ss$bryo.colonise, xlab="Proportion plo
 plot(summaries.ss$vasc.extinct, summaries.ss$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
 savePlot("Colonisations vs extinctions_subset.emf", type="emf")
 
-x11()#this runs all the way to line 72
+x11(7,8)#this runs all the way to line 72
 layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
-par(mar=c(3,3,3,1), cex.axis=0.8, las=2, xpd=NA, mgp=c(2,0.5,0))
+par(mar=c(2,2.5,2,0.5), cex.axis=0.8, las=2, xpd=NA, mgp=c(1.5,0.3,0), tcl=-0.2)
 mapply(function (x) { 
   boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 1992", main=NA)
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=140, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=120, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=135, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
   text(x=3, y=-20, labels=colnames(x))
 }, x=summaries.ss[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")] ) #It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
 
 mapply(function (x) { 
   boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 2015")
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=140, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=120, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=135, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }, x=summaries.ss[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")]) 
 
 mapply(function (x) { 
@@ -59,16 +59,18 @@ mapply(function (x) {
 }, x=summaries.ss[,c("lich.colonise","bryo.colonise","vasc.colonise")])
 
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,0.4), ylab="Bray-Curtis distance")
+  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,1), ylab="Bray-Curtis distance")
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=0.4, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.36, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
 }, x=summaries.ss[,c("lich.BCdiss","bryo.BCdiss","vasc.BCdiss")])
 
-text(-22.5,2.05,"Lichens", cex=1.2)
-text(-22.5,1.3,"Bryophytes", cex=1.2)
-text(-22.5,0.5,"Vascular plants", cex=1.2)
+text(-20,3.9,"Lichens", cex=1.2)
+text(-20,2.5,"Bryophytes", cex=1.2)
+text(-20,1.1,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc_subset.emf", type="emf")
+savePlot("Turnover and richness by phytosoc_subset.pdf", type="pdf")
+savePlot("Turnover and richness by phytosoc_subset.png", type="png")
 
 ###for powerpoint###
 x11(6,3);par(mfrow=c(1,3))
