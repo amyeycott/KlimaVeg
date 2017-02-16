@@ -72,9 +72,10 @@ names(bryos.maps)<-gsub(" ","_",gsub("-","__",names(bryos.maps)))
 bryos.maps$Year<-substr(rownames(easytabx), 4,7)
 
 vascall.df$plot<-substr(rownames(vascall.df), 1,3)
-vascs.maps<-plyr::join(vascall.df, summaries.maps, by="plot", type="full")
+vascall.df$Year<-substr(rownames(vascall.df), 4,7)
+vascs.maps<-merge(vascall.df, summaries.maps, by="plot")
 vascs.maps$byrow<-LETTERS[vascs.maps$byrow]
-vascs.maps$Year<-substr(rownames(vascall.df), 4,7)
+names(vascs.maps)<-gsub(" ","_",gsub("-","__",names(vascs.maps)))
 
 library(ggplot2)
 g<-ggplot(lichens.maps, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=as.factor(Acrocordia_gemmata)))+
@@ -114,6 +115,6 @@ for (i in gsub(" ","_", gsub("-","__",unique(c(vascOld.thin$Species_name, vascNe
   h<-g %+% vascs.maps+aes_string(size=paste0("as.factor(",i,")"))+
     ggtitle(gsub("_"," ", gsub("-","__",i)))+
     labs(size="Frequency")
-  ggsave(paste0("Maps/",i,".png"))
-  #print(h)
+  #ggsave(paste0("Maps/",i,".png"))
+  print(h)
 }

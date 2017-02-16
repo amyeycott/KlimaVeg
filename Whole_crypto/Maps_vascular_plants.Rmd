@@ -1,0 +1,23 @@
+---
+title: "maps for vascular plants"
+output: pdf_document
+documentclass: article
+classoption: a4paper
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=6, fig.width = 8, warning=FALSE)
+knitr::read_chunk("maps.R")
+```
+
+## Vascular plants are cool
+
+These are fancy vascular plant maps.
+
+```{r Maps, include="false", fig.keep="none"}
+```
+
+
+```{r vascularplants_maps, echo="false"}
+
+```
