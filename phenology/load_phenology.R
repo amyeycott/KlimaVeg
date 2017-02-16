@@ -147,10 +147,10 @@ stage_names <- c(
 
 ##species traits
 
-traits <- read_excel(paste0(path, "Indicator_values_phenology_15022017.xlsx"), skip = 1)
+traits <- read_excel(paste0(path, "Indicator_values_phenology_16022017.xlsx"), skip = 1)
 traits <- traits[, nchar(names(traits)) > 0]
 
 traits <- traits %>%
-  rename(light = L, temperature = T, humidity = W, trophism = Tr, reaction = R)
+  rename(light = L, temperature = T, humidity = W, trophism = Tr, reaction = R, continentality = K)
 
 sort(setdiff(phenology2$species, traits$Species.name))
