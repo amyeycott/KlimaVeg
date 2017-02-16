@@ -29,7 +29,7 @@ th <- theme_bw(base_size = 11)
 
 ```{r, cache = TRUE}
 for(i in sort(unique(phenology2$species))){
-  p <- pheno_plot %+% filter(phenology2, species == i, stage < 6) + ggtitle(i)
+  p <- pheno_plot %+% filter(phenology2, species == i, stage != 6) + ggtitle(i)
   print(p)
 }
 ```
@@ -64,16 +64,21 @@ for(i in sort(unique(phenology2$species))){
 
 ```{r plotFF, , dependson=c("keepingUp2", "keepingUp1", "seasonalVelocity")}
 for( i in unique(firstflowerReg$species)){
-  dat <- filter(firstflowerReg, species == i) %>% 
-       mutate(month2 = case_when(transect == "t36" ~ month2 - 3,
-                                 transect == "t37" ~ month2 - 1,
-                                 transect == "t38" ~ month2 + 1,
-                                 transect == "t39" ~ month2 + 3))
+  message("species ", i)
+  dat <- filter(firstflowerReg, species == i, stage %in% 2:4) %>% 
+       mutate(month2 = case_when(transect == "t36" ~ month2 - 6,
+                                 transect == "t37" ~ month2 - 2,
+                                 transect == "t38" ~ month2 + 2,
+                                 transect == "t39" ~ month2 + 6)) %>%
+      mutate(month2 = case_when(stage == 2 ~ month2 - 1.5,
+                                stage == 3 ~ month2 - 0.5,
+                                stage == 4 ~ month2 + 0.5,
+                                stage == 5 ~ month2 + 1.5)) 
   
   g3 <- g2 %+% dat
-  h2 <- h %+% filter(first_flowering, species == i) + ggtitle(i) 
+  h2 <- h %+% filter(first_flowering, species == i, stage %in% 2:4) + ggtitle(i) 
   
-  cowplot::plot_grid(h2, g3,  nrow = 2, align = "v", rel_heights = c(1/3, 2/3)) %>% print()
+  cowplot::plot_grid(h2, g3,  nrow = 2, align = "v", rel_heights = c(0.5, 0.5)) %>% print()
 }
 ```
 
