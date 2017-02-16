@@ -294,7 +294,26 @@ print(g2 %+%  (filter(firstflowerReg, species == "Urtica dioica", stage == 3) %>
 )
 
 
+## ---- timing by trait
+#pollination
+first_flowering %>% filter(stage ==3) %>% 
+  distinct(species, median) %>%
+  inner_join(traits, by = c("species" = "Species.name")) %>% 
+  ggplot(aes(x = `Pollination mechanism`, y = median)) + 
+  geom_violin(draw_quantiles = 0.5) +
+  geom_jitter()
 
+first_flowering %>% filter(stage ==3) %>% 
+  distinct(species, median) %>%
+  inner_join(traits, by = c("species" = "Species.name")) %>% 
+  wilcox.test(as.vector(median) ~ `Pollination mechanism`, data  = .)
 
+##life form
 
+first_flowering %>% filter(stage ==3) %>% 
+  distinct(species, median) %>%
+  inner_join(traits, by = c("species" = "Species.name")) %>% 
+  ggplot(aes(x = RaunkiaerMono, y = median, colour = RaunkiaerMono)) + 
+  geom_violin(draw_quantiles = 0.5, show.legend = FALSE) +
+  geom_jitter(show.legend = FALSE)
 
