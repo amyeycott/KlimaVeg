@@ -309,11 +309,26 @@ first_flowering %>% filter(stage ==3) %>%
   wilcox.test(as.vector(median) ~ `Pollination mechanism`, data  = .)
 
 ##life form
-
 first_flowering %>% filter(stage ==3) %>% 
   distinct(species, median) %>%
   inner_join(traits, by = c("species" = "Species.name")) %>% 
   ggplot(aes(x = RaunkiaerMono, y = median, colour = RaunkiaerMono)) + 
   geom_violin(draw_quantiles = 0.5, show.legend = FALSE) +
   geom_jitter(show.legend = FALSE)
+
+## ---- variance_etc
+first_flowering %>% 
+  group_by(transect, species, timing, stage) %>% 
+  summarise(std = sd(as.vector(first))) %>%
+  ggplot(aes(x = stage, y = std, colour = species, shape = transect)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~ timing)
+
+first_flowering %>% 
+  group_by(transect, species, timing, stage) %>% 
+  summarise(std = sd(as.vector(first))) %>% 
+  group_by(stage, timing) %>% 
+  summarise(mean_std = mean(std), median_std = median(std)) %>% 
+  arrange(timing, stage)
+
 
