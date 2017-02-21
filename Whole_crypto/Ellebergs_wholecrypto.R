@@ -4,6 +4,8 @@ dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "
 summaries.ss<-Summaries[!rownames(Summaries)%in%dodgysquares,]
 
 mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], y=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture" ,"lich.new.R_reaction","lich.new.N_nitrogen")])# Negative difference means value went UP. Light goes up significantly but only very slightly, temperature is ns (just - goes up by almost two points), continentality is ns, moisture goes up but only slightly, reaction goes up slightly but significantly, and nitrogen goes up significantly but still less than half a point.
+
+#histograms of ellenberg changes by EIV and functional group
 x11(12,7);par(mfrow=c(3,6))
 mapply(function(x,y, main){
   hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
@@ -11,6 +13,7 @@ mapply(function(x,y, main){
   }, 
   y= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], x=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture", "lich.new.R_reaction", "lich.new.N_nitrogen")] , main=c("Light (up**)","Temperature (ns)", "Continentality (ns)","Moisture (up***)","Reaction (up***)","Nitrogen (up***)"))  
 
+ 
 mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], y=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")])# Light goes up significantly but only very slightly, temperature up significantly but only very slightly, continentality goes up slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly.
 
 mapply(function(x,y, main){
@@ -18,7 +21,7 @@ mapply(function(x,y, main){
   abline(v=0, col="red")
   }, 
   y= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], x=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")], main=c("Light (up***)","Temperature (up***)","Continentality (up**)","Moisture (ns)","Reaction (up***)"))#  
-plot(0,type='n',axes=FALSE,ann=FALSE)
+plot(0,type='n',axes=FALSE,ann=FALSE)#puts in a blank plot because there is no trophism for bryophytes
 
 mapply(function(x,y){t.test(x,y, paired=TRUE)}, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], y=summaries.ss[,c("vasc.new.L" ,"vasc.new.T","vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")])# Light ns, temperature up just significantly* but only very slightly, moisture is doing absolutely nothing, reaction goes up slightly but significantly, trophism goes up slightly but significantly.
 
@@ -26,11 +29,11 @@ mapply(function(x,y, main){
   hist(x-y, main=main, xlim=c(-1,1), ylim=c(0,50))
   abline(v=0, col="red") 
   }, 
-  y= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], x=summaries.ss[,c("vasc.new.L" ,"vasc.new.T", "vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")], main=c("Light (na)","Temperature (up*)","Continentality (down***)","Moisture (ns)","Reaction (up***)", "Nutrients (up***)"))
+  y= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], x=summaries.ss[,c("vasc.new.L" ,"vasc.new.T", "vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")], main=c("Light (up***)","Temperature (up**)","Continentality (down***)","Moisture (ns)","Reaction (up***)", "Nutrients (up***)"))
 
 savePlot("Ellenbergs all groups.emf", type="emf")
 savePlot("Ellenbergs all groups.pdf", type="pdf")
-savePlot("Ellenbergs all groups.png", type="png")
+savePlot("Ellenbergs hists all groups.png", type="png")
 
 
 
@@ -71,22 +74,42 @@ testing15<-aov(summaries.ss$vasc.old.W-summaries.ss$vasc.new.W~summaries.ss$domi
 testing16<-aov(summaries.ss$vasc.old.R-summaries.ss$vasc.new.R~summaries.ss$dominant)
 testing17<-aov(summaries.ss$vasc.old.Tr-summaries.ss$vasc.new.Tr~summaries.ss$dominant)
 lapply(list(testing12, testing13, testing14, testing15,testing16,testing17),FUN=summary)#L is ns, T is P=0.0003, W is P=0.002, R is P=0.0000000000015 and Tr even stronger.
-lapply(list(testing13, testing14, testing15, testing16,testing17),FUN=function(x)TukeyHSD(x, bonferroni=TRUE))# T is PP-CA P=0.008, pp-PQ P=0.0004287 (just misses), TC-PP P=0.005. W is PP-CelA 0.03, TC-PP 0.002. R is PP-CA 0.0009, PP-CelA 0.00006, QP-PP 0.000056, TC-PP <0.0000001, an TC-PQ 0.0006. Tr is PP-CA, PP-CelA, PP-QP and PP-TC <0.0000001, plus PP-PQ 0.0002, QP-PQ 0.03 and TC-PQ 0.02. Bonferroni on this set is 0.0010.
+lapply(list(testing12,testing13, testing14, testing15, testing16,testing17),FUN=function(x)TukeyHSD(x, bonferroni=TRUE))# T is PP-CA P=0.008, pp-PQ P=0.0004287 (just misses), TC-PP P=0.005. W is PP-CelA 0.03, TC-PP 0.002. R is PP-CA 0.0009, PP-CelA 0.00006, QP-PP 0.000056, TC-PP <0.0000001, an TC-PQ 0.0006. Tr is PP-CA, PP-CelA, PP-QP and PP-TC <0.0000001, plus PP-PQ 0.0002, QP-PQ 0.03 and TC-PQ 0.02. Bonferroni on this set is 0.0010.
 #Bonferroni on all of them is 0.000417
 0.05/((12*4)+(12*2)+(12*4))
 #P values 'beat' bonferroni in bryophytes for temperature, vascular soil reaction and vascular trophism.
-x11(6,3); par(mfrow=c(1,3), cex.lab=1.5, cex.axis=1.2)
-mapply(function(x, z, main, ylab){
-  boxplot(x~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", main=main, las=2, ylab=ylab)
-  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n")},   x = summaries.ss[,c("bryo.old.T","vasc.old.R","vasc.old.Tr")], z=summaries.ss[,c("bryo.new.T","vasc.new.R","vasc.new.Tr")], main=c("Bryophytes","Vascular plants","Vascular plants"), ylab=c("Temperature Indicator","Soil Reaction Indicator", "Soil Trophism Indicator"))
-legend("bottomright", fill=c("blue","yellow"), legend=c("1992","2015"), y.intersp=0.8)
-savePlot("Ellenbergs by community after bonferroni for presentation.png", type="png")
-
-#lichens trophism, out of interest
-boxplot(lich.old.N_nitrogen~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="blue", las=2)
-boxplot(lich.new.N_nitrogen~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="yellow", xaxt="n", yaxt="n") #yes there is a big signal in all classes (except qp...).
-
 
 #tidy up!
 rm(testing1, testing2, testing3,testing4,testing5,testing6,testing7,testing8,testing9,testing10,testing11,testing12,testing13,testing14,testing15,testing16)
 
+
+#for Checiny powerpoint
+x11(6,3); par(mfrow=c(1,3), cex.lab=1.5, cex.axis=1.2)
+mapply(function(x, z, main, ylab){
+  boxplot(x~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="#3873AE", main=main, las=2, ylab=ylab)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="#EF9335", xaxt="n", yaxt="n")},
+  x = summaries.ss[,c("bryo.old.T","vasc.old.R","vasc.old.Tr")], 
+  z=summaries.ss[,c("bryo.new.T","vasc.new.R","vasc.new.Tr")], 
+    main=c("Bryophytes","Vascular plants","Vascular plants"),
+  ylab=c("Temperature Indicator","Soil Reaction Indicator", "Soil Trophism Indicator"))
+
+legend("bottomright", fill=c("#3873AE","#EF9335"), legend=c("1992","2015"), y.intersp=0.8)
+savePlot("Ellenbergs by community after bonferroni for presentation.png", type="png")
+
+#Figure: all the ellenbergs by community
+x11(10,6); par(mfrow=c(3,6), mar=c(3,4,2,0.1), tcl=-0.2, mgp=c(2,0.25,0))
+mapply(function(x,z, ylab, main){boxplot(x~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="#3873AE", las=2, ylab=ylab, main=main)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="#EF9335", xaxt="n", yaxt="n")}, x= summaries.ss[,c("lich.old.L_light" ,"lich.old.T_temperature",   "lich.old.K_continentality","lich.old.F_moisture","lich.old.R_reaction","lich.old.N_nitrogen")], z=summaries.ss[,c("lich.new.L_light" ,"lich.new.T_temperature","lich.new.K_continentality", "lich.new.F_moisture", "lich.new.R_reaction", "lich.new.N_nitrogen")] , ylab=c("Light","Temperature", "Continentality","Moisture","Reaction","Nitrogen"), main=c("","","Lichens","","",""))
+
+mapply(function(x,z, ylab, main){boxplot(x~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="#3873AE", las=2, ylab=ylab, main=main)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="#EF9335", xaxt="n", yaxt="n")}, x= summaries.ss[,c("bryo.old.L" ,"bryo.old.T",   "bryo.old.K","bryo.old.F","bryo.old.R")], z=summaries.ss[,c("bryo.new.L" ,"bryo.new.T",   "bryo.new.K","bryo.new.F","bryo.new.R")], ylab=c("Light","Temperature","Continentality","Moisture ","Reaction"), main=c("","","Bryophytes","",""))
+plot(0,type='n',axes=FALSE,ann=FALSE)
+
+mapply(function(x,z, ylab, main){boxplot(x~dominant, data=summaries.ss, at=c(1,3,5,7,9,11), xlim=c(0.5,12.5), col="#3873AE", las=2, ylab=ylab, main=main)
+  boxplot(z~dominant, data=summaries.ss, main=NULL,add=TRUE, at=c(1.8,3.8,5.8,7.8,9.8,11.8), col="#EF9335", xaxt="n", yaxt="n")}, x= summaries.ss[,c("vasc.old.L" ,"vasc.old.T", "vasc.old.K","vasc.old.W", "vasc.old.R","vasc.old.Tr")], z=summaries.ss[,c("vasc.new.L" ,"vasc.new.T", "vasc.new.K","vasc.new.W", "vasc.new.R","vasc.new.Tr")], ylab=c("Light","Temperature","Continentality","Moisture ","Reaction","Trophism"), main=c("","","Vascular plants","","",""))
+ 
+savePlot("Ellenbergs by community ALL.png", type="png")
+
+                                                                                          
+#Summaries
+write.csv2(aggregate(summaries.ss, by=list(summaries.ss$dominant), FUN=mean), file="summaries for Bogdan.csv")
