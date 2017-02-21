@@ -309,7 +309,8 @@ first_flowering %>% filter(stage ==3) %>%
   wilcox.test(as.vector(median) ~ `Pollination mechanism`, data  = .)
 
 ##life form
-first_flowering %>% filter(stage ==3) %>% 
+first_flowering %>% 
+  filter(stage ==3) %>% 
   distinct(species, median) %>%
   inner_join(traits, by = c("species" = "Species.name")) %>% 
   ggplot(aes(x = RaunkiaerMono, y = median, colour = RaunkiaerMono)) + 
@@ -332,3 +333,46 @@ first_flowering %>%
   arrange(timing, stage)
 
 
+## predictors of april effect
+firstflower_predictor <- firstflowerReg %>% 
+  filter(stage ==3, month == "April") %>%
+  left_join(traits, by = c("species" = "Species.name"))
+
+f <- firstflower_predictor %>%
+  ggplot(aes(x = timing, y = estimate)) + 
+  geom_violin(draw_quantiles = 0.5) +
+  geom_jitter() +
+  labs(y = "Day/°C")
+f
+f + aes(x = Species.type)
+f + aes(x = `Pollination mechanism`)
+f + aes(x = RaunkiaerMono)
+
+kruskal.test(estimate ~ timing, data = firstflower_predictor)
+kruskal.test(estimate ~ as.factor(Species.type), data = firstflower_predictor)
+kruskal.test(estimate ~ as.factor(`Pollination mechanism`), data = firstflower_predictor)
+kruskal.test(estimate ~ as.factor(RaunkiaerMono), data = firstflower_predictor)
+
+f + aes(x = light)
+f <- firstflower_predictor %>%
+  ggplot(aes(x = light, y = estimate)) + 
+  geom_smooth() +
+  geom_point() +
+  labs(y = "April temperature response Day/°C")
+f
+f + aes(x = temperature)
+f + aes(x = continentality)
+f + aes(x = humidity)
+f + aes(x = trophism)
+f + aes(x = reaction)
+
+cor.test(firstflower_predictor$estimate, firstflower_predictor$light, method = "spearman")
+cor.test(firstflower_predictor$estimate, firstflower_predictor$temperature, method = "spearman")
+cor.test(firstflower_predictor$estimate, firstflower_predictor$continentality, method = "spearman")
+cor.test(firstflower_predictor$estimate, firstflower_predictor$humidity, method = "spearman")
+cor.test(firstflower_predictor$estimate, firstflower_predictor$trophism, method = "spearman")
+cor.test(firstflower_predictor$estimate, firstflower_predictor$reaction, method = "spearman")
+
+
+library("GGally")
+ggpairs(select(firstflower_predictor, -(species:median), -(transect:term), -(std.error:month2), -Raunkiaer, -continentality) %>% rename(pollination = `Pollination mechanism`))
