@@ -16,23 +16,19 @@ text("Bryophytes",x=-415, y=85, cex=1.4, srt=90)
 text("Vascular plants",x=-415, y=15, cex=1.4, srt=90)
 savePlot("Distributions of values_subset.emf", type="emf")
 
-t.test(summaries.ss$lich.rich1992, summaries.ss$lich.rich2015, paired=TRUE)
-t.test(summaries.ss$bryo.rich1992, summaries.ss$bryo.rich2015, paired=TRUE)
-t.test(summaries.ss$vasc.rich1992, summaries.ss$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
-
 x11(7,3); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0))
 plot(summaries.ss$lich.extinct, summaries.ss$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
 plot(summaries.ss$bryo.extinct, summaries.ss$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
 plot(summaries.ss$vasc.extinct, summaries.ss$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
 savePlot("Colonisations vs extinctions_subset.emf", type="emf")
 
-x11(7,8)#this runs all the way to line 72
+x11(7,8)#this runs all the way to line 69. Is currently Figure 4 in Whole Crypto ms
 layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
 par(mar=c(2,2.5,2,0.5), cex.axis=0.8, las=2, xpd=NA, mgp=c(1.5,0.3,0), tcl=-0.2)
 mapply(function (x) { 
   boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 1992", main=NA)
   model.x<-aov(x~dominant, data=summaries.ss)
-  text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
+  text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)#magic numbers extract the right bits of the aov objects.
   text(x=4, y=135, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
   text(x=3, y=-20, labels=colnames(x))
 }, x=summaries.ss[,c("lich.rich1992","bryo.rich1992","vasc.rich1992")] ) #It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
@@ -72,6 +68,13 @@ savePlot("Turnover and richness by phytosoc_subset.emf", type="emf")
 savePlot("Turnover and richness by phytosoc_subset.pdf", type="pdf")
 savePlot("Turnover and richness by phytosoc_subset.png", type="png")
 
+#post-hoc tests: not working cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame 
+write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv")
+mapply(function(x, name.x){model.x<-aov(x~dominant, data=summaries.ss)
+write.table(name.x, file="Posthoc of community rich etc.csv",append=TRUE)
+print(TukeyHSD(model.x), file="Posthoc of community rich etc.csv", append=TRUE)},x=summaries.ss[,c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss"))
+       
+
 ###for powerpoint###
 x11(6,3);par(mfrow=c(1,3))
 mapply(function(x, z, main, ylim){
@@ -100,8 +103,8 @@ t.test(summaries.ss$lich.rich1992, summaries.ss$lich.rich2015, paired=TRUE)
 t.test(summaries.ss$bryo.rich1992, summaries.ss$bryo.rich2015, paired=TRUE)
 t.test(summaries.ss$vasc.rich1992, summaries.ss$vasc.rich2015, paired=TRUE)
 
-sapply(summaries.ss[1:21],FUN=mean )
-sapply(summaries.ss[1:21],FUN=sd)
+sapply(summaries.ss[,1:length(summaries.ss)-1],FUN=mean )
+sapply(summaries.ss[1:length(summaries.ss)-1],FUN=sd)
 
 #a long way to get the richnesses etc for the table in the whole crypto paper
 dim(comp_old[!rownames(comp_old)%in%dodgysquares,colSums(comp_old[!rownames(comp_old)%in%dodgysquares]>0)])
