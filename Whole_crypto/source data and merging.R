@@ -3,21 +3,23 @@
 source("../Ania_and_Martin/AniaMartinLichens_dataloading.R")#the ../ is 'go up one level', doing it this way means that it finds the right directory whether it is on C, O, or another person's computer. This has to be done for all the files loading in the project if other places use this code as source
 source("../sylwia/Bryophyte data loading.R")#in an ideal world, work out which step is printing a bunch of structure...
 library(readxl)
+
 vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
-vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015.xls"))
+vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xls"))
 phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
 
 ##Sanity checks and tidying in vascular data
-colnames(vascOld.thin)<-gsub(" ", "_",colnames(vascOld.thin))
+names(vascOld.thin)<-gsub(" ", "_",names(vascOld.thin))
 vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992 
 vascOld.thin$Frequency_1<-as.numeric(vascOld.thin$Frequency_1)
 vascOld.thin$Species_name<-gsub(" ", "_",vascOld.thin$Species_name)
 
-
-colnames(vascNew.thin)<-gsub(" ", "_",colnames(vascNew.thin))
+names(vascNew.thin)<-gsub(" ", "_",names(vascNew.thin))
+names(vascNew.thin)<-gsub("2016","2015",names(vascNew.thin))
 vascNew.thin$Plot_number_2015<-paste(substr(vascNew.thin$Plot_number,1,1),substr(vascNew.thin$Plot_number,3,4), "2015", sep="")
 vascNew.thin$Frequency_1_2015<-as.numeric(vascNew.thin$Frequency_1_2015)
 vascNew.thin$Species_name_2015<-gsub(" ", "_",vascNew.thin$Species_name_2015)
+
 
 #check that each species has one, and only one, frequency score
 unique(vascOld.thin[,4:6]) #checks that there are no values that are not 1, and no record with a 1 in more than one frequency column. Right now 10552 has no frequency score. Actually 10551 should be the last line and there are 11883
