@@ -111,10 +111,10 @@ plot(sp1[,1],sp1[,2],xlab="DCA1",ylab="DCA2",type="n")
 text(sp1[,1],sp1[,2],rownames(elev.df)[occ50>0],cex=0.5)
 
 
-####CCA with time as a predictor#####
+####CCA with time as a predictor#####123
 elev.df<-read.table("tops.csv", sep=";", dec=",", header=TRUE) ###dataframe equal to elev.df from clipboard#
 elev2.df<-elev.df[-1,]###dataframe equal to elev.df from clipboard#
-summit <- elev.df[1, ] #
+summit <- elev.df[1, ]#
 
 s50<-NULL			#s50 this identifies the species at ecah summit above 50 meters below summit#
 for(i in 1:28){#
@@ -132,7 +132,7 @@ cca1<-cca(t(s50[occ50>0,])~old.new)#
 set.seed(42)#
 h<-how(within=Within(type="series", constant=TRUE), plots=Plots(strata=summit.number, type="free"))#
 anova(cca1, permutations=h)#
-####end of cca######
+####end of cca######123
 
 
 rownames(elev.df)[1:25]
