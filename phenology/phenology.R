@@ -353,6 +353,14 @@ first_flowering %>%
   arrange(timing, stage)
 
 
+#variance by april effect
+first_flowering %>% 
+  filter(stage == 3) %>%
+  group_by(transect, species, timing) %>% 
+  summarise(std = sd(as.vector(first))) %>% 
+  left_join(filter(firstflowerReg, stage == 3, month == "April")) %>%
+  ggplot(aes(x = estimate, y = std)) + geom_point()
+
 ## predictors of april effect
 firstflower_predictor <- firstflowerReg %>% 
   filter(stage ==3, month == "April") %>%
