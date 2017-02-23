@@ -113,9 +113,9 @@ shuffleSet(1:length(mountains_sag), nset = 10, control = CTRL_sag)
 
 #s100.sag<-NULL#temporary code for making cca with time for different threshold of elevation	
 #for(i in 1:24){
-  #a1.sag<-as.numeric(summit.sag[i])-sagorski1.df[,i]
-  #s100a.sag<-a1.sag<100 #change these numbers from 10 to 100
-  #s100.sag<-cbind(s100.sag,s100a.sag)
+#a1.sag<-as.numeric(summit.sag[i])-sagorski1.df[,i]
+#s100a.sag<-a1.sag<100 #change these numbers from 10 to 100
+#s100.sag<-cbind(s100.sag,s100a.sag)
 #}
 #occ100.sag<-rowSums(s100.sag)
 
@@ -213,10 +213,10 @@ merged.new<-c(2,4,6,8,10,12,14,16,18,20,22,24,26,28)
 #trait1<-NULL
 #for(i in 1:28) #Temporal code for calculate mean values
 #{
-  #a1<-s50[,i]
-  #t1<-ecol.ind.df[a1,5] #change from 1-5 for all ecological indicators
-  #t0<-mean(na.omit(t1))
-  #trait1<-c(trait1,t0)
+#a1<-s50[,i]
+#t1<-ecol.ind.df[a1,5] #change from 1-5 for all ecological indicators
+#t0<-mean(na.omit(t1))
+#trait1<-c(trait1,t0)
 #}
 #Light.merged<-trait1
 #Temperature.merged<-trait1
@@ -282,10 +282,10 @@ pawlowski.new<-c(2,4,6,8,10,12)
 #trait1.paw<-NULL
 #for(i in 1:12) #Temporal code for calculate mean values
 #{
-  #a1.paw<-s50.paw[,i]
-  #t1.paw<-ecol.ind.df[a1.paw,4] #change from 1-5 for all ecological indicators
-  #t0.paw<-mean(na.omit(t1.paw))
-  #trait1.paw<-c(trait1.paw,t0.paw)
+#a1.paw<-s50.paw[,i]
+#t1.paw<-ecol.ind.df[a1.paw,4] #change from 1-5 for all ecological indicators
+#t0.paw<-mean(na.omit(t1.paw))
+#trait1.paw<-c(trait1.paw,t0.paw)
 #}
 #Light.paw<-trait1.paw
 #Temperature.paw<-trait1.paw
@@ -349,26 +349,26 @@ names(change.per.summit.merged)<-c("Access","Tourism","BCdist","Lold","Lnew","To
 
 ##SAGORSKI
 change.per.summit.sagorski<-cbind(acc.sagorski,tour.sagorski,bray.sag,as.data.frame(Light.sag[sagorski.old]),Light.sag[sagorski.new],
-                                Temperature.sag[sagorski.old],Temperature.sag[sagorski.new],
-                                Moisture.sag[sagorski.old],Moisture.sag[sagorski.new],
-                                Trophism.sag[sagorski.old],Trophism.sag[sagorski.new],
-                                Reaction.sag[sagorski.old],Reaction.sag[sagorski.new])
+                                  Temperature.sag[sagorski.old],Temperature.sag[sagorski.new],
+                                  Moisture.sag[sagorski.old],Moisture.sag[sagorski.new],
+                                  Trophism.sag[sagorski.old],Trophism.sag[sagorski.new],
+                                  Reaction.sag[sagorski.old],Reaction.sag[sagorski.new])
 names(change.per.summit.sagorski)<-c("Access","Tourism","BCdist","Lold","Lnew","Told","Tnew","Mold","Mnew","Nold","Nnew","Rold", "Rnew")
 
 ##KOTULA
 change.per.summit.kotula<-cbind(acc.kotula,tour.kotula,bray.kot,as.data.frame(Light.kot[kotula.old]),Light.kot[kotula.new],
-                                  Temperature.kot[kotula.old],Temperature.kot[kotula.new],
-                                  Moisture.kot[kotula.old],Moisture.kot[kotula.new],
-                                  Trophism.kot[kotula.old],Trophism.kot[kotula.new],
-                                  Reaction.kot[kotula.old],Reaction.kot[kotula.new])
+                                Temperature.kot[kotula.old],Temperature.kot[kotula.new],
+                                Moisture.kot[kotula.old],Moisture.kot[kotula.new],
+                                Trophism.kot[kotula.old],Trophism.kot[kotula.new],
+                                Reaction.kot[kotula.old],Reaction.kot[kotula.new])
 names(change.per.summit.kotula)<-c("Access","Tourism","BCdist","Lold","Lnew","Told","Tnew","Mold","Mnew","Nold","Nnew","Rold", "Rnew")
 
 ##PAWLOWSKI
 change.per.summit.pawlowski<-cbind(acc.pawlowski,tour.pawlowski,bray.paw,as.data.frame(Light.paw[pawlowski.old]),Light.paw[pawlowski.new],
-                                Temperature.paw[pawlowski.old],Temperature.paw[pawlowski.new],
-                                Moisture.paw[pawlowski.old],Moisture.paw[pawlowski.new],
-                                Trophism.paw[pawlowski.old],Trophism.paw[pawlowski.new],
-                                Reaction.paw[pawlowski.old],Reaction.paw[pawlowski.new])
+                                   Temperature.paw[pawlowski.old],Temperature.paw[pawlowski.new],
+                                   Moisture.paw[pawlowski.old],Moisture.paw[pawlowski.new],
+                                   Trophism.paw[pawlowski.old],Trophism.paw[pawlowski.new],
+                                   Reaction.paw[pawlowski.old],Reaction.paw[pawlowski.new])
 names(change.per.summit.pawlowski)<-c("Access","Tourism","BCdist","Lold","Lnew","Told","Tnew","Mold","Mnew","Nold","Nnew","Rold", "Rnew")
 
 ###CREATING PLOTS
@@ -547,5 +547,3 @@ legend("bottomleft", c("R < 0.01 n.s.", "F = 0.07"), cex=1.2)
 plot(climate.lomnica.df$SN~climate.lomnica.df$Year, cex=1.5, cex.axis=1.2, cex.lab=1.2, ylab="Number of days with snow", xlab="")
 abline(lm(climate.lomnica.df$SN~climate.lomnica.df$Year))
 legend("topright", c("R = 0.17**", "F = 8.25"), cex=1.2)
-
-
