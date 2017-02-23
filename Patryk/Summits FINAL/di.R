@@ -125,7 +125,7 @@ for(i in 1:28){#
 
 occ50<-rowSums(s50)#
 
-old.new<-rep(c(0,1),14)#
+old.new<-rep(c(0,1),14)#1
 summit.number<-c(1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14)#
 cca1<-cca(t(s50[occ50>0,])~old.new)#
 
@@ -133,6 +133,8 @@ set.seed(42)#
 h<-how(within=Within(type="series", constant=TRUE), plots=Plots(strata=summit.number, type="free"))#
 anova(cca1, permutations=h)#
 ####end of cca######123
+
+
 
 
 rownames(elev.df)[1:25]
