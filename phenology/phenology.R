@@ -225,13 +225,33 @@ firstflowerReg <- first_floweringClim %>%
   ungroup() %>%
   mutate(transect = factor(transect))
 
+#all stages
+keepingUpPlotData <- filter(firstflowerReg, stage %in% 2:4, month %in% month.name[1:7])
 
-ggplot(filter(firstflowerReg, stage %in% 2:4), aes(x = month, y = estimate, fill = stage)) + 
+ggplot(keepingUpPlotData, aes(x = month2, y = estimate, fill = stage, group = interaction(month, stage))) +
   geom_hline(yintercept = 0, colour = "grey60", linetype = "dashed") + 
   geom_violin(alpha = 0.4, draw_quantiles = c(0.5)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + 
   facet_wrap(~timing, ncol = 1) +
-  scale_fill_discrete(name = "Stage", labels = stage_names[2:5])
+  scale_fill_discrete(name = "Stage", labels = stage_names[2:5]) +
+  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "grey40", inherit.aes = FALSE) +
+  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "grey40", inherit.aes = FALSE) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  coord_cartesian(ylim = c(-20, max(keepingUpPlotData$estimate))) 
+
+###flowering
+keepingUpPlotData <- filter(firstflowerReg, stage == 3, month %in% month.name[1:7])
+
+ggplot(keepingUpPlotData, aes(x = month2, y = estimate, fill = timing, group = interaction(month, timing))) +
+  geom_hline(yintercept = 0, colour = "grey60", linetype = "dashed") + 
+  geom_violin(alpha = 0.4, draw_quantiles = c(0.5)) + 
+#  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + 
+#  scale_fill_discrete(name = "Stage", labels = stage_names[2:5]) +
+  geom_ribbon(data = filter(seasonalwarming, doy < 180 & doy > 40), mapping = aes(x = doy2,  ymax = -1/(estimate + 1.96 * std.error), ymin = -1/(estimate - 1.96 * std.error)), alpha = 0.4, fill = "grey40", inherit.aes = FALSE) +
+  geom_line(data = filter(seasonalwarming, doy < 180 & doy > 30), mapping = aes(x = doy2, y = -1/estimate), colour = "grey40", inherit.aes = FALSE) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  coord_cartesian(ylim = c(min(-12, keepingUpPlotData$estimate), max(keepingUpPlotData$estimate))) +
+  labs(x = "Month", y = "Effect of temperature days/°C", fill = "Timing")
 
 
 firstflowerReg %>% group_by(stage, month) %>%
@@ -332,6 +352,14 @@ first_flowering %>%
   summarise(mean_std = mean(std), median_std = median(std)) %>% 
   arrange(timing, stage)
 
+
+#variance by april effect
+first_flowering %>% 
+  filter(stage == 3) %>%
+  group_by(transect, species, timing) %>% 
+  summarise(std = sd(as.vector(first))) %>% 
+  left_join(filter(firstflowerReg, stage == 3, month == "April")) %>%
+  ggplot(aes(x = estimate, y = std)) + geom_point()
 
 ## predictors of april effect
 firstflower_predictor <- firstflowerReg %>% 
