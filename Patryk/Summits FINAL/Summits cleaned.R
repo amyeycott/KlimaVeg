@@ -10,7 +10,7 @@ merg.new.df<-read.table("merg.new.csv", sep=';', dec=',', header=TRUE)
 climate.kasprowy.df<-read.table("climate.kasprowy.csv", sep=';', dec=',', header=TRUE)
 climate.lomnica.df<-read.table("climate.lomnica.csv", sep=';', dec=',', header=TRUE)
 
-####LIBS####
+####LIBS#####
 library(vegan)
 library(permute)
 library(Hmisc)
