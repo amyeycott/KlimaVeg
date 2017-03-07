@@ -15,6 +15,9 @@
 vignettes/*.html
 vignettes/*.pdf
 
+# Markdown cache
+*_cache/
+
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
 
@@ -33,6 +36,8 @@ Thumbs.db
 *.xls
 *.xlsx
 *.dbf
+
+
 *.csv
 *.tab
 !dictionary.tab
@@ -43,3 +48,4 @@ Thumbs.db
 .Rproj.user
 *.doc
 *.html
+*.Rdata
