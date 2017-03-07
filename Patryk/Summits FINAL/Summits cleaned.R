@@ -64,10 +64,9 @@ mountains <- gl(n = n_mountains, k = 2)# must be factor - safer to use real moun
 old_new <- gl(n = 2, k = 1, length = n_mountains * 2)#should be factor
 
 ##BLOCKS
-CTRL1 <- how(blocks = mountains, complete=TRUE)
+CTRL1 <- how(blocks = mountains, complete=TRUE, maxperm=20000)
 CTRL2 <- how(blocks = mountains, nperm=999)
-check(1:length(mountains), control = CTRL1) # how many possible permutations #returns an error: 
-                                            # Number of possible permutations too large (> 'maxperm')
+check(1:length(mountains), control = CTRL1) # how many possible permutations #now it is 16384
 
 ##SOME EXAMPLE PERMUTATIONS
 set.seed(42)
@@ -75,13 +74,13 @@ shuffleSet(1:length(mountains), nset = 10, control = CTRL)
 
 ###ORDINATION CODE
 mod <- rda(t(s50[occ50>0,]) ~ old_new + Condition(mountains))#partial out effect of mountain
-anova(mod, permutations = CTRL)
+anova(mod, permutations = CTRL1)
 
 ###STRATA IN PLOTS - GIVES SIMILAR PERMUTATIONS
-CTRL <- how(plots = Plots(strata = mountains))
-check(1:length(mountains), control = CTRL)
+CTRL1 <- how(plots = Plots(strata = mountains))
+check(1:length(mountains), control = CTRL1)
 set.seed(42)
-shuffleSet(1:length(mountains), nset = 10, control = CTRL)
+shuffleSet(1:length(mountains), nset = 10, control = CTRL1)
 
 ####CCA FOR DIFFERENT THRESHOLDS OF ELEVATION FOR EACH AUTHOR####
 ###MERGED DATASET
@@ -97,10 +96,10 @@ rda10merged<-rda(t(s10[occ10>0,]) ~ old_new + Condition(mountains))
 rda20merged<-rda(t(s20[occ20>0,]) ~ old_new + Condition(mountains))
 rda50merged<-rda(t(ss50[occc50>0,]) ~ old_new + Condition(mountains))
 rda100merged<-rda(t(s100[occ100>0,]) ~ old_new + Condition(mountains))
-anova(rda10merged, permutations = CTRL)
-anova(rda20merged, permutations = CTRL)
-anova(rda50merged, permutations = CTRL)
-anova(rda100merged, permutations = CTRL)
+anova(rda10merged, permutations = CTRL1)
+anova(rda20merged, permutations = CTRL1)
+anova(rda50merged, permutations = CTRL1)
+anova(rda100merged, permutations = CTRL1)
 
 ###SAGORSKI
 sagorski1.df<-sagorski.df[-1,]
@@ -108,7 +107,7 @@ summit.sag<-sagorski.df[1,]
 n_mountains_sag <- 12
 mountains_sag <- gl(n = n_mountains_sag, k = 2)
 old_new_sag <- gl(n = 2, k = 1, length = n_mountains_sag * 2)
-CTRL_sag <- how(blocks = mountains_sag, nperm = 999)
+CTRL_sag <- how(blocks = mountains_sag, complete=TRUE, maxperm=20000)
 check(1:length(mountains_sag), control = CTRL_sag)
 set.seed(42)
 shuffleSet(1:length(mountains_sag), nset = 10, control = CTRL_sag)
@@ -136,7 +135,7 @@ summit.kot<-kotula.df[1,]
 n_mountains_kot <- 9
 mountains_kot <- gl(n = n_mountains_kot, k = 2)
 old_new_kot <- gl(n = 2, k = 1, length = n_mountains_kot * 2)
-CTRL_kot <- how(blocks = mountains_kot, nperm = 999)
+CTRL_kot <- how(blocks = mountains_kot, complete=TRUE, maxperm=20000)
 check(1:length(mountains_kot), control = CTRL_kot)
 set.seed(42)
 shuffleSet(1:length(mountains_kot), nset = 10, control = CTRL_kot)
@@ -164,7 +163,7 @@ summit.paw<-pawlowski.df[1,]
 n_mountains_paw <- 6
 mountains_paw <- gl(n = n_mountains_paw, k = 2)
 old_new_paw <- gl(n = 2, k = 1, length = n_mountains_paw * 2)
-CTRL_paw <- how(blocks = mountains_paw, nperm = 999)
+CTRL_paw <- how(blocks = mountains_paw, complete=TRUE, maxperm=20000)
 check(1:length(mountains_paw), control = CTRL_paw)
 set.seed(42)
 shuffleSet(1:length(mountains_paw), nset = 10, control = CTRL_paw)
