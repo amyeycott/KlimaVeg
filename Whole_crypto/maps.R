@@ -5,13 +5,7 @@ library("assertthat")
 #this is an attempt to re-create the maps of Falinski.
 source("turnover_subset.R")
 
-coloury <- data.frame(
-  Phytosociology_Latin = c("CA","CelA","PP","PQ","QP","TC"),
-  Colour_softer = c("#6CC8F0", "#AB66AD","#FCF19C","#B5634B","#E0A575","#76B588"),
-  Community_in_1992 = c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), 
-  Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
-  stringsAsFactors = FALSE
-  )
+
 
 #set up the coordinates for the squares
 #mapbase for the subset
@@ -57,28 +51,28 @@ savePlot("PP Picea map_new 5th feb 2017.pdf", type="pdf")
 rownames(vascOld.fat[vascOld.fat$Picea_abies-vascNew.fat$Picea_abies!=0,])
 
 #For richness analyses
-x11(6,3);par(mfrow=c(1,3), pin=c(2.0,2.8), xpd=NA, mar=c(8,2,1,1), mgp=c(1,0.2,0), las=1, tcl=0)
+x11(6,4);par(mfrow=c(1,3), pin=c(2.0,2.8), xpd=NA, mar=c(8,2,1,1), mgp=c(1,0.2,0), las=1, tcl=0)
 plot(byrow~bycol, data=mapbase.ss, col=as.character(mapbase.ss$Colour_softer), pch=15, cex=2.5, cex.axis=0.8, xlab="", ylab="", yaxt="n", xaxp=c(1,max(mapbase.ss$bycol),9))
-text(x=5, y=14, "Lichens", adj=0)
+text(x=5, y=14, "Lichens", adj=0, cex=1.2)
 axis(side=2, at=1:max(mapbase.ss$byrow), labels=unique(substr(mapbase.ss$plot,1,1)), cex.axis=0.8)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)>1,], 
        cex=mapbase.ss$lich.rich2015[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)>1]/mapbase.ss$lich.rich1992[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)>1], pch=16)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)<1,], 
        cex=mapbase.ss$lich.rich1992[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)<1]/mapbase.ss$lich.rich2015[(mapbase.ss$lich.rich2015/mapbase.ss$lich.rich1992)<1], pch=1)
 plot(byrow~bycol, data=mapbase.ss, col=as.character(mapbase.ss$Colour_softer), pch=15, cex=2.5, cex.axis=0.8, xlab="", ylab="", yaxt="n", xaxp=c(1,max(mapbase.ss$bycol),9))
-text(x=5, y=14, "Bryophytes", adj=0)
+text(x=5, y=14, "Bryophytes", adj=0, cex=1.2)
 axis(side=2, at=1:max(mapbase.ss$byrow), labels=unique(substr(mapbase.ss$plot,1,1)), cex.axis=0.8)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)>1,], 
        cex=mapbase.ss$bryo.rich2015[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)>1]/mapbase.ss$bryo.rich1992[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)>1], pch=16)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)<1,], cex=mapbase.ss$bryo.rich1992[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)<1]/mapbase.ss$bryo.rich2015[(mapbase.ss$bryo.rich2015/mapbase.ss$bryo.rich1992)<1], pch=1)
 plot(byrow~bycol, data=mapbase.ss, col=as.character(mapbase.ss$Colour_softer), pch=15, cex=2.5, cex.axis=0.8, xlab="", ylab="", yaxt="n", xaxp=c(1,max(mapbase.ss$bycol),9))
-text(x=5, y=14, "Vascular plants", adj=0)
+text(x=5, y=14, "Vascular plants", adj=0, cex=1.2)
 axis(side=2, at=1:max(mapbase.ss$byrow), labels=unique(substr(mapbase.ss$plot,1,1)), cex.axis=0.8)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)>1,], cex=
          mapbase.ss$vasc.rich2015[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)>1]/mapbase.ss$vasc.rich1992[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)>1], pch=16)
 points(byrow~bycol, data=mapbase.ss[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)<1,], 
        cex=mapbase.ss$vasc.rich1992[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)<1]/mapbase.ss$vasc.rich2015[(mapbase.ss$vasc.rich2015/mapbase.ss$vasc.rich1992)<1], pch=1)
-legend(x=-13, y=-1, legend=coloury$Community_in_1992, fill=coloury$Colour_softer, ncol=2, title="Phytosociological classification in 1992", cex=0.8)
+legend(x=-20, y=-1, legend=coloury$Community_in_1992, fill=coloury$Colour_softer, ncol=2, title="Phytosociological classification in 1992", cex=1.5)
 savePlot("Net richness change mapped.png", type="png")
 
 
@@ -104,7 +98,7 @@ vascs.maps<-merge(vascall.df, summaries.maps, by="plot")
 vascs.maps$byrow<-unique(substr(vascs.maps$plot,1,1))
 names(vascs.maps)<-gsub(" ","_",gsub("-","__",names(vascs.maps)))
 
-library(ggplot2)
+library(ggplot2)#g sets up plots with one year and then another.
 g<-ggplot(lichens.maps, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=as.factor(Acrocordia_gemmata)))+
   theme(panel.grid = element_blank(), panel.background = element_blank())+
   geom_tile(colour="black", size=0.5, linetype="dashed")+
@@ -116,6 +110,8 @@ g<-ggplot(lichens.maps, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=as.
   labs(x="",y="",fill="Forest type in 1992", size="Frequency")+
   ggtitle("Acrocordia gemmata")
 g#sets up the plot, using the first species as an example
+
+
 
 ## ---- lichens_maps
 for (i in gsub(" ","_", unique(c(new.harm.db$Species, old.harm.db$Species)))) {
@@ -145,3 +141,44 @@ for (i in gsub(" ","_", gsub("-","__",unique(c(vascOld.thin$Species_name, vascNe
   #ggsave(paste0("Maps/",i,".png"))
   print(h)
 }
+
+#k sets up plots for lichens-bryos-vasculars (e.g. richchange)
+library(tidyr)
+for.k.plots<-cbind(gather(mapbase.ss[,c("byrow","bycol","dominant","plot","Community_in_1992","Colour_softer","Colour_bolder","lich.BCdiss", "bryo.BCdiss","vasc.BCdiss")],key=group, value=BCdiss,lich.BCdiss, bryo.BCdiss,vasc.BCdiss), gather(mapbase.ss[,c("lich.rich1992", "bryo.rich1992","vasc.rich1992")],key=notneeded, value=rich1992),gather(mapbase.ss[,c("lich.rich2015", "bryo.rich2015","vasc.rich2015")],key=ignoreme, value=rich2015))
+for.k.plots$group<-substr(for.k.plots$group,1,4)
+for.k.plots<-subset(for.k.plots,select=-c(notneeded,ignoreme))
+for.k.plots$richdiff<-for.k.plots$rich2015-for.k.plots$rich1992
+for.k.plots$group<-factor(for.k.plots$group)
+levels(for.k.plots$group) <- list(Lichens="lich",Bryophytes="bryo", Vascular_plants="vasc")
+
+x11(6,3)
+k<-ggplot(for.k.plots, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=BCdiss/2))+
+  theme(panel.grid = element_blank(), panel.background = element_blank())+
+  geom_tile(colour="black", size=0.5, linetype="dashed")+
+  geom_point()+
+  scale_fill_manual(limits=coloury$Phytosociology_Latin, values=coloury$Colour_softer, labels=coloury$Community_in_1992)+
+  facet_wrap(~group)+
+  coord_equal()+
+  labs(x="",y="",fill="Forest type in 1992", size="Frequency")+
+  ggtitle("Bray-Curtis dissimilarity")
+k
+
+
+x11(6,3)#plot m: with filled circles for positive numbers and hollow circles for negative ones. Negative ones were plotting fine in a previous version where I wasn't attempting unfilled circles.
+m<-ggplot(data=for.k.plots, aes(x=as.factor(bycol), y=byrow, fill=dominant)+
+  geom_point(aesas.factor(bycol)[richdiff>0], byrow[richdiff>0], size=richdiff))+
+  geom_point(aes(as.factor(bycol)[richdiff<0], byrow[richdiff<0], size=richdiff, fill=NULL))+
+  theme(panel.grid = element_blank(), panel.background = element_blank())+
+  geom_tile(colour="black", size=0.5, linetype="dashed")+
+  scale_fill_manual(limits=coloury$Phytosociology_Latin, values=coloury$Colour_softer, labels=coloury$Community_in_1992)+
+  facet_wrap(~group)+
+  coord_equal()+
+  labs(x="",y="",fill="Forest type in 1992", size="Frequency")+
+  ggtitle("Change in species richness") #Error in layer(data = data, mapping = mapping, stat = stat, geom = GeomPoint. Was using code from http://stackoverflow.com/questions/8583594/modifying-the-shape-for-a-subset-of-points-with-ggplot2
+m
+
+p <- ggplot(data = mtcars)+
+  geom_point(aes(wt, mpg, shape=as.factor(cyl), colour=gear, size=carb))+
+  geom_point(aes(wt[carb==8], mpg[carb==8]), colour="black", shape=1, size=7)  
+
+k+aes(size=richdiff)+ggtitle("Change in species richness")
