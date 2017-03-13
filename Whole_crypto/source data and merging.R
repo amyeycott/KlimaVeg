@@ -61,8 +61,8 @@ rownames(vascNew.fat)<-substr(rownames(vascNew.fat),1,3)
 colnames(phytosoc)<-gsub(" ", "_",colnames(phytosoc))#takes spaces out of column names
 phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2]<-paste0(substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 1,1),"0", substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. 
 phytosoc[is.na(phytosoc)]<-0
-phytosoc$ncomms<-rowSums(phytosoc[,2:7]>0)#magic numbers are very bad, but subset wasn't working
-phytosoc$dominant<-as.factor(colnames(phytosoc[,2:7])[max.col(phytosoc[,2:7], ties.method = 'first')])  #return the column name of the column with the highest value. Should probably check how many ties there are though.
+phytosoc$ncomms<-rowSums(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")]>0)
+phytosoc$dominant<-as.factor(colnames(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")])[max.col(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")], ties.method = 'first')])  #return the column name of the column with the highest value. Should probably check how many ties there are though.
 
 ####Species characteristics - Indicator values and conservation status####
 #for bryophytes and lichens, the code is in their respective projects
@@ -86,4 +86,11 @@ bryoall.df.ss<-bryoall.df.ss[,colSums(bryoall.df.ss)>0]
 vascall.df.ss<-vascall.df[!substr(rownames(vascall.df),1,3)%in%dodgysquares,]
 vascall.df.ss<-vascall.df.ss[,colSums(vascall.df.ss)>0]
 
-
+#colour scheme to match falinski maps
+coloury <- data.frame(
+  Phytosociology_Latin = c("CA","CelA","PP","PQ","QP","TC"),
+  Colour_softer = c("#6CC8F0", "#AB66AD","#FCF19C","#B5634B","#E0A575","#76B588"),
+  Community_in_1992 = c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), 
+  Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
+  stringsAsFactors = FALSE
+)
