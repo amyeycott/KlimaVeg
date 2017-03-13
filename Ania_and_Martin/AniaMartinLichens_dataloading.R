@@ -8,8 +8,13 @@ newdb[is.na(newdb)] <-0
 #take spaces out of variable names
 colnames(newdb)<-gsub(" ", "_", colnames(newdb))
 newdb$Site[nchar(newdb$Site)==2]<-paste0(substr(newdb$Site[nchar(newdb$Site)==2], 1,1),"0", substr(newdb$Site[nchar(newdb$Site)==2], 2,2))#makes format for Site match that used elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. This affects other lines: line 49 in this file is fixed.
-newdb$Species[newdb$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."#database correction
-newdb$Species[newdb$Species=="Pertusaria ophtalmiza"]<-"Pertusaria ophthalmiza"#database correction
+
+#database corrections (do before factor generation):
+newdb$Species[newdb$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."
+newdb$Species[newdb$Species=="Pertusaria ophtalmiza"]<-"Pertusaria ophthalmiza"
+newdb$Species[newdb$Species=="Lecanora sarcopidioides"]<-"Lecanora sarcopidoides"
+newdb$Species[newdb$Species=="Lecanatis abietina"]<-"Lecanactis abietina"
+newdb$Species[newdb$Species=="Phlyctia agelaea"]<-"Phlyctis agelaea"
 newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
@@ -19,8 +24,14 @@ new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
 colnames(new.harm.db)<-gsub(" ", "_", colnames(new.harm.db))
 new.harm.db$Site[nchar(new.harm.db$Site)==2]<-paste0(substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 1,1),"0", substr(new.harm.db$Site[nchar(new.harm.db$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
-new.harm.db$Species[new.harm.db$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."#database correction
-new.harm.db$Species[new.harm.db$Species=="Pertusaria ophtalmiza"]<-"Pertusaria ophthalmiza"#database correction
+
+#database corrections (do before factor generation):
+new.harm.db$Species[new.harm.db$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."
+new.harm.db$Species[new.harm.db$Species=="Pertusaria ophtalmiza"]<-"Pertusaria ophthalmiza"
+new.harm.db$Species[new.harm.db$Species=="Lecanora sarcopidioides"]<-"Lecanora sarcopidoides"
+new.harm.db$Species[new.harm.db$Species=="Lecanatis abietina"]<-"Lecanactis abietina"
+new.harm.db$Species[new.harm.db$Species=="Phlyctia agelaea"]<-"Phlyctis agelaea"
+
 new.harm.db$Species<-as.factor(new.harm.db$Species)
 new.harm.db$Site<-as.factor(new.harm.db$Site)
 
@@ -30,6 +41,12 @@ olddb<-as.data.frame(olddb)
 olddb[is.na(olddb)] <-0
 colnames(olddb)<-gsub(" ", "_", colnames(olddb))
 olddb$Site[nchar(olddb$Site)==2]<-paste0(substr(olddb$Site[nchar(olddb$Site)==2], 1,1),"0", substr(olddb$Site[nchar(olddb$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
+
+#database corrections (do before factor generation):
+olddb$Species[olddb$Species=="Cladonia arbuscula subsp. Beringiana"]<-"Cladonia arbuscula subsp. beringiana"
+olddb$Species[olddb$Species=="Cladonia arbuscula subsp. Mitis"]<-"Cladonia arbuscula subsp. mitis"
+olddb$Species[olddb$Species=="Cladonia furcata subsp. Furcata"]<-"Cladonia furcata subsp. furcata"
+
 olddb$Species<-as.factor(olddb$Species)
 olddb$Site<-as.factor(olddb$Site)
 
@@ -39,6 +56,12 @@ old.harm.db<-as.data.frame(old.harm.db)
 old.harm.db[is.na(old.harm.db)] <-0
 colnames(old.harm.db)<-gsub(" ", "_", colnames(old.harm.db))
 old.harm.db$Site[nchar(old.harm.db$Site)==2]<-paste0(substr(old.harm.db$Site[nchar(old.harm.db$Site)==2], 1,1),"0", substr(old.harm.db$Site[nchar(old.harm.db$Site)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2).
+
+#database corrections (do before factor generation):
+old.harm.db$Species[old.harm.db$Species=="Cladonia arbuscula subsp. Beringiana"]<-"Cladonia arbuscula subsp. beringiana"
+old.harm.db$Species[old.harm.db$Species=="Cladonia arbuscula subsp. Mitis"]<-"Cladonia arbuscula subsp. mitis"
+old.harm.db$Species[old.harm.db$Species=="Cladonia furcata subsp. Furcata"]<-"Cladonia furcata subsp. furcata"
+
 old.harm.db$Species<-as.factor(old.harm.db$Species)
 old.harm.db$Site<-as.factor(old.harm.db$Site)
 
@@ -54,6 +77,11 @@ PP<- c("B01","C01","C02","D01","D02","E01","E02","F01","F02","G01", "G02","G03",
 
 #environmental indicator value data, plus some other traity stuff
 envir<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=4)
+envir$Species<-trimws(envir$Species, which = "both")
+#needs an NA line rmeoved maybe.envir<-
+#corrections to species names
+envir$Species[envir$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."
+
 
 #trim trailing spaces in species names. Don't do it for the whole file, that is very very crashy
 envir$Species<-trimws(envir$Species, which = "both")
