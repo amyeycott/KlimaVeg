@@ -18,8 +18,10 @@ axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1,2,3))
 library(Hmisc)
 x11(4,3); par(mar=c(3,4,0.1,0.1))
 errbar(c(1.2,2,2.8),means.Fe, (means.Fe+sd.Fe) , (means.Fe-sd.Fe), ylim=c(0,40), pch=16,ylab="mean plot species richness", xlab=NA, xaxt="n", xlim=c(1,3), cex.axis=1.2, cex.lab=1.2, cex=1.2, col=c("forestgreen", "forestgreen", "chocolate4"), errbar.col=c("forestgreen", "forestgreen", "chocolate4"), lwd=2)
-axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1.2,2,2.8), cex=1.5) #this is figure 1 in the summary document
+axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1.2,2,2.8), cex=1.5) 
 savePlot("Figure 1 richness per plot for presentation.emf", type="emf")
+savePlot("Figure 1 richness per plot for presentation.png", type="png")
+
 
 #how many plots have something reported from living ash? This is table 1 in the summary document.
 dim(FeLS1992table.byplot) #66 x 64 sixty six species in 64 plots
@@ -47,6 +49,17 @@ by.CWD2015<-by(hosts.CWD2015$hosts.CWD2015, hosts.CWD2015$Plot, mean)
 errbar(c(1.2,2,2.8),c(mean(by.LS1992), mean(by.LS2015), mean(by.CWD2015)),c(mean(by.LS1992)+sd(by.LS1992),mean(by.LS2015)+sd(by.LS2015),mean(by.CWD2015)+sd(by.CWD2015)),c(mean(by.LS1992)-sd(by.LS1992),mean(by.LS2015)-sd(by.LS2015),mean(by.CWD2015)-sd(by.CWD2015)),xaxt="n", xlab=NA, xlim=c(1,3), main="Hosts per ash-epiphytic bryophyte species per plot", ylab="n hosts +- 1 sd", cex.axis=1.2, cex.lab=1.2, cex=1.2, col=c("forestgreen", "forestgreen", "chocolate4"), errbar.col=c("forestgreen", "forestgreen", "chocolate4"), lwd=2)
 axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1.2,2,2.8), cex=1.5) #this is Figure 2 in the summary document.
 savePlot("Figure 2 alt hosts per plot for presentation.emf", type="emf")
+savePlot("Figure 2 alt hosts per plot for presentation.png", type="png")
+
+x11(4,6); par(mar=c(3,4,0.1,0.1), mfrow=c(2,1))
+errbar(c(1.2,2,2.8),means.Fe, (means.Fe+sd.Fe) , (means.Fe-sd.Fe), ylim=c(0,40), pch=16, ylab="mean plot species richness", xlab=NA, xaxt="n", xlim=c(1,3), cex.axis=1.2, cex.lab=1.2, cex=1.2, lwd=2)
+axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1.2,2,2.8), cex=1.2) 
+errbar(c(1.2,2,2.8),c(mean(by.LS1992), mean(by.LS2015), mean(by.CWD2015)),c(mean(by.LS1992)+sd(by.LS1992),mean(by.LS2015)+sd(by.LS2015),mean(by.CWD2015)+sd(by.CWD2015)),c(mean(by.LS1992)-sd(by.LS1992),mean(by.LS2015)-sd(by.LS2015),mean(by.CWD2015)-sd(by.CWD2015)),xaxt="n", xlab=NA, xlim=c(1,3), main="Hosts per ash-epiphytic bryophyte species per plot", ylab="mean hosts +- 1 sd", cex.axis=1.2, cex.lab=1.2)
+axis(1, labels=c("LS1992","LS2015","CWD2015"), at=c(1.2,2,2.8), cex=1.2)       
+savePlot("Figure 1ab richness and alt hosts per plot.emf", type="emf")
+savePlot("Figure 1ab richness and alt hosts per plot.png", type="png")
+
+
 
 #who is on CWD and NOT on LS? #This is Table 2 in the summary document.
 they.like.their.ash.dead<-unique(on.cwd.ash$Species_name[!on.cwd.ash$Species_name%in%on.ls.ash$Species_name])#don't stress about learning this, the syntax is a bastard
@@ -217,17 +230,20 @@ ggplot(cbind(plothostrich, Fe_LS= plotFe_LSrich$V1), aes(x=V1, y = Fe_LS)) +
 
 #Figure on hosts for ms. Lines 30-40 have it per plot, and then line 150 onwards 
 #asked for: Histogram of total n alternative hosts and barplot of ash epiphytes per host. Also for CWD? (3x2 – LS 1992, LS2015, CWD 2015).
-x11(8,6); par(mfrow=c(2,3))
-hist(hostsall.1992$max[hostsall.1992$Fe_LS==1], xlab="Number of hosts for F. excelsior epiphyte species", main="1992", xlim=c(0,14), ylim=c(0,25), las=1)
-hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.LS2015$Species_name)], xlab="Number of hosts for F. excelsior epiphyte species", main="2015", xlim=c(0,14), ylim=c(0,25), las=1) #two different ways of the same thing... why?
-hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.CWD2015$Species_name)], xlab="Number of hosts for F. excelsior saproxylic species", main="CWD2015", xlim=c(0,14), ylim=c(0,25), breaks=14, las=1)## Two things seemed wrong with hostsall.2015 - there can't be 70 epiphytic species on alnus glutinosa. But there is, there's 84, I checked using "bryophytes"! And there is no UG or MS CWD.
-barplot(colSums(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]), names.arg =substr(colnames(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")
-barplot(colSums(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]), names.arg =substr(colnames(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")
+x11(6,3); par(mfrow=c(1,3), xpd=NA, cex=1.2, mgp=c(2,0.7,0), mar=c(4,3,3,1))
+hist(hostsall.1992$max[hostsall.1992$Fe_LS==1], xlim=c(0,14), ylim=c(0,25), las=1, xlab="", main="1992", col="forestgreen")
+hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.LS2015$Species_name)], xlab="Number of hosts for F. excelsior epiphyte species", main="2015", xlim=c(0,14), ylim=c(0,25), las=1, col="forestgreen") #two different ways of the same thing... why?
+hist(hostsall.2015$max[(hostsall.2015$Group.1%in%hosts.CWD2015$Species_name)], main="CWD2015", xlim=c(0,14), ylim=c(0,25), breaks=14, las=1, xlab="", col="brown")## Two things seemed wrong with hostsall.2015 - there can't be 70 epiphytic species on alnus glutinosa. But there is, there's 84, I checked using "bryophytes"! And there is no UG or MS CWD.
+savePlot("N alternative hosts for presentations.png", type="png")
 
 
+x11(8,3); par(mfrow=c(1,3), xpd=NA, cex=1.15, mgp=c(1.7,0.3,0), mar=c(4,2.5,3,0.1), tcl=-0.2)
+barplot(colSums(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]), names.arg =substr(colnames(hostsall.1992[,substr(colnames(hostsall.1992),4,5)=="LS"]),1,2), las=2, xlab="", ylab="Number of epiphyte species", col="forestgreen", main="1992")
+barplot(colSums(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]), names.arg =substr(colnames(hostsall.2015[,substr(colnames(hostsall.2015),4,5)=="LS"]),1,2), las=2, xlab="Host tree", ylab="", col="forestgreen", main="2015")
 hostsall.CWD2015<-aggregate(bryophytes[bryophytes$Year==2015, substr(colnames(bryophytes),4,6)=="CWD"], by=list(bryophytes$Species_name[bryophytes$Year==2015]), max)
+barplot(colSums(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]), names.arg =substr(colnames(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]),1,2), las=2, xlab="", ylab="", col="brown",main="CWD2015" )#hostsall.CWD2015 needs making. missing UG & MS in the file! Magic number fail.
+savePlot("Epiphytes per tree spp for presentation.png", type="png")
 
 
-barplot(colSums(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]), names.arg =substr(colnames(hostsall.CWD2015[,substr(colnames(hostsall.CWD2015),4,6)=="CWD"]),1,2), las=2, xlab="Host tree", ylab="Number of epiphyte species")#hostsall.CWD2015 needs making. missing UG & MS in the file! Magic number fail.
 savePlot("Figure Hosts 3x2.emf", type="emf")
 savePlot("Figure Hosts 3x2.pdf", type="pdf")
