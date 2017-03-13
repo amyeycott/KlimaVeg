@@ -16,10 +16,12 @@ text("Bryophytes",x=-415, y=85, cex=1.4, srt=90)
 text("Vascular plants",x=-415, y=15, cex=1.4, srt=90)
 savePlot("Distributions of values_subset.emf", type="emf")
 
-x11(7,3); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0))
-plot(summaries.ss$lich.extinct, summaries.ss$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
-plot(summaries.ss$bryo.extinct, summaries.ss$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
-plot(summaries.ss$vasc.extinct, summaries.ss$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
+x11(7,3.5); par(mfrow=c(1,3), pin=c(1.6,1.6), mgp=c(1.8,0.5,0), xpd=NA)
+plot(summaries.ss$lich.extinct, summaries.ss$lich.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens",col= coloury$Colour_bolder[as.factor(summaries.ss$dominant)], lwd=1.5, cex=0.8)# the colour only works while the factor for community is ordered the same way for both. Should be fixed, same as magic numbers (which I have written here to find the faults)
+plot(summaries.ss$bryo.extinct, summaries.ss$bryo.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes",col= coloury$Colour_bolder[as.factor(summaries.ss$dominant)], lwd=1.5, cex=0.8)
+legend(x=-1, y=-0.3, legend=coloury$Community_in_1992,fill=coloury$Colour_bolder, ncol=3)
+plot(summaries.ss$vasc.extinct, summaries.ss$vasc.colonise, xlab="Proportion plot extinctions 1992-2015", ylab="Proportion plot colonisations 1992-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants", col= coloury$Colour_bolder[as.factor(summaries.ss$dominant)], lwd=1.5, cex=0.8)
+savePlot("Colonisations vs extinctions_subset.png", type="png")
 savePlot("Colonisations vs extinctions_subset.emf", type="emf")
 
 x11(7,8)#this runs all the way to line 69. Is currently Figure 4 in Whole Crypto ms
@@ -67,13 +69,6 @@ text(-20,1.1,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc_subset.emf", type="emf")
 savePlot("Turnover and richness by phytosoc_subset.pdf", type="pdf")
 savePlot("Turnover and richness by phytosoc_subset.png", type="png")
-
-#post-hoc tests: not working cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame 
-write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv")
-mapply(function(x, name.x){model.x<-aov(x~dominant, data=summaries.ss)
-write.table(name.x, file="Posthoc of community rich etc.csv",append=TRUE)
-print(TukeyHSD(model.x), file="Posthoc of community rich etc.csv", append=TRUE)},x=summaries.ss[,c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss"))
-       
 
 ###for powerpoint###
 x11(6,3);par(mfrow=c(1,3))
@@ -144,3 +139,12 @@ losers<-as.data.frame(head(sort(colSums(lichall.df.ss[128:254,]>0)-colSums(licha
 winners<-tail(sort(colSums(lichall.df.ss[128:254,]>0)-colSums(lichall.df.ss[1:127,]>0)))#winners: by total squares gained
 write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])==0)&(colSums(lichall.df.ss[1:127,])>1)]>0))), file="lich.extinction.csv")
 write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])>0)&(colSums(lichall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="lich colonisation.csv")
+
+#post-hoc tests: cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv")
+write.table(c(0,0), file="Posthoc of community rich etc.csv")
+mapply(function(x, name.x){model.x<-aov(x~dominant, data=summaries.ss)
+write.table(name.x, file="Posthoc of community rich etc.csv",append=TRUE)
+write.table(round(TukeyHSD(model.x)[[1]], digits=4), file="Posthoc of community rich etc.csv", append=TRUE, sep=";")},x=summaries.ss[,c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1992","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1992", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1992","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss"))#works for 'print' but not for 'write table' (cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv"))
+
+TukeyHSD(aov(vasc.BCdiss~dominant, data=summaries.ss))[[1]]
+
