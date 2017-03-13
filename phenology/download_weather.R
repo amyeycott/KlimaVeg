@@ -56,28 +56,39 @@ monthlyRegionalData %>%
 
 
 ## Bialowieza data from 
-library("RCurl")
-library("readr")
+source("phenology/R/get_polish_weather.R")
+
 #authentic <- "richard.telford@uib.no:Pa55w0rd"#not real password
 #save(authentic, file = "phenology/data/authentic.Rdata")
 load("phenology/data/authentic.Rdata")#
-
 startDate <- as.Date("1964-1-1")
 endDate <- as.Date("2015-12-31")
-meanTemperature <- plyr::ldply(seq(from = startDate, to = endDate, by = 7), function(D){
-  url <- paste0("https://dane.imgw.pl/1.0/pomiary/cbdh/252230120-B100B007CD/tydzien/", D,"?format=csv")
-  Sys.sleep(0.9)#don't hit server too hard
-  read_delim(getURL(url, userpwd = authentic), delim = ";")
-}, .progress = "text")
+siteCode <- "252230120"
+
+meanTemperature <- get_Polish_weather_data(
+  siteCode = siteCode, 
+  variableCode = "B100B007CD", 
+  startDate = startDate, 
+  endDate = endDate, 
+  authentic = authentic
+  )
+
+minTemperature <- get_Polish_weather_data(
+  siteCode = siteCode, 
+  variableCode = "B100B007AD",# Minimalna temperatura powietrza-doba-klimat 
+  startDate = startDate, 
+  endDate = endDate, 
+  authentic = authentic
+  )
+BialowiezaMinima <- minTemperature %>%
+  mutate(name = "Białowieża", variable = "tmin")
+  
 
 save(meanTemperature, file = "phenology/data/BialowiezaMeanTemp.Rdata")
+save(BialowiezaMinima, file = "phenology/data/BialowiezaMinTemp.Rdata")
 
-BialowiezaDaily <- meanTemperature %>% 
-  rename(value = wartosc, date = data) %>% 
-  filter(date >= startDate, date <= endDate) %>%
-  mutate(name = "Białowieża",
-         date = as.Date(format(date, "%Y-%m-%d")),
-         variable = "tavg")
+BialowiezaDaily <- meanTemperature %>%
+  mutate(name = "Białowieża", variable = "tavg")
 
 
 BialowiezaDaily %>% ggplot(aes(x = date, y = value, colour = variable))  + geom_line()

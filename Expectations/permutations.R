@@ -7,8 +7,10 @@ old_new <- gl(n = 2, k = 1, length = n_mountains * 2)#should be factor
 
 
 ## blocks
-CTRL <- how(blocks = mountains, nperm = 999)
+CTRL <- how(blocks = mountains, complete = TRUE, maxperm = Inf)
 check(1:length(mountains), control = CTRL) # how many possible permutations
+
+
 
 #Some example permutations
 set.seed(42)

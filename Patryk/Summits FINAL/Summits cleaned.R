@@ -64,22 +64,23 @@ mountains <- gl(n = n_mountains, k = 2)# must be factor - safer to use real moun
 old_new <- gl(n = 2, k = 1, length = n_mountains * 2)#should be factor
 
 ##BLOCKS
-CTRL <- how(blocks = mountains, nperm = 999)
-check(1:length(mountains), control = CTRL) # how many possible permutations
+CTRL1 <- how(blocks = mountains, complete=TRUE, maxperm=20000)
+CTRL2 <- how(blocks = mountains, nperm=999)
+check(1:length(mountains), control = CTRL1) # how many possible permutations #now it is 16384
 
 ##SOME EXAMPLE PERMUTATIONS
 set.seed(42)
 shuffleSet(1:length(mountains), nset = 10, control = CTRL)
 
 ###ORDINATION CODE
-mod <- cca(t(s50[occ50>0,]) ~ old_new + Condition(mountains))#partial out effect of mountain
-anova(mod, permutations = CTRL)
+mod <- rda(t(s50[occ50>0,]) ~ old_new + Condition(mountains))#partial out effect of mountain
+anova(mod, permutations = CTRL1)
 
 ###STRATA IN PLOTS - GIVES SIMILAR PERMUTATIONS
-CTRL <- how(plots = Plots(strata = mountains))
-check(1:length(mountains), control = CTRL)
+CTRL1 <- how(plots = Plots(strata = mountains))
+check(1:length(mountains), control = CTRL1)
 set.seed(42)
-shuffleSet(1:length(mountains), nset = 10, control = CTRL)
+shuffleSet(1:length(mountains), nset = 10, control = CTRL1)
 
 ####CCA FOR DIFFERENT THRESHOLDS OF ELEVATION FOR EACH AUTHOR####
 ###MERGED DATASET
@@ -91,14 +92,14 @@ shuffleSet(1:length(mountains), nset = 10, control = CTRL)
 #}
 #occ100<-rowSums(s100)
 
-cca10merged<-cca(t(s10[occ10>0,]) ~ old_new + Condition(mountains))
-cca20merged<-cca(t(s20[occ20>0,]) ~ old_new + Condition(mountains))
-cca50merged<-cca(t(ss50[occc50>0,]) ~ old_new + Condition(mountains))
-cca100merged<-cca(t(s100[occ100>0,]) ~ old_new + Condition(mountains))
-anova(cca10merged, permutations = CTRL)
-anova(cca20merged, permutations = CTRL)
-anova(cca50merged, permutations = CTRL)
-anova(cca100merged, permutations = CTRL)
+rda10merged<-rda(t(s10[occ10>0,]) ~ old_new + Condition(mountains))
+rda20merged<-rda(t(s20[occ20>0,]) ~ old_new + Condition(mountains))
+rda50merged<-rda(t(ss50[occc50>0,]) ~ old_new + Condition(mountains))
+rda100merged<-rda(t(s100[occ100>0,]) ~ old_new + Condition(mountains))
+anova(rda10merged, permutations = CTRL1)
+anova(rda20merged, permutations = CTRL1)
+anova(rda50merged, permutations = CTRL1)
+anova(rda100merged, permutations = CTRL1)
 
 ###SAGORSKI
 sagorski1.df<-sagorski.df[-1,]
@@ -106,7 +107,7 @@ summit.sag<-sagorski.df[1,]
 n_mountains_sag <- 12
 mountains_sag <- gl(n = n_mountains_sag, k = 2)
 old_new_sag <- gl(n = 2, k = 1, length = n_mountains_sag * 2)
-CTRL_sag <- how(blocks = mountains_sag, nperm = 999)
+CTRL_sag <- how(blocks = mountains_sag, complete=TRUE, maxperm=20000)
 check(1:length(mountains_sag), control = CTRL_sag)
 set.seed(42)
 shuffleSet(1:length(mountains_sag), nset = 10, control = CTRL_sag)
@@ -119,14 +120,14 @@ shuffleSet(1:length(mountains_sag), nset = 10, control = CTRL_sag)
 #}
 #occ100.sag<-rowSums(s100.sag)
 
-cca10sag<-cca(t(s10.sag[occ10.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
-cca20sag<-cca(t(s20.sag[occ20.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
-cca50sag<-cca(t(s50.sag[occ50.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
-cca100sag<-cca(t(s100.sag[occ100.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
-anova(cca10sag, permutations = CTRL_sag)
-anova(cca20sag, permutations = CTRL_sag)
-anova(cca50sag, permutations = CTRL_sag)
-anova(cca100sag, permutations = CTRL_sag)
+rda10sag<-rda(t(s10.sag[occ10.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
+rda20sag<-rda(t(s20.sag[occ20.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
+rda50sag<-rda(t(s50.sag[occ50.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
+rda100sag<-rda(t(s100.sag[occ100.sag>0,]) ~ old_new_sag + Condition(mountains_sag))
+anova(rda10sag, permutations = CTRL_sag)
+anova(rda20sag, permutations = CTRL_sag)
+anova(rda50sag, permutations = CTRL_sag)
+anova(rda100sag, permutations = CTRL_sag)
 
 ###KOTULA
 kotula1.df<-kotula.df[-1,]
@@ -134,7 +135,7 @@ summit.kot<-kotula.df[1,]
 n_mountains_kot <- 9
 mountains_kot <- gl(n = n_mountains_kot, k = 2)
 old_new_kot <- gl(n = 2, k = 1, length = n_mountains_kot * 2)
-CTRL_kot <- how(blocks = mountains_kot, nperm = 999)
+CTRL_kot <- how(blocks = mountains_kot, complete=TRUE, maxperm=20000)
 check(1:length(mountains_kot), control = CTRL_kot)
 set.seed(42)
 shuffleSet(1:length(mountains_kot), nset = 10, control = CTRL_kot)
@@ -147,14 +148,14 @@ shuffleSet(1:length(mountains_kot), nset = 10, control = CTRL_kot)
 #}
 #occ100.kot<-rowSums(s100.kot)
 
-cca10.kot<-cca(t(s10.kot[occ10.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
-cca20.kot<-cca(t(s20.kot[occ20.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
-cca50.kot<-cca(t(s50.kot[occ50.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
-cca100.kot<-cca(t(s100.kot[occ100.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
-anova(cca10.kot, permutations = CTRL_kot)
-anova(cca20.kot, permutations = CTRL_kot)
-anova(cca50.kot, permutations = CTRL_kot)
-anova(cca100.kot, permutations = CTRL_kot)
+rda10.kot<-rda(t(s10.kot[occ10.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
+rda20.kot<-rda(t(s20.kot[occ20.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
+rda50.kot<-rda(t(s50.kot[occ50.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
+rda100.kot<-rda(t(s100.kot[occ100.kot>0,]) ~ old_new_kot + Condition(mountains_kot))
+anova(rda10.kot, permutations = CTRL_kot)
+anova(rda20.kot, permutations = CTRL_kot)
+anova(rda50.kot, permutations = CTRL_kot)
+anova(rda100.kot, permutations = CTRL_kot)
 
 ###PAWLOWSKI
 pawlowski1.df<-pawlowski.df[-1,]
@@ -162,7 +163,7 @@ summit.paw<-pawlowski.df[1,]
 n_mountains_paw <- 6
 mountains_paw <- gl(n = n_mountains_paw, k = 2)
 old_new_paw <- gl(n = 2, k = 1, length = n_mountains_paw * 2)
-CTRL_paw <- how(blocks = mountains_paw, nperm = 999)
+CTRL_paw <- how(blocks = mountains_paw, complete=TRUE, maxperm=20000)
 check(1:length(mountains_paw), control = CTRL_paw)
 set.seed(42)
 shuffleSet(1:length(mountains_paw), nset = 10, control = CTRL_paw)
@@ -175,14 +176,14 @@ shuffleSet(1:length(mountains_paw), nset = 10, control = CTRL_paw)
 #}
 #occ100.paw<-rowSums(s100.paw)
 
-cca10.paw<-cca(t(s10.paw[occ10.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
-cca20.paw<-cca(t(s20.paw[occ20.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
-cca50.paw<-cca(t(s50.paw[occ50.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
-cca100.paw<-cca(t(s100.paw[occ100.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
-anova(cca10.paw, permutations = CTRL_paw)
-anova(cca20.paw, permutations = CTRL_paw)
-anova(cca50.paw, permutations = CTRL_paw)
-anova(cca100.paw, permutations = CTRL_paw)
+rda10.paw<-rda(t(s10.paw[occ10.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
+rda20.paw<-rda(t(s20.paw[occ20.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
+rda50.paw<-rda(t(s50.paw[occ50.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
+rda100.paw<-rda(t(s100.paw[occ100.paw>0,]) ~ old_new_paw + Condition(mountains_paw))
+anova(rda10.paw, permutations = CTRL_paw)
+anova(rda20.paw, permutations = CTRL_paw)
+anova(rda50.paw, permutations = CTRL_paw)
+anova(rda100.paw, permutations = CTRL_paw)
 
 ####ECOLOGICAL INDICATOR VALUES####
 ####CORRELATION MATRIX####
