@@ -18,15 +18,15 @@ barplot(sort(FeLS.byspp2$maxhosts), col=FeLS.byspp2$Any.status[order(FeLS.byspp2
 
 Ellens<-merge(bryophytes[c(1:4,66)], bryo.status, by.x=3, by.y=2, all=TRUE)
 
-#weighted mean L value in 2015 for plots which had Fraxinus epiphytes in 1992 kept to test the order is coming out as expected:
-mean(rep(Ellens$L[!is.na(Ellens$L) &Ellens$Plot%in%hosts.LS1992$Plot &Ellens$Year==2015], Ellens$Frequency[!is.na(Ellens$L)&Ellens$Plot%in%hosts.LS1992$Plot &Ellens$Year==2015]))#5.134
+#weighted mean L value in 2015 for plots which had Fraxinus epiphytes in 1990 kept to test the order is coming out as expected:
+mean(rep(Ellens$L[!is.na(Ellens$L) &Ellens$Plot%in%hosts.LS1990$Plot &Ellens$Year==2015], Ellens$Frequency[!is.na(Ellens$L)&Ellens$Plot%in%hosts.LS1990$Plot &Ellens$Year==2015]))#5.134
 
 
-cases<-expand.grid(year = c(1992, 2015), FeLS1992 = c(FALSE, TRUE))#sets up the subset possibilities for the sapply to loop through
+cases<-expand.grid(year = c(1992, 2015), FeLS1990 = c(FALSE, TRUE))#sets up the subset possibilities for the sapply to loop through
 
 wt.mean.ell.fun<-function(x,param){
   E<-Ellens[Ellens$Year == x[1], ]#do one subsetting strategy on each row. This starts with the first column of the grid we fed sapply
-  E<-E[(E$Plot%in%hosts.LS1992$Plot)==x[2],]#this chooses plots which had Fe epiphytes in 1992 (so, we assume, some big ash trees which have a  75 %change of having died since).
+  E<-E[(E$Plot%in%hosts.LS1990$Plot)==x[2],]#this chooses plots which had Fe epiphytes in 1990 (so, we assume, some big ash trees which have a  75 %change of having died since).
    out <- by(E, IND = E$Plot, function(x){       
     weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
     })
@@ -34,7 +34,7 @@ wt.mean.ell.fun<-function(x,param){
 }
 wt.sd.ell.fun<-function(x,param){
   E<-Ellens[Ellens$Year == x[1], ]#do one subsetting strategy on each row. This starts with the first column of the grid we fed sapply
-  E<-E[(E$Plot%in%hosts.LS1992$Plot)==x[2],]#this chooses plots which had Fe epiphytes in 1992 (so, we assume, some big ash trees which have a  75 %change of having died since).
+  E<-E[(E$Plot%in%hosts.LS1990$Plot)==x[2],]#this chooses plots which had Fe epiphytes in 1990 (so, we assume, some big ash trees which have a  75 %change of having died since).
   out <- by(E, IND = E$Plot, function(x){       
     weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
   })
@@ -57,16 +57,16 @@ Ellensummary$sdF<-apply(cases,1,wt.sd.ell.fun,param="F")
 Ellensummary$sdR<-apply(cases,1,wt.sd.ell.fun,param="R")
 
 wt.ttest.ell.fun<-function(x,param){  
-  E<-Ellens[(Ellens$Plot%in%hosts.LS1992$Plot)==x[2],]
-  out.1992 <- by(E[E$Year == 1992,], IND = E$Plot[E$Year == 1992], function(x){       weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
+  E<-Ellens[(Ellens$Plot%in%hosts.LS1990$Plot)==x[2],]
+  out.1990 <- by(E[E$Year == 1992,], IND = E$Plot[E$Year == 1992], function(x){       weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
   })
   out.2015<-by(E[E$Year == 2015,], IND = E$Plot[E$Year == 2015], function(x){           weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
   })
-  t.test(out.1992,out.2015)
+  t.test(out.1990,out.2015)
 }
 
-apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="L") #sig for both FELS1992 and not
-apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="T") #sig for no-FELS1992! Went up by 0.06...
+apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="L") #sig for both FELS1990 and not
+apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="T") #sig for no-FELS1990! Went up by 0.06...
 apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="K") #same! Went up by 0.01...
 apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="F") #ns
 apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="R") #ns
@@ -75,52 +75,52 @@ apply(cases[c(1,3),],1,wt.ttest.ell.fun,param="R") #ns
 library(Hmisc)
 x11(); par(mfrow=c(2,2), xpd=NA)
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanL, (meanL+sdL), (meanL-sdL), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2, ylim=c(4.8, 5.4)))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6),cex.axis=1.2)
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6),cex.axis=1.2)
 mtext("Light (L)", side =3, line=2, cex=1.2)
-text(x=1.6, y=4.6, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=4.6, "Ash in 1992", cex=1.2)
+text(x=1.6, y=4.6, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=4.6, "Ash in 1990", cex=1.2)
 
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanF, (meanF+sdF), (meanF-sdF), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2, ylim=c(4.6, 5.6)))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
 mtext("Humidity (F)", side =3, line=2, cex=1.2)
-text(x=1.6, y=4.3, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=4.3, "Ash in 1992", cex=1.2)
+text(x=1.6, y=4.3, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=4.3, "Ash in 1990", cex=1.2)
 
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanR, (meanR+sdR), (meanR-sdR), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
-mtext("Soil pH (R)", side =3, line=2, cex=1.2)
-text(x=1.6, y=2.3, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=2.3, "Ash in 1992", cex=1.2)
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+mtext("Substrate pH (R)", side =3, line=2, cex=1.2)
+text(x=1.6, y=2.3, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=2.3, "Ash in 1990", cex=1.2)
 
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanT, (meanT+sdT), (meanT-sdT), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
 mtext("Temperature (T)", side =3, line=2, cex=1.2)
-text(x=1.6, y=3.02, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=3.02, "Ash in 1992", cex=1.2)
+text(x=1.6, y=3.02, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=3.02, "Ash in 1990", cex=1.2)
 savePlot("Compound plot Ellenbergs for Ash.emf", type="emf")
 
 x11(5,5);par(xpd=NA)
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanL, (meanL+sdL), (meanL-sdL), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2, ylim=c(4.8, 5.4)))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6),cex.axis=1.2)
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6),cex.axis=1.2)
 mtext("Light (L)", side =3, line=2, cex=1.2)
-text(x=1.6, y=4.6, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=4.6, "Ash in in 1992", cex=1.2)
+text(x=1.6, y=4.6, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=4.6, "Ash in in 1990", cex=1.2)
 savePlot("Ellenberg for Ash Light.emf", type="emf")
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanF, (meanF+sdF), (meanF-sdF), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2, ylim=c(4.6, 5.6)))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
 mtext("Humidity (F)", side =3, line=2, cex=1.2)
-text(x=1.6, y=4.3, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=4.3, "Ash in 1992", cex=1.2)
+text(x=1.6, y=4.3, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=4.3, "Ash in 1990", cex=1.2)
 savePlot("Ellenberg for Ash Humidity.emf", type="emf")
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanR, (meanR+sdR), (meanR-sdR), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
 mtext("Soil pH (R)", side =3, line=2, cex=1.2)
-text(x=1.6, y=2.3, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=2.3, "Ash in 1992", cex=1.2)
+text(x=1.6, y=2.3, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=2.3, "Ash in 1990", cex=1.2)
 savePlot("Ellenberg for Ash pH.emf", type="emf")
 with(Ellensummary, errbar(c(1.2,2,2.8, 3.6),meanT, (meanT+sdT), (meanT-sdT), pch=16,ylab="Mean of plot weighted means +- 1 sd", xlab=NA, xaxt="n", xlim=c(1,4), cex.axis=1.2, cex.lab=1.2))
-axis(1, labels=c("1992","2015","1992", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
+axis(1, labels=c("1990","2015","1990", "2015"), at=c(1.2,2,2.8,3.6), cex.axis=1.2) 
 mtext("Temperature (T)", side =3, line=2, cex=1.2)
-text(x=1.6, y=3.02, "No Ash in 1992", cex=1.2)
-text(x=3.2, y=3.02, "Ash in 1992", cex=1.2)
+text(x=1.6, y=3.02, "No Ash in 1990", cex=1.2)
+text(x=3.2, y=3.02, "Ash in 1990", cex=1.2)
 savePlot("Ellenberg for Ash Temparature.emf", type="emf")
