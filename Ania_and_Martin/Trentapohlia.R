@@ -29,40 +29,40 @@ oldfrq <- as.data.frame.matrix(table(old.harm.db$Frequency, old.harm.db$Species 
 
 x11(7,5); par(mfrow=c(1,2), mar=c(4,4,3,0.1), las=1, xpd=NA)
 barplot(c(table(!old.harm.db$Species%in%hastrent),table(!new.harm.db$Species%in%hastrent)), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Total records", ylab="Count")
-text(c(1.2,3.7), -1200, c("1992", "2015"))
+text(c(1.2,3.7), -1200, c("1990", "2015"))
 
 barplot(as.matrix(cbind(oldfrq[2]/colSums(oldfrq[2]), oldfrq[1]/colSums(oldfrq[1]),newfrq[2]/colSums(newfrq[2]), newfrq[1]/colSums(newfrq[1]))), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Assigned frequency scores", ylab="Proportion")
-text(c(1.2,3.7), -0.17, c("1992", "2015"))
+text(c(1.2,3.7), -0.17, c("1990", "2015"))
 savePlot("Counts and assigned scores side by side.emf", type="emf")
 
-Tpspp_per_plot.1992<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Site[old.harm.db$Species%in%hastrent]), NROW)
-NotTpspp_per_plot.1992<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Site[!old.harm.db$Species%in%hastrent]), NROW)
+Tpspp_per_plot.1990<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Site[old.harm.db$Species%in%hastrent]), NROW)
+NotTpspp_per_plot.1990<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Site[!old.harm.db$Species%in%hastrent]), NROW)
 
 Tpspp_per_plot.2015<-aggregate(new.harm.db$Frequency[new.harm.db$Species%in%hastrent], by=list(new.harm.db$Site[new.harm.db$Species%in%hastrent]), NROW)
 NotTpspp_per_plot.2015<-aggregate(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent], by=list(new.harm.db$Site[!new.harm.db$Species%in%hastrent]), NROW)
 
-Tpcount.perplot.1992<-merge(NotTpspp_per_plot.1992, Tpspp_per_plot.1992, all=TRUE, by=1)
-Tpcount.perplot.1992[is.na(Tpcount.perplot.1992)]<-0
-Tpcount.perplot.1992$proportion1992<-Tpcount.perplot.1992$x.y/Tpcount.perplot.1992$x.x
+Tpcount.perplot.1990<-merge(NotTpspp_per_plot.1990, Tpspp_per_plot.1990, all=TRUE, by=1)
+Tpcount.perplot.1990[is.na(Tpcount.perplot.1990)]<-0
+Tpcount.perplot.1990$proportion1990<-Tpcount.perplot.1990$x.y/Tpcount.perplot.1990$x.x
 Tpcount.perplot.2015<-merge(NotTpspp_per_plot.2015, Tpspp_per_plot.2015, all=TRUE, by=1)
 Tpcount.perplot.2015[is.na(Tpcount.perplot.2015)]<-0
 Tpcount.perplot.2015$proportion2015<-Tpcount.perplot.2015$x.y/Tpcount.perplot.2015$x.x
-wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1992$proportion1992) #ns
+wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1990$proportion1990) #ns
 
-boxplot(list(Tpcount.perplot.1992$proportion1992, Tpcount.perplot.2015$proportion2015), names = c(1992, 2015), ylab="Proportion of Tp-containg species per plot")
-boxplot(list(Tpcount.perplot.1992$x.y, Tpcount.perplot.2015$x.y), names = c(1992, 2015), ylab="Number of Tp-containg species per plot")
-wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1992$x.y)#overall counts of Tp per plot higher in 2015, but due to large increase in n. records.
+boxplot(list(Tpcount.perplot.1990$proportion1990, Tpcount.perplot.2015$proportion2015), names = c(1990, 2015), ylab="Proportion of Tp-containg species per plot")
+boxplot(list(Tpcount.perplot.1990$x.y, Tpcount.perplot.2015$x.y), names = c(1990, 2015), ylab="Number of Tp-containg species per plot")
+wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1990$x.y)#overall counts of Tp per plot higher in 2015, but due to large increase in n. records.
 savePlot("Tp per plot counts and proportions_harmonised.emf", type="emf")
 
-numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1992)
+numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1990)
 numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.2015)
 
-Tp.freqperspp1992<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[old.harm.db$Species%in%hastrent]), NROW)
-NotTp.freqperspp1992<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[!old.harm.db$Species%in%hastrent]), NROW)
+Tp.freqperspp1990<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[old.harm.db$Species%in%hastrent]), NROW)
+NotTp.freqperspp1990<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[!old.harm.db$Species%in%hastrent]), NROW)
 Tp.freqperspp2015<-aggregate(new.harm.db$Frequency[new.harm.db$Species%in%hastrent], by=list(new.harm.db$Species[new.harm.db$Species%in%hastrent]), NROW)
 NotTp.freqperspp2015<-aggregate(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent], by=list(new.harm.db$Species[!new.harm.db$Species%in%hastrent]), NROW)
 
-c(mean(Tp.freqperspp1992$x, na.rm=TRUE), mean(NotTp.freqperspp1992$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
+c(mean(Tp.freqperspp1990$x, na.rm=TRUE), mean(NotTp.freqperspp1990$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
 
 
 
@@ -72,40 +72,40 @@ table(new.harm.db$Frequency, new.harm.db$Species%in%hastrent.limited)
 table(old.harm.db$Frequency, old.harm.db$Species%in%hastrent.limited)
 
 x11()
-#barplot(c(NROW(new.harm.db$Frequency[new.harm.db$Species%in%hastrent.limited]), NROW(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent.limited]), NROW(old.harm.db$Frequency[old.harm.db$Species%in%hastrent.limited]), NROW(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent.limited])), names.arg=c("Tp 2015","Not Tp 2015", "Tp 1992", "Not Tp 1992"))#, log="y")
+#barplot(c(NROW(new.harm.db$Frequency[new.harm.db$Species%in%hastrent.limited]), NROW(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent.limited]), NROW(old.harm.db$Frequency[old.harm.db$Species%in%hastrent.limited]), NROW(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent.limited])), names.arg=c("Tp 2015","Not Tp 2015", "Tp 1990", "Not Tp 1990"))#, log="y")
 
-barplot(c(table(!new.harm.db$Species%in%hastrent.limited), table(!old.harm.db$Species%in%hastrent.limited)), names.arg=c("Tp 2015","Not Tp 2015", "Tp 1992", "Not Tp 1992"))#, log="y")
+barplot(c(table(!new.harm.db$Species%in%hastrent.limited), table(!old.harm.db$Species%in%hastrent.limited)), names.arg=c("Tp 2015","Not Tp 2015", "Tp 1990", "Not Tp 1990"))#, log="y")
 
 length(new.harm.db)
-Tpspp_per_plot.1992<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent.limited], by=list(old.harm.db$Site[old.harm.db$Species%in%hastrent.limited]), NROW)
-NotTpspp_per_plot.1992<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent.limited], by=list(old.harm.db$Site[!old.harm.db$Species%in%hastrent.limited]), NROW)
+Tpspp_per_plot.1990<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent.limited], by=list(old.harm.db$Site[old.harm.db$Species%in%hastrent.limited]), NROW)
+NotTpspp_per_plot.1990<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent.limited], by=list(old.harm.db$Site[!old.harm.db$Species%in%hastrent.limited]), NROW)
 Tpspp_per_plot.2015<-aggregate(new.harm.db$Frequency[new.harm.db$Species%in%hastrent.limited], by=list(new.harm.db$Site[new.harm.db$Species%in%hastrent.limited]), NROW)
 NotTpspp_per_plot.2015<-aggregate(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent.limited], by=list(new.harm.db$Site[!new.harm.db$Species%in%hastrent.limited]), NROW)
-Tpcount.perplot.1992<-merge(NotTpspp_per_plot.1992, Tpspp_per_plot.1992, all=TRUE, by=1)#equivalent code for 2015 mising
-Tpcount.perplot.1992[is.na(Tpcount.perplot.1992)]<-0
-Tpcount.perplot.1992$proportion1992<-Tpcount.perplot.1992$x.y/Tpcount.perplot.1992$x.x
+Tpcount.perplot.1990<-merge(NotTpspp_per_plot.1990, Tpspp_per_plot.1990, all=TRUE, by=1)#equivalent code for 2015 mising
+Tpcount.perplot.1990[is.na(Tpcount.perplot.1990)]<-0
+Tpcount.perplot.1990$proportion1990<-Tpcount.perplot.1990$x.y/Tpcount.perplot.1990$x.x
 
-wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1992$proportion1992)
+wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1990$proportion1990)
 
 x11(7,5); par(mfrow=c(1,2), mar=c(4,4,3,0.1), las=1, xpd=NA)
 barplot(c(table(!old.harm.db$Species%in%hastrent),table(!new.harm.db$Species%in%hastrent)), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Total records", ylab="Count")
-text(c(1.2,3.7), -1200, c("1992", "2015"))
+text(c(1.2,3.7), -1200, c("1990", "2015"))
 
 barplot(as.matrix(cbind(oldfrq[2]/colSums(oldfrq[2]), oldfrq[1]/colSums(oldfrq[1]),newfrq[2]/colSums(newfrq[2]), newfrq[1]/colSums(newfrq[1]))), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Assigned frequency scores", ylab="Proportion")
-text(c(1.2,3.7), -0.17, c("1992", "2015"))
+text(c(1.2,3.7), -0.17, c("1990", "2015"))
 savePlot("Counts and assigned scores side by side.emf", type="emf")
 
-wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1992$x.y)
-numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1992)
+wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1990$x.y)
+numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1990)
 numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.2015)
 
 #####Have the Tentrapohloid species expanded their ocurrrnces in the site?
-Tp.freqperspp1992<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[old.harm.db$Species%in%hastrent]), NROW)
-NotTp.freqperspp1992<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[!old.harm.db$Species%in%hastrent]), NROW)
+Tp.freqperspp1990<-aggregate(old.harm.db$Frequency[old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[old.harm.db$Species%in%hastrent]), NROW)
+NotTp.freqperspp1990<-aggregate(old.harm.db$Frequency[!old.harm.db$Species%in%hastrent], by=list(old.harm.db$Species[!old.harm.db$Species%in%hastrent]), NROW)
 Tp.freqperspp2015<-aggregate(new.harm.db$Frequency[new.harm.db$Species%in%hastrent], by=list(new.harm.db$Species[new.harm.db$Species%in%hastrent]), NROW)
 NotTp.freqperspp2015<-aggregate(new.harm.db$Frequency[!new.harm.db$Species%in%hastrent], by=list(new.harm.db$Species[!new.harm.db$Species%in%hastrent]), NROW)
 
-c(mean(Tp.freqperspp1992$x, na.rm=TRUE), mean(NotTp.freqperspp1992$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
+c(mean(Tp.freqperspp1990$x, na.rm=TRUE), mean(NotTp.freqperspp1990$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
 
 ############################################################
 ######starts again from line 22 but with epiphytes only (skips the bit with just the easy spp)#####
@@ -122,41 +122,41 @@ oldfrq.EO<-as.data.frame.matrix(table(old.harm.db.EO$Frequency, old.harm.db.EO$S
 
 x11(7,5); par(mfrow=c(1,2), mar=c(4,4,3,0.1), las=1, xpd=NA)
 barplot(c(table(!old.harm.db.EO$Species%in%hastrent),table(!new.harm.db.EO$Species%in%hastrent)), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Total records", ylab="Count")
-text(c(1.2,3.7), -1200, c("1992", "2015"))
+text(c(1.2,3.7), -1200, c("1990", "2015"))
 
 barplot(as.matrix(cbind(oldfrq.EO[2]/colSums(oldfrq.EO[2]), oldfrq.EO[1]/colSums(oldfrq.EO[1]),newfrq.EO[2]/colSums(newfrq.EO[2]), newfrq.EO[1]/colSums(newfrq.EO[1]))), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Assigned frequency scores", ylab="Proportion")
-text(c(1.2,3.7), -0.17, c("1992", "2015"))
+text(c(1.2,3.7), -0.17, c("1990", "2015"))
 savePlot("Counts and assigned scores side by side_epiphytes only.emf", type="emf")
 
 
-Tpspp_per_plot.1992<-aggregate(old.harm.db.EO$Frequency[old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Site[old.harm.db.EO$Species%in%hastrent]), NROW)
-NotTpspp_per_plot.1992<-aggregate(old.harm.db.EO$Frequency[!old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Site[!old.harm.db.EO$Species%in%hastrent]), NROW)
+Tpspp_per_plot.1990<-aggregate(old.harm.db.EO$Frequency[old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Site[old.harm.db.EO$Species%in%hastrent]), NROW)
+NotTpspp_per_plot.1990<-aggregate(old.harm.db.EO$Frequency[!old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Site[!old.harm.db.EO$Species%in%hastrent]), NROW)
 
 Tpspp_per_plot.2015<-aggregate(new.harm.db.EO$Frequency[new.harm.db.EO$Species%in%hastrent], by=list(new.harm.db.EO$Site[new.harm.db.EO$Species%in%hastrent]), NROW)
 NotTpspp_per_plot.2015<-aggregate(new.harm.db.EO$Frequency[!new.harm.db.EO$Species%in%hastrent], by=list(new.harm.db.EO$Site[!new.harm.db.EO$Species%in%hastrent]), NROW)
 
-Tpcount.perplot.1992<-merge(NotTpspp_per_plot.1992, Tpspp_per_plot.1992, all=TRUE, by=1)
-Tpcount.perplot.1992[is.na(Tpcount.perplot.1992)]<-0
-Tpcount.perplot.1992$proportion1992<-Tpcount.perplot.1992$x.y/Tpcount.perplot.1992$x.x
+Tpcount.perplot.1990<-merge(NotTpspp_per_plot.1990, Tpspp_per_plot.1990, all=TRUE, by=1)
+Tpcount.perplot.1990[is.na(Tpcount.perplot.1990)]<-0
+Tpcount.perplot.1990$proportion1990<-Tpcount.perplot.1990$x.y/Tpcount.perplot.1990$x.x
 Tpcount.perplot.2015<-merge(NotTpspp_per_plot.2015, Tpspp_per_plot.2015, all=TRUE, by=1)
 Tpcount.perplot.2015[is.na(Tpcount.perplot.2015)]<-0
 Tpcount.perplot.2015$proportion2015<-Tpcount.perplot.2015$x.y/Tpcount.perplot.2015$x.x
-wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1992$proportion1992)#NS
+wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1990$proportion1990)#NS
 
-boxplot(list(Tpcount.perplot.1992$proportion1992, Tpcount.perplot.2015$proportion2015), names = c(1992, 2015), ylab="Proportion of Tp-containg species per plot")
-boxplot(list(Tpcount.perplot.1992$x.y, Tpcount.perplot.2015$x.y), names = c(1992, 2015), ylab="Number of Tp-containg species per plot")
-wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1992$x.y)
+boxplot(list(Tpcount.perplot.1990$proportion1990, Tpcount.perplot.2015$proportion2015), names = c(1990, 2015), ylab="Proportion of Tp-containg species per plot")
+boxplot(list(Tpcount.perplot.1990$x.y, Tpcount.perplot.2015$x.y), names = c(1990, 2015), ylab="Number of Tp-containg species per plot")
+wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1990$x.y)
 
-numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1992)
+numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1990)
 numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.2015)
 
 #####Have the Tentrapohloid species expanded their ocurrrnces in the site?
-Tp.freqperspp1992<-aggregate(old.harm.db.EO$Frequency[old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Species[old.harm.db.EO$Species%in%hastrent]), NROW)
-NotTp.freqperspp1992<-aggregate(old.harm.db.EO$Frequency[!old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Species[!old.harm.db.EO$Species%in%hastrent]), NROW)
+Tp.freqperspp1990<-aggregate(old.harm.db.EO$Frequency[old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Species[old.harm.db.EO$Species%in%hastrent]), NROW)
+NotTp.freqperspp1990<-aggregate(old.harm.db.EO$Frequency[!old.harm.db.EO$Species%in%hastrent], by=list(old.harm.db.EO$Species[!old.harm.db.EO$Species%in%hastrent]), NROW)
 Tp.freqperspp2015<-aggregate(new.harm.db.EO$Frequency[new.harm.db.EO$Species%in%hastrent], by=list(new.harm.db.EO$Species[new.harm.db.EO$Species%in%hastrent]), NROW)
 NotTp.freqperspp2015<-aggregate(new.harm.db.EO$Frequency[!new.harm.db.EO$Species%in%hastrent], by=list(new.harm.db.EO$Species[!new.harm.db.EO$Species%in%hastrent]), NROW)
 
-c(mean(Tp.freqperspp1992$x, na.rm=TRUE), mean(NotTp.freqperspp1992$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
+c(mean(Tp.freqperspp1990$x, na.rm=TRUE), mean(NotTp.freqperspp1990$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
 
 #############Peucedanum-pinetum plots removed (otherwise normal)#########################
 ##############
@@ -174,40 +174,40 @@ table(old.noPP$Frequency, old.noPP$Species %in% hastrent)#needs a more sensible 
 
 x11(7,5); par(mfrow=c(1,2), mar=c(4,4,3,0.1), las=1, xpd=NA)
 barplot(c(table(!old.harm.db$Species%in%hastrent),table(!new.harm.db$Species%in%hastrent)), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Total records", ylab="Count")
-text(c(1.2,3.7), -1200, c("1992", "2015"))
+text(c(1.2,3.7), -1200, c("1990", "2015"))
 
 barplot(as.matrix(cbind(oldfrq[2]/colSums(oldfrq[2]), oldfrq[1]/colSums(oldfrq[1]),newfrq[2]/colSums(newfrq[2]), newfrq[1]/colSums(newfrq[1]))), names.arg=c("Tp", "Not Tp","Tp","Not Tp"), main="Assigned frequency scores", ylab="Proportion")
-text(c(1.2,3.7), -0.17, c("1992", "2015"))
+text(c(1.2,3.7), -0.17, c("1990", "2015"))
 savePlot("Counts and assigned scores side by side_noPP.emf", type="emf")
 
-Tpspp_per_plot.1992<-aggregate(old.noPP$Frequency[old.noPP$Species%in%hastrent], by=list(old.noPP$Site[old.noPP$Species%in%hastrent]), NROW)
-NotTpspp_per_plot.1992<-aggregate(old.noPP$Frequency[!old.noPP$Species%in%hastrent], by=list(old.noPP$Site[!old.noPP$Species%in%hastrent]), NROW)
+Tpspp_per_plot.1990<-aggregate(old.noPP$Frequency[old.noPP$Species%in%hastrent], by=list(old.noPP$Site[old.noPP$Species%in%hastrent]), NROW)
+NotTpspp_per_plot.1990<-aggregate(old.noPP$Frequency[!old.noPP$Species%in%hastrent], by=list(old.noPP$Site[!old.noPP$Species%in%hastrent]), NROW)
 
 Tpspp_per_plot.2015<-aggregate(new.harm.db.noPP$Frequency[new.harm.db.noPP$Species%in%hastrent], by=list(new.harm.db.noPP$Site[new.harm.db.noPP$Species%in%hastrent]), NROW)
 NotTpspp_per_plot.2015<-aggregate(new.harm.db.noPP$Frequency[!new.harm.db.noPP$Species%in%hastrent], by=list(new.harm.db.noPP$Site[!new.harm.db.noPP$Species%in%hastrent]), NROW)
 
-Tpcount.perplot.1992<-merge(NotTpspp_per_plot.1992, Tpspp_per_plot.1992, all=TRUE, by=1)
-Tpcount.perplot.1992[is.na(Tpcount.perplot.1992)]<-0
-Tpcount.perplot.1992$proportion1992<-Tpcount.perplot.1992$x.y/Tpcount.perplot.1992$x.x
+Tpcount.perplot.1990<-merge(NotTpspp_per_plot.1990, Tpspp_per_plot.1990, all=TRUE, by=1)
+Tpcount.perplot.1990[is.na(Tpcount.perplot.1990)]<-0
+Tpcount.perplot.1990$proportion1990<-Tpcount.perplot.1990$x.y/Tpcount.perplot.1990$x.x
 Tpcount.perplot.2015<-merge(NotTpspp_per_plot.2015, Tpspp_per_plot.2015, all=TRUE, by=1)
 Tpcount.perplot.2015[is.na(Tpcount.perplot.2015)]<-0
 Tpcount.perplot.2015$proportion2015<-Tpcount.perplot.2015$x.y/Tpcount.perplot.2015$x.x
-wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1992$proportion1992) #sig
+wilcox.test(Tpcount.perplot.2015$proportion2015, Tpcount.perplot.1990$proportion1990) #sig
 
-boxplot(list(Tpcount.perplot.1992$proportion1992, Tpcount.perplot.2015$proportion2015), names = c(1992, 2015), ylab="Proportion of Tp-containg species per plot")#sig, slightly higher Tp proportion in 1992.
-boxplot(list(Tpcount.perplot.1992$x.y, Tpcount.perplot.2015$x.y), names = c(1992, 2015), ylab="Number of Tp-containg species per plot")
+boxplot(list(Tpcount.perplot.1990$proportion1990, Tpcount.perplot.2015$proportion2015), names = c(1990, 2015), ylab="Proportion of Tp-containg species per plot")#sig, slightly higher Tp proportion in 1990.
+boxplot(list(Tpcount.perplot.1990$x.y, Tpcount.perplot.2015$x.y), names = c(1990, 2015), ylab="Number of Tp-containg species per plot")
 savePlot("proportions tp per plot PP only.emf", type="emf")
-wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1992$x.y)#overall counts of Tp per plot higher in 2015, but due to large increase in n. records.
-numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1992)
+wilcox.test(Tpcount.perplot.2015$x.y, Tpcount.perplot.1990$x.y)#overall counts of Tp per plot higher in 2015, but due to large increase in n. records.
+numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.1990)
 numcolwise(mean, na.rm=TRUE)(Tpcount.perplot.2015)
 
 #####Have the Tentrapohloid species expanded their ocurrrnces in the site?
-Tp.freqperspp1992<-aggregate(old.harm.db.noPP$Frequency[old.harm.db.noPP$Species%in%hastrent], by=list(old.harm.db.noPP$Species[old.harm.db.noPP$Species%in%hastrent]), NROW)
-NotTp.freqperspp1992<-aggregate(old.harm.db.noPP$Frequency[!old.harm.db.noPP$Species%in%hastrent], by=list(old.harm.db.noPP$Species[!old.harm.db.noPP$Species%in%hastrent]), NROW)
+Tp.freqperspp1990<-aggregate(old.harm.db.noPP$Frequency[old.harm.db.noPP$Species%in%hastrent], by=list(old.harm.db.noPP$Species[old.harm.db.noPP$Species%in%hastrent]), NROW)
+NotTp.freqperspp1990<-aggregate(old.harm.db.noPP$Frequency[!old.harm.db.noPP$Species%in%hastrent], by=list(old.harm.db.noPP$Species[!old.harm.db.noPP$Species%in%hastrent]), NROW)
 Tp.freqperspp2015<-aggregate(new.harm.db.noPP$Frequency[new.harm.db.noPP$Species%in%hastrent], by=list(new.harm.db.noPP$Species[new.harm.db.noPP$Species%in%hastrent]), NROW)
 NotTp.freqperspp2015<-aggregate(new.harm.db.noPP$Frequency[!new.harm.db.noPP$Species%in%hastrent], by=list(new.harm.db.noPP$Species[!new.harm.db.noPP$Species%in%hastrent]), NROW)
 
-c(mean(Tp.freqperspp1992$x, na.rm=TRUE), mean(NotTp.freqperspp1992$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
+c(mean(Tp.freqperspp1990$x, na.rm=TRUE), mean(NotTp.freqperspp1990$x, na.rm=TRUE), mean(Tp.freqperspp2015$x, na.rm=TRUE), mean(NotTp.freqperspp2015$x, na.rm=TRUE))
 
 
 ##########Newstuff 18th april 2016 - mostly about wirth values
@@ -215,7 +215,7 @@ x11(9,4); par(mfrow=c(1,3))
 hist(envir$T_temperature, main="Temperature by Species", xlab="Wirth T value", ylab="Number of species")
 hist(envir$T_temperature[envir$Trentepohlia_photobiont==1], col="red",add=TRUE)
 legend("topright", legend=c("All species", "Trentapohlioid"), fill=c("white", "red"))
-hist(old.wirths$T_temperature, main="1992", xlab="Wirth T value", ylab="Occurrences")
+hist(old.wirths$T_temperature, main="1990", xlab="Wirth T value", ylab="Occurrences")
 hist(old.wirths$T_temperature[old.wirths$Trentepohlia_photobiont==1], col="red",add=TRUE)
 hist(new.wirths$T_temperature, main="2015", xlab="Wirth T value", ylab="Occurrences")
 hist(new.wirths$T_temperature[new.wirths$Trentepohlia_photobiont==1], col="red",add=TRUE)

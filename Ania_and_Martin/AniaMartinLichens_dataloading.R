@@ -18,7 +18,7 @@ newdb$Species[newdb$Species=="Phlyctia agelaea"]<-"Phlyctis agelaea"
 newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
-#new.harm. is the data with only the species comparable between 1992 and 2015 in it. Same data prep as above.
+#new.harm. is the data with only the species comparable between 1990 and 2015 in it. Same data prep as above.
 new.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
 new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
@@ -35,7 +35,7 @@ new.harm.db$Species[new.harm.db$Species=="Phlyctia agelaea"]<-"Phlyctis agelaea"
 new.harm.db$Species<-as.factor(new.harm.db$Species)
 new.harm.db$Site<-as.factor(new.harm.db$Site)
 
-#old is the 1992 sampling period
+#old is the 1990 sampling period
 olddb<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=1)
 olddb<-as.data.frame(olddb)
 olddb[is.na(olddb)] <-0
@@ -50,7 +50,7 @@ olddb$Species[olddb$Species=="Cladonia furcata subsp. Furcata"]<-"Cladonia furca
 olddb$Species<-as.factor(olddb$Species)
 olddb$Site<-as.factor(olddb$Site)
 
-#old.harm. is the 1992 sampling period with only the species comparable between 1992 and 2015 in it. 
+#old.harm. is the 1990 sampling period with only the species comparable between 1990 and 2015 in it. 
 old.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=2)# need some filepath so that this still runs when used as 'source' in other folders
 old.harm.db<-as.data.frame(old.harm.db)
 old.harm.db[is.na(old.harm.db)] <-0

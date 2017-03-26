@@ -25,9 +25,9 @@ lichen.nmds.genus<-metaMDS(subset(genus_comp,select=-Year))
 plot(lichen.nmds.genus, display="sites")
 points(lichen.nmds.genus, display="sites", col=genus_comp$Year)#reducing to genus doesn't help
 
-lichen.nmds.1992<-metaMDS(comp[comp$Year==1992,-225])
+lichen.nmds.1990<-metaMDS(comp[comp$Year==1992,-225])
 lichen.nmds.2015<-metaMDS(comp[comp$Year==2015,-225])
-protest(lichen.nmds.1992, lichen.nmds.2015)
+protest(lichen.nmds.1990, lichen.nmds.2015)
 
 #############################
 colSumsP <- function(x){
@@ -36,7 +36,7 @@ colSumsP <- function(x){
 }
   
 abun <- subset(ddply(comp, .(Year), colSumsP), select=-Year)
-plot(t(abun), xlab = 1992, ylab = 2015, main = "N occurences 2015 vs 1992" )
+plot(t(abun), xlab = 1990, ylab = 2015, main = "N occurences 2015 vs 1990" )
 abline(0,1)
 
 gabun <- subset(ddply(genus_comp, .(Year), colSumsP), select=-Year)
