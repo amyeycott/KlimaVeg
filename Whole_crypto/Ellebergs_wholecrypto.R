@@ -93,7 +93,7 @@ mapply(function(x, z, main, ylab){
     main=c("Bryophytes","Vascular plants","Vascular plants"),
   ylab=c("Temperature Indicator","Soil Reaction Indicator", "Soil Trophism Indicator"))
 
-legend("bottomright", fill=c("#3873AE","#EF9335"), legend=c("1992","2015"), y.intersp=0.8)
+legend("bottomright", fill=c("#3873AE","#EF9335"), legend=c("1990","2015"), y.intersp=0.8)
 savePlot("Ellenbergs by community after bonferroni for presentation.png", type="png")
 
 #Figure: all the ellenbergs by community

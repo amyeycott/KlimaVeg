@@ -5,7 +5,7 @@ library(grid)
 library(gtable)
 
 
-labelR = "Frequency in 1992"
+labelR = "Frequency in 1990"
 labelT = "Frequency in 2015"
 
 strippyfunction<-function(p){
