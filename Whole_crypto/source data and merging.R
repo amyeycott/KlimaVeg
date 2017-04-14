@@ -10,7 +10,7 @@ phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falins
 
 ##Sanity checks and tidying in vascular data
 names(vascOld.thin)<-gsub(" ", "_",names(vascOld.thin))
-vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992 
+vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992. Note that row names 1992 hasn't been changed to 90, just vector and object names. A row name change might come later.
 vascOld.thin$Frequency_1<-as.numeric(vascOld.thin$Frequency_1)
 vascOld.thin$Species_name<-gsub(" ", "_",vascOld.thin$Species_name)
 
@@ -61,8 +61,8 @@ rownames(vascNew.fat)<-substr(rownames(vascNew.fat),1,3)
 colnames(phytosoc)<-gsub(" ", "_",colnames(phytosoc))#takes spaces out of column names
 phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2]<-paste0(substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 1,1),"0", substr(phytosoc$Plot_No.[nchar(phytosoc$Plot_No.)==2], 2,2))#makes format for Site match that elsewhere (i.e. F02 not F2). Note: ONLY RUN ONCE each time the read_excel is run. 
 phytosoc[is.na(phytosoc)]<-0
-phytosoc$ncomms<-rowSums(phytosoc[,2:7]>0)#magic numbers are very bad, but subset wasn't working
-phytosoc$dominant<-as.factor(colnames(phytosoc[,2:7])[max.col(phytosoc[,2:7], ties.method = 'first')])  #return the column name of the column with the highest value. Should probably check how many ties there are though.
+phytosoc$ncomms<-rowSums(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")]>0)
+phytosoc$dominant<-as.factor(colnames(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")])[max.col(phytosoc[,c("TC","CA","PQ","QP","PP","CelA")], ties.method = 'first')])  #return the column name of the column with the highest value. Should probably check how many ties there are though.
 
 ####Species characteristics - Indicator values and conservation status####
 #for bryophytes and lichens, the code is in their respective projects
@@ -81,9 +81,16 @@ vasc.protected$Species.name<-gsub(" ", "_",vasc.protected$Species.name)
 dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11")
 lichall.df.ss<-comp[!substr(rownames(comp),1,3)%in%dodgysquares,!names(comp)=="Year"]
 lichall.df.ss<-lichall.df.ss[,colSums(lichall.df.ss)>0]
-bryoall.df.ss<-easytabx[!substr(rownames(easytabx),1,3)%in%dodgysquares,]
+bryoall.df.ss<-bryo.fat[!substr(rownames(bryo.fat),1,3)%in%dodgysquares,]
 bryoall.df.ss<-bryoall.df.ss[,colSums(bryoall.df.ss)>0]
 vascall.df.ss<-vascall.df[!substr(rownames(vascall.df),1,3)%in%dodgysquares,]
 vascall.df.ss<-vascall.df.ss[,colSums(vascall.df.ss)>0]
 
-
+#colour scheme to match falinski maps
+coloury <- data.frame(
+  Phytosociology_Latin = c("CA","CelA","PP","PQ","QP","TC"),
+  Colour_softer = c("#6CC8F0", "#AB66AD","#FCF19C","#B5634B","#E0A575","#76B588"),
+  Community_in_1990 = c("Streamside alder-ash forest", "Black alder bog forest","Mesotrophic pine forest","Meso-oligotrophic mixed for.", "Spruce forest", "Mixed deciduous forest"), 
+  Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
+  stringsAsFactors = FALSE
+)

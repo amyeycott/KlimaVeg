@@ -1,7 +1,8 @@
 library(readxl)
-bryophytes<-read_excel("../sylwia/Baza Styczen 2016.xls", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
-bryo.status<-read_excel("../sylwia/Baza Styczen 2016.xls", sheet="Ellenberg.protected")#works only if you index the sheet number by name, not by position.
+bryophytes<-read_excel("../sylwia/Baza_15_03_2017.xlsx", sheet=1,col_names = TRUE) # przypisałam do zbioru funcje
+bryo.status<-read_excel("../sylwia/Baza_15_03_2017.xlsx", sheet="Ellenberg")#works only if you index the sheet number by name, not by position.
 str(bryo.status)
+names(bryo.status)<-gsub("-", "_", names(bryo.status))
 names(bryo.status)<-gsub(" ", "_", names(bryo.status))
 bryo.status$Red_coded[bryo.status$Red_coded==""]<-0
 bryo.status$Any.status<-bryo.status$Red_coded
@@ -25,7 +26,6 @@ S.in.CWD<-c("S6", "S9", "S10", "S11", "S13", "S15", "S17")
 S.in.inorganic<-c("S1", "S2","S3", "S4","S5","s12", "S25")
 S.in.fineorganic<-c("S7","S8","S20", "S21","S22", "S23","S24","S26")
 
-easytab<-bryophytes[1:4]
-easytabx<-xtabs(Frequency~(paste(Plot,Year, sep=""))+Species_name, data=easytab)
-easytabx<-as.data.frame.matrix(easytabx)
-head(easytabx[1:6])
+bryo.fat<-xtabs(Frequency~(paste(Plot,Year, sep=""))+Species_name, data=bryophytes[1:4])
+bryo.fat<-as.data.frame.matrix(bryo.fat)
+head(bryo.fat[1:6])
