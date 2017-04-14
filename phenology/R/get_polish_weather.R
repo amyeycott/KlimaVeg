@@ -2,6 +2,7 @@ get_Polish_weather_data <- function(siteCode, variableCode, startDate, endDate, 
   require("RCurl")
   require("readr")
   require("assertthat")
+  require("dplyr")
   
   assert_that(is.Date(startDate))
   assert_that(is.Date(endDate))
@@ -15,7 +16,7 @@ get_Polish_weather_data <- function(siteCode, variableCode, startDate, endDate, 
   }, .progress = "text")
   
   res %>%  
-    rename(value = wartosc, date = data) %>% 
-    filter(date >= startDate, date <= endDate) %>%
-    mutate(date = as.Date(format(date, "%Y-%m-%d")))
+    rename(value = wartosc, date = data) %>%
+    mutate(date = as.Date(format(date, "%Y-%m-%d"))) %>% 
+    filter(date >= startDate, date <= endDate) 
 }
