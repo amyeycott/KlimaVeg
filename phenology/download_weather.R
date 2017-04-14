@@ -1,8 +1,6 @@
 #Down load Bialowieza and regional temperature data 
-library("dplyr")
+library("tidyverse")
 library("rnoaa")
-library("ggplot2")
-library("tidyr")
 library("lubridate")
 
 
