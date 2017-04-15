@@ -2,7 +2,7 @@
 library("tidyverse")
 library("rnoaa")
 library("lubridate")
-
+library("ggrepel")
 
 
 ##regional climate
@@ -15,7 +15,7 @@ dat <- read.table(header = TRUE, sep = ",", text = "
 stations <- meteo_nearby_stations(dat, lat_colname = "latitude", lon_colname = "longitude", station_data = ghcnd_stations(), var = "all",  year_min = 1960, year_max = 2000, radius = NULL, limit = 20)
 
 #map
-mp <- map_data("world", xlim = c(18, 30), ylim = c(48, 56))
+mp <- map_data("world", xlim = c(16, 30), ylim = c(48, 58))
 
 ggplot(stations$Białowieża, aes(x = longitude, y = latitude, label = name)) + 
   geom_map(data = mp, mapping = aes(map_id = region), map = mp, fill = "grey80", colour = "black", inherit.aes = FALSE) + 
@@ -50,7 +50,7 @@ monthlyRegionalData <- regionalData %>%
 monthlyRegionalData %>% 
   ggplot(aes(x = date, y = value, colour = name)) +
   geom_line() + 
-  facet_wrap(. ~ month, scale = "free_y")
+  facet_wrap( ~ month, scale = "free_y")
 
 
 ## Bialowieza data from 
