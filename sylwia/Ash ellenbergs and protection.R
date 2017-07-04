@@ -22,7 +22,7 @@ Ellens<-merge(bryophytes[c(1:4,66)], bryo.status, by.x=3, by.y=2, all=TRUE)
 mean(rep(Ellens$L[!is.na(Ellens$L) &Ellens$Plot%in%hosts.LS1990$Plot &Ellens$Year==2015], Ellens$Frequency[!is.na(Ellens$L)&Ellens$Plot%in%hosts.LS1990$Plot &Ellens$Year==2015]))#5.134
 
 
-cases<-expand.grid(year = c(1992, 2015), FeLS1990 = c(FALSE, TRUE))#sets up the subset possibilities for the sapply to loop through
+cases<-expand.grid(year = c(1990, 2015), FeLS1990 = c(FALSE, TRUE))#sets up the subset possibilities for the sapply to loop through
 
 wt.mean.ell.fun<-function(x,param){
   E<-Ellens[Ellens$Year == x[1], ]#do one subsetting strategy on each row. This starts with the first column of the grid we fed sapply
@@ -58,7 +58,7 @@ Ellensummary$sdR<-apply(cases,1,wt.sd.ell.fun,param="R")
 
 wt.ttest.ell.fun<-function(x,param){  
   E<-Ellens[(Ellens$Plot%in%hosts.LS1990$Plot)==x[2],]
-  out.1990 <- by(E[E$Year == 1992,], IND = E$Plot[E$Year == 1992], function(x){       weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
+  out.1990 <- by(E[E$Year == 1990,], IND = E$Plot[E$Year == 1990], function(x){       weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
   })
   out.2015<-by(E[E$Year == 2015,], IND = E$Plot[E$Year == 2015], function(x){           weighted.mean(x[[param]], x$Frequency, na.rm = TRUE)
   })

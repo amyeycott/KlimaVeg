@@ -5,7 +5,7 @@ on.cwd.ash<-bryophytes[(bryophytes$Fe_CWD)>0,c(1:4,which(names(bryophytes)%in%S.
 on.cwd.ash$Species_name<-droplevels(on.cwd.ash$Species_name)
 
 FeLS2015table.byplot<-table(on.ls.ash$Species_name[on.ls.ash$Year==2015], on.ls.ash$Plot[on.ls.ash$Year==2015])
-FeLS1990table.byplot<-table(on.ls.ash$Species_name[on.ls.ash$Year==1992], on.ls.ash$Plot[on.ls.ash$Year==1992])
+FeLS1990table.byplot<-table(on.ls.ash$Species_name[on.ls.ash$Year==1990], on.ls.ash$Plot[on.ls.ash$Year==1990])
 FeCWD2015table.byplot<-table(on.cwd.ash$Species_name, on.cwd.ash$Plot) #makes plot x species table for FeCWD2015
 summary(colSums(FeCWD2015table.byplot))#the summary of species richnesses of different plots which had something growing on ash CWD
 
@@ -35,8 +35,8 @@ dim(FeCWD2015table.byplot) #104 x 69 a hundred and four species in sixty nine pl
 hosts.LS2015<-on.ls.ash[on.ls.ash$Year==2015, 1:4] #has to be set up year by year then merged as diff lengths per year
 hosts.LS2015$hosts.LS2015<-rowSums(on.ls.ash[on.ls.ash$Year==2015, 8:length(on.ls.ash)], na.rm=TRUE)# note to myself: this is ok order in at least the first 12 lines
 
-hosts.LS1990<-on.ls.ash[on.ls.ash$Year==1992, 1:4] 
-hosts.LS1990$hosts.LS1990<-rowSums(on.ls.ash[on.ls.ash$Year==1992, 8:length(on.ls.ash)], na.rm=TRUE)# note to myself: ordering is ok in at least the first 12 lines.
+hosts.LS1990<-on.ls.ash[on.ls.ash$Year==1990, 1:4] 
+hosts.LS1990$hosts.LS1990<-rowSums(on.ls.ash[on.ls.ash$Year==1990, 8:length(on.ls.ash)], na.rm=TRUE)# note to myself: ordering is ok in at least the first 12 lines.
 
 hosts.CWD2015<-on.cwd.ash[1:4] 
 hosts.CWD2015$hosts.CWD2015<-rowSums(on.cwd.ash[, 8:length(on.cwd.ash)], na.rm=TRUE)
@@ -110,10 +110,10 @@ fig<-ordiplot(ash.nmds)
 #identify(fig, what="species")
 #identify(fig, what="sites")
 
-t.test(scores(ash.nmds)[(substr(rownames(scores(ash.nmds)), 4,7))=="1992",1],scores(ash.nmds)[(substr(rownames(scores(ash.nmds)), 4,7))=="2015",1])# Difference between years, t94=2.202, p=0.0301. This is interesting because there is no consistent change in composition at the whole area level. But what about at the level of just the LS2015 plots?
+t.test(scores(ash.nmds)[(substr(rownames(scores(ash.nmds)), 4,7))=="1990",1],scores(ash.nmds)[(substr(rownames(scores(ash.nmds)), 4,7))=="2015",1])# Difference between years, t94=2.202, p=0.0301. This is interesting because there is no consistent change in composition at the whole area level. But what about at the level of just the LS2015 plots?
 FeLSsites2015<-colnames(FeLS2015table.byplot)
 FeLSsites.allspp.nmds<-metaMDS(bryo.fat[which(substr(rownames(bryo.fat),1,3)%in%FeLSsites2015),])
-t.test(scores(FeLSsites.allspp.nmds)[(substr(rownames(scores(FeLSsites.allspp.nmds)), 4,7))=="1992",1],scores(FeLSsites.allspp.nmds)[(substr(rownames(scores(FeLSsites.allspp.nmds)), 4,7))=="2015",1])
+t.test(scores(FeLSsites.allspp.nmds)[(substr(rownames(scores(FeLSsites.allspp.nmds)), 4,7))=="1990",1],scores(FeLSsites.allspp.nmds)[(substr(rownames(scores(FeLSsites.allspp.nmds)), 4,7))=="2015",1])
 
 #is 2015LS less diverse than 1990LS?
 betatest<-betadisper(vegdist(ashtabx), group=substr(rownames(ashtabx),4,7))
@@ -193,7 +193,7 @@ generalisty.testy<-sapply(hostsall.2015[, 2:(length(hostsall.2015)-1)], function
 generalisty.testy #not enough observations
 
 #what about 1990?
-hostsall.1990<-aggregate(bryophytes[bryophytes$Year==1992, 61:74], by=list(bryophytes$Species_name[bryophytes$Year==1992]), max)
+hostsall.1990<-aggregate(bryophytes[bryophytes$Year==1990, 61:74], by=list(bryophytes$Species_name[bryophytes$Year==1990]), max)
 hostsall.1990$max<-rowSums((hostsall.1990[,2:length(hostsall.1990)]>0), na.rm=T)
 hostsall.1990<-hostsall.1990[(hostsall.1990$max)>0,]
 generalisty.1990<-sapply(hostsall.1990[, 2:(length(hostsall.1990)-1)], function(x){

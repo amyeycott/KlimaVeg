@@ -25,7 +25,7 @@ lichen.nmds.genus<-metaMDS(subset(genus_comp,select=-Year))
 plot(lichen.nmds.genus, display="sites")
 points(lichen.nmds.genus, display="sites", col=genus_comp$Year)#reducing to genus doesn't help
 
-lichen.nmds.1990<-metaMDS(comp[comp$Year==1992,-225])
+lichen.nmds.1990<-metaMDS(comp[comp$Year==1990,-225])
 lichen.nmds.2015<-metaMDS(comp[comp$Year==2015,-225])
 protest(lichen.nmds.1990, lichen.nmds.2015)
 
