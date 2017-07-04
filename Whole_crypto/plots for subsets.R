@@ -1,12 +1,6 @@
 source("../Whole_crypto/turnover_subset.R")
-
-pairs(~mpg+disp+drat+wt,data=mtcars, 
-      main="Simple Scatterplot Matrix")
-
 names(envir)
 names(lichall.df.ss)
-
-pairs(~L_light+T_temperature+K_continentality+F_moisture+R_reaction+N_nitrogen,data=envir[envir$Species%in%names(lichall.df.ss),])
 
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
@@ -19,7 +13,20 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
   text(0.5, 0.5, txt)
 }#adapted from help file for pairs, prints the correlation coefficient on the upper diagonals
 
-x11()
 pairs(~L_light+T_temperature+K_continentality+F_moisture+R_reaction+N_nitrogen,data=envir[envir$Species%in%names(lichall.df.ss),], lower.panel = panel.smooth, upper.panel = panel.cor, na.action = na.omit)#panel.smooth is fitting a lowess-smoothed fit line to the lower diagonals.
+
+pairs(sapply(envir[envir$Species%in%names(lichall.df.ss),c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=NULL, main="Lichens")#you can have jitter OR panel cor, not both.
+
 savePlot("Lichen_EIV_correlations.emf", type="emf")
 savePlot("Lichen_EIV_correlations.png", type="png")
+
+pairs(sapply(bryo.status[,c("L","T","K","F","R")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=NULL, main="Bryophytes")#you can have jitter OR panel cor, not both.
+
+savePlot("Bryo_EIV_correlations.emf", type="emf")
+savePlot("Bryo_EIV_correlations.png", type="png")
+
+pairs(sapply(vasc.ellen[,c("L","T","K","W","Tr","R")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=NULL, main="Vascular plants")#you can have jitter OR panel cor, not both.
+
+savePlot("Vasc_EIV_correlations.emf", type="emf")
+savePlot("Vasc_EIV_correlations.png", type="png")
+
