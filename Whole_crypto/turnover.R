@@ -99,7 +99,6 @@ Summaries<- Reduce(HDRmerge, list(summ.lichens, summ.bryos, summ.vascs))
 ####Add in Ellenbergs####
 ####weighted mean ellenbergs for different species groups in the plots####
 
-#this could be done with a loop and weighted.mean but never mind.
 #merge thin tables with ellenberg values (already done for lichens)
 vascoldthin.withellens<-merge(vascOld.thin[,c("Species_name","Plot_number","frequency_score")], vasc.ellen, by.x="Species_name", by.y="Species.name")
 vascnewthin.withellens<-merge(vascNew.thin[,c("Species_name_2015","Plot_number_2015","frequency_score")], vasc.ellen, by.x="Species_name_2015", by.y="Species.name")

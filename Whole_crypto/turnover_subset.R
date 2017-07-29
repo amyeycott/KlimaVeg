@@ -124,11 +124,16 @@ plot(summaries.ss$vasc.colonise~summaries.ss$vasc.BCdiss)
 ##idea for another day: plot number of new-to-whole-crypto lichen spp against BC dist of only the existing list.
 
 ####winners and losers####
-losers<-as.data.frame(head(sort(colSums(vascall.df.ss[128:254,]>0)-colSums(vascall.df.ss[1:127,]>0))))#losers: by total squares lost
+losers<-as.data.frame(head(sort(colSums(vascall.df.ss[128:254,]>0)-colSums(vascall.df.ss[1:127,]>0))))#losers: by total squares lost FIX THESE MAGIC NUMBERS
 winners<-tail(sort(colSums(vascall.df.ss[128:254,]>0)-colSums(vascall.df.ss[1:127,]>0)))#winners: by total squares gained
-write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])==0)&(colSums(vascall.df.ss[1:127,])>1)]>0))), file="vasc.extinction.csv")
-write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])>0)&(colSums(vascall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="vasc colonisation.csv")               
+write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])==0)&(colSums(vascall.df.ss[1:127,])>1)]>0))), file="vasc.extinction.csv")#July 2017: 6 extinctions, of
+write.csv2(as.data.frame(sort(colSums(vascall.df.ss[,(colSums(vascall.df.ss[128:254,])>0)&(colSums(vascall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="vasc colonisation.csv")#115 colonisations              
+#having difficulty making sure we have the right turnover, it seems higher than before?
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d2cc4555b84ad95d9c2a4c4cc0f32e90a3454ac6
 losers<-as.data.frame(head(sort(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",]>0)-colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1990",]>0))))#losers: by total squares lost
 winners<-tail(sort(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",]>0)-colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1990",]>0)))#winners: by total squares gained
 write.csv2(as.data.frame(sort(colSums(bryoall.df.ss[,(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="2015",])==0)&(colSums(bryoall.df.ss[substr(rownames(bryoall.df.ss),4,7)=="1990",])>1)]>0))), file="bryo.extinction.csv")
@@ -148,3 +153,8 @@ write.table(round(TukeyHSD(model.x)[[1]], digits=4), file="Posthoc of community 
 
 TukeyHSD(aov(vasc.BCdiss~dominant, data=summaries.ss))[[1]]
 
+
+
+####total turnover suddently got weirdly high
+dim(vascall.df.ss[substr(rownames(vascall.df),4,7)=="1990", colSums(vascall.df.ss[substr(rownames(vascall.df),4,7)=="1990",])==0])#only 92 species left now. This seems odd. That, plus the 127 colonists only make 219, which is fewer than the 290 total species in the 127-plot dataset.
+                  

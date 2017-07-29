@@ -9,6 +9,12 @@ vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASC
 vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'"
 phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
 
+vascOld.thinTEST<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xlsx", col_types=c(rep("text",4), rep("numeric", 47), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'
+vascOld.thinTEST[4]<-as.numeric(vascOld.thinTEST[4])
+
+
+
+
 ##Sanity checks and tidying in vascular data
 names(vascOld.thin)<-gsub(" ", "_",names(vascOld.thin))
 vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1990", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011990.
@@ -68,6 +74,7 @@ phytosoc$dominant<-as.factor(colnames(phytosoc[,c("TC","CA","PQ","QP","PP","CelA
 #for bryophytes and lichens, the code is in their respective projects
 vasc.ellen<-read_excel("Sierhanowo_species_indicator_values_final_final.xlsx", skip=1)
 vasc.ellen<-vasc.ellen[, colSums(!is.na(vasc.ellen)) != 0]#removes columns filled entirely with NA
+names(vasc.ellen)<-make.names(names(vasc.ellen))
 vasc.ellen$Species.name<-gsub(" ", "_",vasc.ellen$Species.name)
 
 vasc.protected<-read_excel("Sierhanowo_protected_red_listed_vascular.xlsx", skip=1)#skip=1 because the column headings are on line 2, line 1 describes the contents of the worksheet. 
