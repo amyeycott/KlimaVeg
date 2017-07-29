@@ -42,9 +42,9 @@ for (i in (1:144))
 BCdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
 summ.bryos[1:5,]
 head(bryo.fat[,1:5])#shows that bryo and the resulting objects have the same row order. BUT the are a different row order to lichens and vascular - goes A01, A02, A03 not A01, A10, A11.
-rownames(summ.bryos)<-substr(rownames(bryo.fat[substr(rownames(bryo.fat),4,7)=="1992",]),1,3)
+rownames(summ.bryos)<-substr(rownames(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",]),1,3)
 colnames(summ.bryos)<-c("bryo.BCdiss", "bryo.Sodiss")
-summ.bryos$bryo.rich1990<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1992",]>0)
+summ.bryos$bryo.rich1990<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",]>0)
 summ.bryos$bryo.rich2015<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",]>0)
 summ.bryos$bryochange<-summ.bryos$bryo.rich2015-summ.bryos$bryo.rich1990
 extinctions.bryos<-as.matrix(designdist(bryo.fat, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) 
@@ -56,7 +56,7 @@ summ.bryos$bryo.colonise<-0
 for (i in 1:144)
 {summ.bryos$bryo.colonise[i]<-(colonisations.bryos[i*2-1, i*2])}
 
-summ.bryos$bryo_threatened_1990<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1992",names(bryo.fat[substr(rownames(bryo.fat),4,7)=="1992",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
+summ.bryos$bryo_threatened_1990<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",names(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
 summ.bryos$bryo_threatened_2015<-rowSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",names(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",])%in%bryo.status$Species_name[!bryo.status$Red_coded=="NA"]]>0)
 
 ##Vascular plants##
@@ -130,7 +130,7 @@ names(lich.weightmeanold)<-paste("lich.old.",names(lich.weightmeanold), sep="")
 lich.weightmeannew<-as.data.frame(lich.weightmeannew)
 rownames(lich.weightmeannew)<-lich.weightmeannew$Site
 names(lich.weightmeannew)<-paste("lich.new.",names(lich.weightmeannew), sep="")
-bryo.weightmeanold<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="1992",])
+bryo.weightmeanold<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="1990",])
 rownames(bryo.weightmeanold)<-bryo.weightmeanold$Plot
 names(bryo.weightmeanold)<-paste("bryo.old.",names(bryo.weightmeanold), sep="")
 bryo.weightmeannew<-as.data.frame(bryo.weightmean[bryo.weightmean$Year=="2015",])
@@ -171,7 +171,7 @@ savePlot("Colonisations vs extinctions.emf", type="emf")
 sapply(Summaries, mean)
 sapply(Summaries, sd)
 sapply (list(comp_old, comp_new, vascOld.fat, vascNew.fat), dim)
-sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1992",])>0)#that's a long-winded way to get bryo richness...
+sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",])>0)#that's a long-winded way to get bryo richness...
 sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",])>0)
 
 #is turnover higher in certain communities? Or plots with more communities in?

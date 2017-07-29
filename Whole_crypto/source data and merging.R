@@ -1,19 +1,19 @@
 #This project is to analyse all taxonomic groups in the crypto-klimaveg dataset. It was written by Amy Eycott starting 7th April 2016.
 
 source("../Ania_and_Martin/AniaMartinLichens_dataloading.R")#the ../ is 'go up one level', doing it this way means that it finds the right directory whether it is on C, O, or another person's computer. This has to be done for all the files loading in the project if other places use this code as source
-source("../sylwia/Bryophyte data loading.R")#in an ideal world, work out which step is printing a bunch of structure...
+source("../sylwia/Bryophyte data loading.R")#ignore warning about NAs introduced by coercion, they are fine...
 library(readxl)
 
-vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xls"), col_types=c(rep("text",3), rep("numeric", 48), "text"))
-vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xls"))
+#BEFORE LOADING. If there is a new version of the following data files, they have to be saved as xlsx and the blank trailing columns removed by hand. Otherwise you get an error if you set column types, and print a bunch of weird extra stuff if you don't (plus setting the column types is good). 
+vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'"
+vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'"
 phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
 
 ##Sanity checks and tidying in vascular data
 names(vascOld.thin)<-gsub(" ", "_",names(vascOld.thin))
-vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1992", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011992. Note that row names 1992 hasn't been changed to 90, just vector and object names. A row name change might come later.
+vascOld.thin$Plot_number<-paste(substr(vascOld.thin$Plot_number,1,1),substr(vascOld.thin$Plot_number,3,4), "1990", sep="") #to match row name formatting in other datasets. Format is letter, 2 numeric, year eg A011990.
 vascOld.thin$Frequency_1<-as.numeric(vascOld.thin$Frequency_1)
 vascOld.thin$Species_name<-gsub(" ", "_",vascOld.thin$Species_name)
-
 names(vascNew.thin)<-gsub(" ", "_",names(vascNew.thin))
 names(vascNew.thin)<-gsub("2016","2015",names(vascNew.thin))
 vascNew.thin$Plot_number_2015<-paste(substr(vascNew.thin$Plot_number,1,1),substr(vascNew.thin$Plot_number,3,4), "2015", sep="")
@@ -51,7 +51,7 @@ library(analogue)
 vascall.df<-join(vascOld.fat, vascNew.fat, na.replace=TRUE, split=FALSE, type="outer")
 
 #fixing comp(lichens) rownames for merging with other datasets
-rownames(comp)<-gsub(".x",1992, rownames(comp))
+rownames(comp)<-gsub(".x",1990, rownames(comp))
 rownames(comp)<-gsub(".y",2015, rownames(comp))
 #fixing the seperate-by-year vasc data rownames for merging purposes. This step has to happen *AFTER* vascall
 rownames(vascOld.fat)<-substr(rownames(vascOld.fat),1,3)#broken

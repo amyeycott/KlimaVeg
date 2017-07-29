@@ -8,8 +8,8 @@ bryophytes<-bryophytes[!(rowSums(bryophytes[,5:length(bryophytes)]))==0,]
 colnames(bryophytes)<-gsub(" ", "_", colnames(bryophytes))
 bryophytes$Species_name<-as.factor(bryophytes$Species_name)
 
-setdiff(bryophytes$Species_name[bryophytes$Year==1992],bryophytes$Species_name[bryophytes$Year==2015])#finds out which species are in 1992 but not 2015.
-setdiff(bryophytes$Species_name[bryophytes$Year==2015],bryophytes$Species_name[bryophytes$Year==1992])
+setdiff(bryophytes$Species_name[bryophytes$Year==1990],bryophytes$Species_name[bryophytes$Year==2015])#finds out which species are in 1990 but not 2015.
+setdiff(bryophytes$Species_name[bryophytes$Year==2015],bryophytes$Species_name[bryophytes$Year==1990])
 
 #all the places where there is a record but no frequency.
 write.table(bryophytes[bryophytes$Frequency==0&!(rowSums(bryophytes[,5:length(bryophytes)]))==0, 1:4], file="strange things of zero frequency.tab", sep="\t")
