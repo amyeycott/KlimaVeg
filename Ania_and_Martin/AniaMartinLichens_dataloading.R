@@ -1,5 +1,5 @@
 library(readxl)
-library(plyr)
+library(tidyverse)
 
 #load 2015 full data set
 newdb<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx")
@@ -19,7 +19,7 @@ newdb$Species<-as.factor(newdb$Species)
 newdb$Site<-as.factor(newdb$Site)
 
 #new.harm. is the data with only the species comparable between 1990 and 2015 in it. Same data prep as above.
-new.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet=3)
+new.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx", sheet="data without")
 new.harm.db<-as.data.frame(new.harm.db)
 new.harm.db[is.na(new.harm.db)] <-0
 colnames(new.harm.db)<-gsub(" ", "_", colnames(new.harm.db))
@@ -51,7 +51,7 @@ olddb$Species<-as.factor(olddb$Species)
 olddb$Site<-as.factor(olddb$Site)
 
 #old.harm. is the 1990 sampling period with only the species comparable between 1990 and 2015 in it. 
-old.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet=2)# need some filepath so that this still runs when used as 'source' in other folders
+old.harm.db<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - hist data-1987-1989-final ver..xlsx", sheet="data without")# need some filepath so that this still runs when used as 'source' in other folders
 old.harm.db<-as.data.frame(old.harm.db)
 old.harm.db[is.na(old.harm.db)] <-0
 colnames(old.harm.db)<-gsub(" ", "_", colnames(old.harm.db))
@@ -81,7 +81,7 @@ envir$Species<-trimws(envir$Species, which = "both")
 #needs an NA line rmeoved maybe.envir<-
 #corrections to species names
 envir$Species[envir$Species=="Lecanora argentata"]<-"Lecanora argentata s.l."
-
+envir$Species[envir$Species=="Pertusaria opthalmiza"]<-"Pertusaria ophthalmiza"
 
 #trim trailing spaces in species names. Don't do it for the whole file, that is very very crashy
 envir$Species<-trimws(envir$Species, which = "both")
@@ -99,7 +99,7 @@ new.harm.db$Frequency<-new.harm.db$`1_rare` +  new.harm.db$`2_frequent` * 2 + ne
 #a combined datafile so we can do a giant ordination. From here on we use harmonised data all the time unless stated
 
 comp_old<-as.data.frame(unclass(xtabs(Frequency~Site+Species, data=old.harm.db)))
-comp_old$Year<-1992
+comp_old$Year<-1990
 comp_new<-as.data.frame(unclass(xtabs(Frequency~Site+Species, data=new.harm.db)))
 comp_new$Year<-2015
 comp<-as.data.frame(merge(t(comp_old), t(comp_new), by=0, all=TRUE)) # Merge in rioja package is neater, join in analogue is nice and easy to understand.
@@ -128,4 +128,5 @@ lich.protect$Is_protected[is.na(lich.protect$Is_protected)]<-0#these are needed 
 
 #Wirth's values (like Ellenberg) for each year's ocurrences. There are some species in there not in the main dataset for some reason.
 old.wirths<-merge(old.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
-new.wirths<-merge(new.harm.db[c("Species","Site","Frequency")], envir, by="Species",, all.x=TRUE, all.y=FALSE)
+new.wirths<-merge(new.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
+

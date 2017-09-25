@@ -82,20 +82,20 @@ savePlot("Net richness change mapped.png", type="png")
 comp$plot<-substr(rownames(comp), 1,3)
 lichens.maps<-merge (comp, summaries.maps, by.x = "plot", by.y="plot")
 head(lichens.maps[(length(lichens.maps)-5):(length(lichens.maps))])
-lichens.maps$byrow<-unique(substr(lichens.maps$plot,1,1))
+lichens.maps$byrow<-substr(lichens.maps$plot,1,1)
 #lichens.maps[lichens.maps==0]<-NA#needed to make the zero points disappear in scale_size_area
 names(lichens.maps)<-gsub(" ","_",names(lichens.maps))
 
 bryo.fat$plot<-substr(rownames(bryo.fat), 1,3)
 bryos.maps<-merge(bryo.fat, summaries.maps, by.x="plot", by.y="plot")
-bryos.maps$byrow<-unique(substr(bryos.maps$plot,1,1))
+bryos.maps$byrow<-substr(bryos.maps$plot,1,1)
 names(bryos.maps)<-gsub(" ","_",gsub("-","__",names(bryos.maps)))
 bryos.maps$Year<-substr(rownames(bryo.fat), 4,7)
 
 vascall.df$plot<-substr(rownames(vascall.df), 1,3)
 vascall.df$Year<-substr(rownames(vascall.df), 4,7)
 vascs.maps<-merge(vascall.df, summaries.maps, by="plot")
-vascs.maps$byrow<-unique(substr(vascs.maps$plot,1,1))
+vascs.maps$byrow<-substr(vascs.maps$plot,1,1)
 names(vascs.maps)<-gsub(" ","_",gsub("-","__",names(vascs.maps)))
 
 library(ggplot2)#g sets up plots with one year and then another.
@@ -164,18 +164,18 @@ k<-ggplot(for.k.plots, aes(x=as.factor(bycol), y=byrow, fill=dominant, size=BCdi
 k
 
 
-x11(6,3)#plot m: with filled circles for positive numbers and hollow circles for negative ones. Negative ones were plotting fine in a previous version where I wasn't attempting unfilled circles.
-m<-ggplot(data=for.k.plots, aes(x=as.factor(bycol), y=byrow, fill=dominant)+
-  geom_point(aesas.factor(bycol)[richdiff>0], byrow[richdiff>0], size=richdiff))+
-  geom_point(aes(as.factor(bycol)[richdiff<0], byrow[richdiff<0], size=richdiff, fill=NULL))+
-  theme(panel.grid = element_blank(), panel.background = element_blank())+
-  geom_tile(colour="black", size=0.5, linetype="dashed")+
-  scale_fill_manual(limits=coloury$Phytosociology_Latin, values=coloury$Colour_softer, labels=coloury$Community_in_1990)+
-  facet_wrap(~group)+
-  coord_equal()+
-  labs(x="",y="",fill="Forest type in 1990", size="Frequency")+
-  ggtitle("Change in species richness") #Error in layer(data = data, mapping = mapping, stat = stat, geom = GeomPoint. Was using code from http://stackoverflow.com/questions/8583594/modifying-the-shape-for-a-subset-of-points-with-ggplot2
-m
+x11(6,3)#plot m: with filled circles for positive numbers and hollow circles for negative ones. Negative ones were plotting fine in a previous version where I wasn't attempting unfilled circles. Comented out so that the markdown runs
+#m<-ggplot(data=for.k.plots, aes(x=as.factor(bycol), y=byrow, fill=dominant)+
+#  geom_point(aes(as.factor(bycol)[richdiff>0], byrow[richdiff>0], size=richdiff))+
+#  geom_point(aes(as.factor(bycol)[richdiff<0], byrow[richdiff<0], size=richdiff, fill=NULL))+
+#  theme(panel.grid = element_blank(), panel.background = element_blank())+
+#  geom_tile(colour="black", size=0.5, linetype="dashed")+
+#  scale_fill_manual(limits=coloury$Phytosociology_Latin, values=coloury$Colour_softer, labels=coloury$Community_in_1990)+
+#  facet_wrap(~group)+
+#  coord_equal()+
+#  labs(x="",y="",fill="Forest type in 1990", size="Frequency")+
+#  ggtitle("Change in species richness")) #Error in layer(data = data, mapping = mapping, stat = stat, geom = GeomPoint. Was using code from http://stackoverflow.com/questions/8583594/modifying-the-shape-for-a-subset-of-points-with-ggplot2
+#m
 
 p <- ggplot(data = mtcars)+
   geom_point(aes(wt, mpg, shape=as.factor(cyl), colour=gear, size=carb))+

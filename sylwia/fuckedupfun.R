@@ -16,8 +16,8 @@ for (i in 1:a1){
 fuckedup.fun<-function(x){
   
 on.ls.x<-bryophytes[(bryophytes[[x]])>0,c(1:4,which(names(bryophytes)%in%S.in.LS), 55:68)]
-occ.on.x<-table(on.ls.x[on.ls.x$Year==1992,3]) 
-occ.tot<-colSums(bry.matr[(substr(rownames(bry.matr), 5,8))==1992,]>0)
+occ.on.x<-table(on.ls.x[on.ls.x$Year==1990,3]) 
+occ.tot<-colSums(bry.matr[(substr(rownames(bry.matr), 5,8))==1990,]>0)
 
 occ.tot[names(occ.on.x)]
 # line above replaces the following five lines:
@@ -27,7 +27,7 @@ occ.tot[names(occ.on.x)]
 #    occ.tot0<-c(occ.tot0,occ.tot1)
 #  } 
 
-frac1992<-occ.on.x/occ.tot0 #hypnum pallescens  is 2
+frac1990<-occ.on.x/occ.tot0 #hypnum pallescens  is 2
 
 occ.on.x<-table(on.ls.x[on.ls.x$Year==2015,3])
 occ.tot<-colSums(bry.matr[(substr(rownames(bry.matr), 5,8))==2015,]>0)
@@ -41,16 +41,16 @@ occ.tot[names(occ.on.x)]
 
 frac2015<-occ.on.x/occ.tot0
 
-n1<-table(c(names(frac1992),names(frac2015)))
+n1<-table(c(names(frac1990),names(frac2015)))
 n2<-names(n1[n1==2])
 
 frac0<-NULL
   for(i in 1:length(n2)){
-   o1<-c(frac2015[names(frac2015)==n2[i]],frac1992[names(frac1992)==n2[i]])
+   o1<-c(frac2015[names(frac2015)==n2[i]],frac1990[names(frac1990)==n2[i]])
     frac0<-rbind(frac0,o1)
   }
 
-plot(frac0[,2],frac0[,1],xlab="Fraction on tree in 1992",ylab="Fraction on tree in 2015",main=x, xlim=c(0,1), ylim=c(0,1))
+plot(frac0[,2],frac0[,1],xlab="Fraction on tree in 1990",ylab="Fraction on tree in 2015",main=x, xlim=c(0,1), ylim=c(0,1))
 abline(0,1)
 }
 
