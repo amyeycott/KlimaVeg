@@ -102,7 +102,6 @@ vascnewthin.withellens<-merge(vascNew.thin[,c("Species_name_2015","Plot_number_2
 bryothin.withellens<-merge(bryophytes[1:4], bryo.status, by.x="Species_name", by.y="Species_name")
 
 #weighted averages by plot
-library(dplyr)
 lich.weightmeanold<-old.wirths %>% 
   group_by(Site) %>%
   summarise_at(vars(L_light:N_nitrogen),weighted.mean, z=.$Frequency, na.rm=TRUE)#the dot is because it means "use the object named in the previous line" in hadlyspeak. Think of pipe as "feed into", where a little robot on the previous line delivers its completed task to the next robot
@@ -114,7 +113,7 @@ bryo.weightmean<-bryothin.withellens %>%
   summarise_at(vars(L:R),weighted.mean, z=.$Frequency, na.rm=TRUE)
 vasc.weightmeanold<-vascoldthin.withellens %>% 
   group_by(Plot_number) %>%
-  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
+  summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)#broken: there's x's in the ellenberg values file. Emailed Bogdan 25th Sep 2017
 vasc.weightmeannew<-vascnewthin.withellens %>% 
   group_by(Plot_number_2015) %>%
   summarise_at(vars(L:R),weighted.mean, z=.$frequency_score, na.rm=TRUE)
@@ -122,6 +121,7 @@ vasc.weightmeannew<-vascnewthin.withellens %>%
 #make the plot names the row names in A01, A02 format. You can't manipulate rownames in vascoldell, and I want to leave it as rownames to be able to use the HDRmerge.
 lich.weightmeanold<-as.data.frame(lich.weightmeanold)
 rownames(lich.weightmeanold)<-lich.weightmeanold$Site
+
 names(lich.weightmeanold)<-paste("lich.old.",names(lich.weightmeanold), sep="")
 lich.weightmeannew<-as.data.frame(lich.weightmeannew)
 rownames(lich.weightmeannew)<-lich.weightmeannew$Site
@@ -141,8 +141,8 @@ rownames(vasc.weightmeannew)<-substr(vasc.weightmeannew$Plot_number_2015,1,3)
 names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
 
 
-#A magic number for removing unecessary columns but [,-"Site"] wasn't working "invalid argument to unary operator"
-Summaries<- Reduce(HDRmerge, list(Summaries, lich.weightmeanold[-1], lich.weightmeannew[-1], bryo.weightmeanold[-c(1,2)], bryo.weightmeannew[-c(1,2)], vasc.weightmeanold[-1], vasc.weightmeannew[-1]))
+#Removing unecessary columns. Magic numbers to be fixed fro vascs when problem with x scores is fixed
+Summaries<- Reduce(HDRmerge, list(Summaries, select(lich.weightmeanold,-lich.old.Site), select(lich.weightmeannew,-lich.new.Site), select(bryo.weightmeanold,-bryo.old.Plot, -bryo.old.Year), select(bryo.weightmeannew,-bryo.new.Plot, -bryo.new.Year), vasc.weightmeanold[-1], vasc.weightmeannew[-1]))
 
 
 #####Some plots####
