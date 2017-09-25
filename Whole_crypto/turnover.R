@@ -1,6 +1,6 @@
 source("../Whole_crypto/source data and merging.R")
 #this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1990 and weighted mean ellenberg values, and does a few plots on turnover.
-
+library(vegan)
 ####lichens###
 #turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
 BCdist.lichens<-as.matrix(vegdist(comp[,!names(comp)=="Year"], method="bray"))
@@ -9,9 +9,9 @@ summ.lichens<-as.data.frame(cbind(0,0))#you have to set something up for the loo
   for (i in 1:144)
   {summ.lichens[i,1]<-(BCdist.lichens[i, i+144])
     summ.lichens[i,2]<-(Sodiss.lichens[i, i+144])}
-#How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-BCdist.lichens[1:5, 145:149]
-summ.lichens[1:5,]
+#How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after - this should produce five zeros. It has.
+diag(BCdist.lichens[1:5, 145:149])-summ.lichens[1:5,1]
+
 head(comp_old[,1:5])#shows that comp/comp new/comp old have the same row order
 colnames(summ.lichens)<-c("lich.BCdiss", "lich.Sodiss")
 summ.lichens$lich.rich1990<-rowSums(subset(comp_old>0, select=-Year))
@@ -19,8 +19,7 @@ summ.lichens$lich.rich2015<-rowSums(subset(comp_new>0, select=-Year))
 summ.lichens$richchange<-summ.lichens$lich.rich2015-summ.lichens$lich.rich1990
 rownames(summ.lichens)<-rownames(comp_old)
 
-library(vegan)
-extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species). I need to get someone to check this.
+extinctions.lichens<-as.matrix(designdist(comp, method = "(A-J)/A", terms = "binary", abcd=FALSE, alphagamma=FALSE, "extinctions")) #J for shared quantity, A and B for totals, N for the number of rows (sites) and P for the number of columns (species).
 summ.lichens$lich.extinct<-0
 for (i in 1:144)
 {summ.lichens$lich.extinct[i]<-(extinctions.lichens[i, i+144])}
@@ -38,9 +37,8 @@ summ.bryos<-as.data.frame(cbind(0,0))#you have to set something up for the loop 
 for (i in (1:144))
 {summ.bryos[i,1]<-(BCdist.bryos[i*2-1, i*2])
   summ.bryos[i,2]<-(Sodist.bryos[i*2-1, i*2])}# Here I want odds combined with their folllowing evens.
-#How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-BCdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)]
-summ.bryos[1:5,]
+#How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. GSould be a row of zeros. It has.
+diag(BCdist.bryos[c(1,3,5,7,9), c(2,4,6,8,10)])-summ.bryos[1:5,1]
 head(bryo.fat[,1:5])#shows that bryo and the resulting objects have the same row order. BUT the are a different row order to lichens and vascular - goes A01, A02, A03 not A01, A10, A11.
 rownames(summ.bryos)<-substr(rownames(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",]),1,3)
 colnames(summ.bryos)<-c("bryo.BCdiss", "bryo.Sodiss")
@@ -67,8 +65,7 @@ for (i in (1:144))
 {summ.vascs[i,1]<-(BCdist.vascs[i, i+144])
   summ.vascs[i,2]<-(Sodiss.vascs[i, i+144])}# Like lichens, it goes 1-144 then 145-250
 #How do I know it preserved the row order? Compare the diagonals of the next line with the values of the one after. It has.
-BCdist.vascs[1:5, 145:149]
-summ.vascs[1:5,]
+diag(BCdist.vascs[1:5, 145:149])-summ.vascs[1:5,1]
 head(vascall.df[,1:5])#shows that bryo and the resulting objects have the same row order. They go A1, A2, A3 not A1, A10, A11.
 colnames(summ.vascs)<-c("vasc.BCdiss", "vasc.Sodiss")
 summ.vascs$vasc.rich1990<-rowSums(vascOld.fat>0)

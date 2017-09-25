@@ -49,6 +49,7 @@ colnames(vascOld.fat)<-gsub(" ", "_",colnames(vascOld.fat))
 
 ##making a combined file for vegdist
 vascall.df<-bind_rows(vascOld.fat, vascNew.fat)
+vascall.df[is.na(vascall.df)]<-0
 
 #fixing comp(lichens) rownames for merging with other datasets
 rownames(comp)<-gsub(".x",1990, rownames(comp))
