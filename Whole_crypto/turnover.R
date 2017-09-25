@@ -141,6 +141,16 @@ rownames(vasc.weightmeannew)<-substr(vasc.weightmeannew$Plot_number_2015,1,3)
 names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
 
 
-#Removing unecessary columns. Magic numbers to be fixed fro vascs when problem with x scores is fixed
+#Merging taxa summaries and removing unnecessary columns.
 Summaries<- Reduce(HDRmerge, list(Summaries, select(lich.weightmeanold,-lich.old.Site), select(lich.weightmeannew,-lich.new.Site), select(bryo.weightmeanold,-bryo.old.Plot, -bryo.old.Year), select(bryo.weightmeannew,-bryo.new.Plot, -bryo.new.Year), select(vasc.weightmeanold, -vasc.old.Plot_number), select(vasc.weightmeannew, -vasc.new.Plot_number_2015)))
 
+##summary statistics
+sapply(Summaries, mean)
+sapply(Summaries, sd)
+sapply (list(comp_old, comp_new, vascOld.fat, vascNew.fat), dim)
+sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",])>0)#that's a long-winded way to get bryo richness...
+sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",])>0)
+#is turnover higher in certain communities? Or plots with more communities in?
+Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
+rownames(Summaries)<-Summaries$Row.names 
+Summaries$Row.names<-NULL
