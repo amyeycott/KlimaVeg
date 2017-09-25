@@ -2,6 +2,7 @@ source("turnover.R")
 #####Some plots####
 
 
+
 x11();par(mfrow=c(3,3), xpd=NA)
 mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1990","lich.rich2015","bryo.BCdiss", "bryo.rich1990", "bryo.rich2015","vasc.BCdiss", "vasc.rich1990","vasc.rich2015")], ylab= c("BCdist","Richness in 1990","Richness in 2015")) # OBS! column subsetting needs mapply.
 text("Lichens",x=-150, y=180, cex=1.4)
