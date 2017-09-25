@@ -1,5 +1,5 @@
 library(readxl)
-library(plyr)
+library(tidyverse)
 
 #load 2015 full data set
 newdb<-read_excel("../Ania_and_Martin/LICHENES CRYPTO - new data-2014-2015-final ver..xlsx")
@@ -129,3 +129,4 @@ lich.protect$Is_protected[is.na(lich.protect$Is_protected)]<-0#these are needed 
 #Wirth's values (like Ellenberg) for each year's ocurrences. There are some species in there not in the main dataset for some reason.
 old.wirths<-merge(old.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
 new.wirths<-merge(new.harm.db[c("Species","Site","Frequency")], envir, by="Species", all.x=TRUE, all.y=FALSE)
+

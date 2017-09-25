@@ -1,5 +1,5 @@
 library(readxl)
-library(plyr)
+library(tidyverse)
 
 #load 2015 full data set
 newdb<-read_excel("LICHENES CRYPTO - new data-2014-2015-final ver..xlsx")
