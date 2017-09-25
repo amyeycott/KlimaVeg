@@ -1,5 +1,5 @@
 source("../Whole_crypto/source data and merging.R")
-#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1990 and weighted mean ellenberg values, and does a few plots on turnover.
+#this file prepares the plot-level summaries (richness, tunover, n threatened species, etc), merges them with the dominant vegetation community from 1990 and weighted mean ellenberg values. There were a few plots here, they now have their own script so that this doesn't produce plots when being run as source.
 library(vegan)
 ####lichens###
 #turnover. First work out the dissimilaritiy scores. Any score that vegdist makes can be added in by changing the first line for each section - for example, options for binary dissimilarity indices. E.g. if you do Bray Curtis, binary= TRUE you get sørensen DISsimilarity.
@@ -142,36 +142,5 @@ names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
 
 
 #Removing unecessary columns. Magic numbers to be fixed fro vascs when problem with x scores is fixed
-Summaries<- Reduce(HDRmerge, list(Summaries, select(lich.weightmeanold,-lich.old.Site), select(lich.weightmeannew,-lich.new.Site), select(bryo.weightmeanold,-bryo.old.Plot, -bryo.old.Year), select(bryo.weightmeannew,-bryo.new.Plot, -bryo.new.Year), vasc.weightmeanold[-1], vasc.weightmeannew[-1]))
-
-
-#####Some plots####
-
-
-x11();par(mfrow=c(3,3), xpd=NA)
-mapply(function(x, ylab){hist (x, main=NULL, ylab=ylab, xlab=NULL)}, x=Summaries[,c("lich.BCdiss","lich.rich1990","lich.rich2015","bryo.BCdiss", "bryo.rich1990", "bryo.rich2015","vasc.BCdiss", "vasc.rich1990","vasc.rich2015")], ylab= c("BCdist","Richness in 1990","Richness in 2015")) # OBS! column subsetting needs mapply.
-text("Lichens",x=-150, y=180, cex=1.4)
-text("Bryophytes",x=-150, y=110, cex=1.4)
-text("vascular plants",x=-150, y=35, cex=1.4)
-savePlot("Distributions of values.emf", type="emf")
-t.test(Summaries$lich.rich1990, Summaries$lich.rich2015, paired=TRUE)
-t.test(Summaries$bryo.rich1990, Summaries$bryo.rich2015, paired=TRUE)
-t.test(Summaries$vasc.rich1990, Summaries$vasc.rich2015, paired=TRUE)#this is very ns for unpaired data and very sig for paired data!
-
-x11(); par(mfrow=c(1,3), pin=c(1.4,1.4), mgp=c(1.8,0.5,0))
-plot(Summaries$lich.extinct, Summaries$lich.colonise, xlab="Proportion plot extinctions 1990-2015", ylab="Proportion plot colonisations 1990-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Lichens")
-plot(Summaries$bryo.extinct, Summaries$bryo.colonise, xlab="Proportion plot extinctions 1990-2015", ylab="Proportion plot colonisations 1990-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Bryophytes")
-plot(Summaries$vasc.extinct, Summaries$vasc.colonise, xlab="Proportion plot extinctions 1990-2015", ylab="Proportion plot colonisations 1990-2015", xlim=c(0,0.8), ylim=c(0,0.8), main="Vascular plants")
-savePlot("Colonisations vs extinctions.emf", type="emf")
-
-sapply(Summaries, mean)
-sapply(Summaries, sd)
-sapply (list(comp_old, comp_new, vascOld.fat, vascNew.fat), dim)
-sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990",])>0)#that's a long-winded way to get bryo richness...
-sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",])>0)
-
-#is turnover higher in certain communities? Or plots with more communities in?
-Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
-rownames(Summaries)<-Summaries$Row.names
-Summaries$Row.names<-NULL
+Summaries<- Reduce(HDRmerge, list(Summaries, select(lich.weightmeanold,-lich.old.Site), select(lich.weightmeannew,-lich.new.Site), select(bryo.weightmeanold,-bryo.old.Plot, -bryo.old.Year), select(bryo.weightmeannew,-bryo.new.Plot, -bryo.new.Year), select(vasc.weightmeanold, -vasc.old.Plot_number), select(vasc.weightmeannew, -vasc.new.Plot_number_2015)))
 
