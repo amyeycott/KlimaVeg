@@ -3,17 +3,13 @@
 source("../Ania_and_Martin/AniaMartinLichens_dataloading.R")#the ../ is 'go up one level', doing it this way means that it finds the right directory whether it is on C, O, or another person's computer. This has to be done for all the files loading in the project if other places use this code as source
 source("../sylwia/Bryophyte data loading.R")#ignore warning about NAs introduced by coercion, they are fine...
 library(readxl)
+library(tidyverse)
 
 #BEFORE LOADING. If there is a new version of the following data files, they have to be saved as xlsx and the blank trailing columns removed by hand. Otherwise you get an error if you set column types, and print a bunch of weird extra stuff if you don't (plus setting the column types is good). 
-vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'"
-vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'"
+vascOld.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xlsx"),col_types=c(rep("text",3), rep("numeric", 48), "text"))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains because column D is stored as text. Seem to work though.
+vascOld.thin$`Frequency 1`<-as.numeric(vascOld.thin$`Frequency 1`)
+vascNew.thin<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_2015_FINAL.xlsx", col_types=c(rep("text",3), rep("numeric", 48), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, and corces column D to numeric neatly.
 phytosoc<-as.data.frame(read_excel("../Whole_crypto/habitat share.xlsx"))#Falinski's phytosociological classifications of each plot
-
-vascOld.thinTEST<-as.data.frame(read_excel("../Whole_crypto/KLIMAVEG_BIALOWIEZA_VASCULAR_OLD_Corr.xlsx", col_types=c(rep("text",4), rep("numeric", 47), "text")))#saving as xlsx seems to have fixed the problem of printing a load of structure, and allows column type setting, but now complains "expecting numeric, got '1'
-vascOld.thinTEST[4]<-as.numeric(vascOld.thinTEST[4])
-
-
-
 
 ##Sanity checks and tidying in vascular data
 names(vascOld.thin)<-gsub(" ", "_",names(vascOld.thin))
@@ -42,7 +38,6 @@ vascNew.thin$frequency_score <- rowSums(
   na.rm = TRUE)
 
 ##making fat tables for distance matrices##
-library(tidyr)
 vascOld.fat<-spread(vascOld.thin[,c(2,3,53)], Species_name,frequency_score, fill=0)
 rownames(vascOld.fat)<-vascOld.fat$Plot_number
 vascOld.fat$Plot_number<-NULL
@@ -53,14 +48,13 @@ colnames(vascNew.fat)<-gsub(" ", "_",colnames(vascNew.fat))
 colnames(vascOld.fat)<-gsub(" ", "_",colnames(vascOld.fat))
 
 ##making a combined file for vegdist
-library(analogue)
-vascall.df<-join(vascOld.fat, vascNew.fat, na.replace=TRUE, split=FALSE, type="outer")
+vascall.df<-bind_rows(vascOld.fat, vascNew.fat)
 
 #fixing comp(lichens) rownames for merging with other datasets
 rownames(comp)<-gsub(".x",1990, rownames(comp))
 rownames(comp)<-gsub(".y",2015, rownames(comp))
 #fixing the seperate-by-year vasc data rownames for merging purposes. This step has to happen *AFTER* vascall
-rownames(vascOld.fat)<-substr(rownames(vascOld.fat),1,3)#broken
+rownames(vascOld.fat)<-substr(rownames(vascOld.fat),1,3)
 rownames(vascNew.fat)<-substr(rownames(vascNew.fat),1,3)
 
 #phytosociological file from falinski: data tidying and matching plot name format
@@ -91,7 +85,7 @@ lichall.df.ss<-lichall.df.ss[,colSums(lichall.df.ss)>0]
 bryoall.df.ss<-bryo.fat[!substr(rownames(bryo.fat),1,3)%in%dodgysquares,]
 bryoall.df.ss<-bryoall.df.ss[,colSums(bryoall.df.ss)>0]
 vascall.df.ss<-vascall.df[!substr(rownames(vascall.df),1,3)%in%dodgysquares,]
-vascall.df.ss<-vascall.df.ss[,colSums(vascall.df.ss)>0]
+vascall.df.ss<-vascall.df.ss[,!is.na(colSums(vascall.df.ss))]
 
 #colour scheme to match falinski maps
 coloury <- data.frame(
@@ -101,3 +95,4 @@ coloury <- data.frame(
   Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
   stringsAsFactors = FALSE
 )
+
