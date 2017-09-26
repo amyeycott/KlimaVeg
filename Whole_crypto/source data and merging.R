@@ -96,4 +96,6 @@ coloury <- data.frame(
   Colour_bolder = c("#3AAEE3", "#924884","#FFF383","#A75F4A","#D19563","#61A375"), 
   stringsAsFactors = FALSE
 )
+coloury$Phytosociology_Latin<-factor(coloury$Phytosociology_Latin, levels=c("PP", "PQ", "QP", "TC", "CelA", "CA"))
+coloury<-arrange(coloury, Phytosociology_Latin)
 
