@@ -1,6 +1,11 @@
 source("../Whole_crypto/turnover_subset.R")
+library(GGally)
 names(envir)
 names(lichall.df.ss)
+
+lichpairs<-ggpairs(envir[envir$Species%in%names(lichall.df.ss),], columns=c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen"),lower = list(continuous = 'smooth_loess'),  diag = list(continuous = "barDiag"))
+lichpairs+theme(panel.grid=element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black", size = 1))
+  
 
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
@@ -12,10 +17,13 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
   if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
   text(0.5, 0.5, txt)
 }#adapted from help file for pairs, prints the correlation coefficient on the upper diagonals
+x11(5,6)
+
+
 
 pairs(~L_light+T_temperature+K_continentality+F_moisture+R_reaction+N_nitrogen,data=envir[envir$Species%in%names(lichall.df.ss),], lower.panel = panel.smooth, upper.panel = panel.cor, na.action = na.omit)#panel.smooth is fitting a lowess-smoothed fit line to the lower diagonals.
 
-pairs(sapply(envir[envir$Species%in%names(lichall.df.ss),c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=NULL, main="Lichens")#you can have jitter OR panel cor, not both.
+pairs(sapply(envir[envir$Species%in%names(lichall.df.ss),c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=panel.cor, main="Lichens")#you can have jitter OR panel cor, not both.
 
 savePlot("Lichen_EIV_correlations.emf", type="emf")
 savePlot("Lichen_EIV_correlations.png", type="png")
@@ -49,46 +57,46 @@ plot(summaries.ss$vasc.extinct, summaries.ss$vasc.colonise, xlab="Proportion plo
 savePlot("Colonisations vs extinctions_subset.png", type="png")
 savePlot("Colonisations vs extinctions_subset.emf", type="emf")
 
-x11(7,8)#this runs all the way to line 69. Is currently Figure 4 in Whole Crypto ms
+x11(7,8)#this runs all the way to line 97. Is currently Figure 4 in Whole Crypto ms
 layout(matrix(c(1,4,7,10,13,2,5,8,11,14,3,6,9,12,15), 3, 5, byrow = TRUE))
 par(mar=c(2,2.5,2,0.5), cex.axis=0.8, las=2, xpd=NA, mgp=c(1.5,0.3,0), tcl=-0.2)
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 1990", main=NA)
+  boxplot(x~dominant, data=summaries.ss, col=coloury$Colour_bolder, ylim=c(0,150), ylab="Plot richness 1990", main=NA)
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)#magic numbers extract the right bits of the aov objects.
-  text(x=4, y=135, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=135, labels=paste("P =", ifelse(signif(summary(model.x)[[1]][1,5], 3)<0.001, "<0.001",  signif(summary(model.x)[[1]][1,5], 3))), cex=0.8)
   text(x=3, y=-20, labels=colnames(x))
 }, x=summaries.ss[,c("lich.rich1990","bryo.rich1990","vasc.rich1990")] ) #It would be great if I could get the P to display as stars or as >0.001 as well. And I should use an appropriate model, but poisson models with log links don't appear to give F or P values.
 
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,150), ylab="Plot richness 2015")
+  boxplot(x~dominant, data=summaries.ss, col=coloury$Colour_bolder, ylim=c(0,150), ylab="Plot richness 2015")
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=150, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=135, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=135, labels=paste("P =", ifelse(signif(summary(model.x)[[1]][1,5], 3)<0.001, "<0.001",  round(signif(summary(model.x)[[1]][1,5], 3), 3))), cex=0.8)
 }, x=summaries.ss[,c("lich.rich2015","bryo.rich2015","vasc.rich2015")]) 
 
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,1), ylab="Proportion plot extinctions")
+  boxplot(x~dominant, data=summaries.ss, col=coloury$Colour_bolder, ylim=c(0,1), ylab="Proportion plot extinctions")
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", ifelse(signif(summary(model.x)[[1]][1,5], 3)<0.001, "<0.001",    round(signif(summary(model.x)[[1]][1,5], 3), 3))), cex=0.8)
 }, x=summaries.ss[,c("lich.extinct", "bryo.extinct","vasc.extinct")])
 
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,1), ylab="Proportion plot colonisations")
+  boxplot(x~dominant, data=summaries.ss, col=coloury$Colour_bolder, ylim=c(0,1), ylab="Proportion plot colonisations")
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", ifelse(signif(summary(model.x)[[1]][1,5], 3)<0.001, "<0.001",    round(signif(summary(model.x)[[1]][1,5], 3), 3))), cex=0.8)
 }, x=summaries.ss[,c("lich.colonise","bryo.colonise","vasc.colonise")])
 
 mapply(function (x) { 
-  boxplot(x~dominant, data=summaries.ss, col=2:8, ylim=c(0,1), ylab="Bray-Curtis distance")
+  boxplot(x~dominant, data=summaries.ss, col=coloury$Colour_bolder, ylim=c(0,1), ylab="Bray-Curtis distance")
   model.x<-aov(x~dominant, data=summaries.ss)
   text(x=4, y=1, labels=paste("F =", signif(summary(model.x)[[1]][1,4], 3)),cex=0.8)
-  text(x=4, y=0.9, labels=paste("P =", signif(summary(model.x)[[1]][1,5], 3)),cex=0.8)
+  text(x=4, y=0.9, labels=paste("P =", ifelse(signif(summary(model.x)[[1]][1,5], 3)<0.001, "<0.001",    round(signif(summary(model.x)[[1]][1,5], 3), 3))), cex=0.8)
 }, x=summaries.ss[,c("lich.BCdiss","bryo.BCdiss","vasc.BCdiss")])
 
-text(-20,3.9,"Lichens", cex=1.2)
+text(-20,3.87,"Lichens", cex=1.2)
 text(-20,2.5,"Bryophytes", cex=1.2)
 text(-20,1.1,"Vascular plants", cex=1.2)
 savePlot("Turnover and richness by phytosoc_subset.emf", type="emf")

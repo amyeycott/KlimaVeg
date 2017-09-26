@@ -144,6 +144,8 @@ names(vasc.weightmeannew)<-paste("vasc.new.",names(vasc.weightmeannew), sep="")
 #Merging taxa summaries and removing unnecessary columns.
 Summaries<- Reduce(HDRmerge, list(Summaries, select(lich.weightmeanold,-lich.old.Site), select(lich.weightmeannew,-lich.new.Site), select(bryo.weightmeanold,-bryo.old.Plot, -bryo.old.Year), select(bryo.weightmeannew,-bryo.new.Plot, -bryo.new.Year), select(vasc.weightmeanold, -vasc.old.Plot_number), select(vasc.weightmeannew, -vasc.new.Plot_number_2015)))
 
+
+
 ##summary statistics
 sapply(Summaries, mean)
 sapply(Summaries, sd)
@@ -154,3 +156,4 @@ sum(colSums(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015",])>0)
 Summaries<-merge(Summaries, phytosoc, by.x=0, by.y=1)
 rownames(Summaries)<-Summaries$Row.names 
 Summaries$Row.names<-NULL
+Summaries$dominant<-factor(Summaries$dominant, levels=c("PP", "PQ", "QP", "TC", "CelA", "CA"))
