@@ -18,12 +18,14 @@ library("assertthat")
 # + single plants
 
 phenfiles <- list(
-  t36 = list(file = "Fenology36.xlsx", names = "species list36.xlsx"),
-  t37 = list(file = "Phenology37.xlsx", names = "species list37.xlsx"),
-  t38 = list(file = "Phenology38.xlsx", names = "species list38.xlsx"),
-  t39 = list(file = "Phenology39.xlsx", names = "species list39.xlsx")
+  t36 = list(file = "FEN36Koncowy.xls", names = "species list36.xlsx"),
+  t37 = list(file = "FEN37Koncowy.xls", names = "species list37.xlsx"),
+  t38 = list(file = "FEN38Koncowy.xls" , names = "species list38.xlsx"),
+  t39 = list(file = "FEN39Koncowy.xls" , names = "species list39.xlsx")
 )
-
+                        
+   
+ 
 if(interactive()){
   path <- "phenology/data/"
 } else {
@@ -74,7 +76,9 @@ dictionary$new[dictionary$new == ""] <- dictionary$old[dictionary$new == ""]
 phenology$species <- plyr::mapvalues(phenology$species, dictionary$old, dictionary$new)
 phenology$species <- plyr::mapvalues(phenology$species, "GLYCERIA\r\r\nMANNA", "Glyceria maxima")#problems with escape characters
 
-phenology2 <- gather(phenology, key = "pentad", value = "decile", -species, -year, -stage, -transect) %>%
+phenology2 <- phenology %>% 
+  select(species, year, stage, transect, matches("^\\d{1,2}$")) %>% 
+  gather(key = "pentad", value = "decile", -species, -year, -stage, -transect) %>%
   filter(!decile %in% c("@", "@@"), !is.na(decile)) %>%
   mutate(decile = trimws(decile)) %>%
   mutate(decile = gsub('"', "", decile)) %>% # remove quote marks
