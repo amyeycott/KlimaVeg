@@ -2,19 +2,38 @@ source("source data and merging.R")
 set.seed(5)# 5 seed makes vasc 2015 not converge, even thugh it used to be the most converge-able.
 library(vegan)
 library(RColorBrewer)
-
-library(ggvegan)
 library(tidyverse)
+#on a new computer
+#library(devtools)
+#install_github("gavinsimpson/ggvegan")#,
+library(ggvegan)
 
 dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11")
+set.seed(5)
 
-#Lichens whole set.
+
+lichen.nmds.1990.k3<-metaMDS(subset(comp_old[!rownames(comp_old)%in%dodgysquares,colSums(comp_old>0)>1], select=-Year), k=3, trymax=100)# See notes on the not-subsetted version, but subset does not cure the non-convergence issue. 3 axes does, though the stress isn't much lower than the 2 axis version. 
+
+#showing Richard that arrows aren't the way forward
+lichen.nmds.both<-metaMDS(subset(comp[!rownames(comp)%in%dodgysquares,colSums(comp>0)>1], select=-Year), trymax=100)#putting both years in together also helps.
+lich.nmds.both.fortified<-fortify(lichen.nmds.both)
+lich.nmds.both.sites<-filter(lich.nmds.both.fortified, Score=="sites")
+lich.nmds.both.species<-filter(lich.nmds.both.fortified, Score=="species")
+lich.nmds.both.sites$Year<-substr(lich.nmds.both.sites$Label,4,7)
+g<-ggplot(lich.nmds.both.sites, aes(x=Dim1, y=Dim2, colour=Year))+
+  geom_point()+
+  coord_equal()
+
+
+
+testy<-select(filter(lich.nmds.both.fortified, Score=="sites"), Label)
+testy2<-substr(testy, 4,7)
+          
+####start of the rest of the code how it was intended to be - this script skips all the exploratory stuff
 lichen.nmds.1990<-metaMDS(subset(comp_old[!rownames(comp_old)%in%dodgysquares,colSums(comp_old>0)>1], select=-Year), trymax=100)# See notes on the not-subsetted version, but subset does not cure the non-convergence issue.
 lichen.nmds.2015<-metaMDS(subset(comp_new[!rownames(comp_new)%in%dodgysquares,colSums(comp_new>0)>1], select=-Year), trymax=100)
-
-####start of the rest of the code how it was intended to be - this script skips all the exploratory stuff
-lichen.nmds.2015<-metaMDS(subset(comp[!rownames(comp_old)%in%dodgysquares,], Year==2015, select=-Year))#not converging
 lichen.crusty<-protest(lichen.nmds.1990, lichen.nmds.2015)
+lichen.crusty
 #Bryophytes whole set
 bryo.nmds.1990<-metaMDS(bryo.fat[substr(rownames(bryo.fat),4,7)=="1990"&!substr(rownames(bryo.fat),1,3)%in%dodgysquares,])#
 bryo.nmds.2015<-metaMDS(bryo.fat[substr(rownames(bryo.fat),4,7)=="2015"&!substr(rownames(bryo.fat),1,3)%in%dodgysquares,])#
@@ -71,7 +90,7 @@ savePlot("nmds bryo and vasc just for show_subset_col.png", type="png")
 plot(bryo.sppscores.1990$NMDS1, bryo.sppscores.1990$NMDS2, col=bryo.sppscores.1990$coloury, pch=16)
 points(bryo.nmds.1990, display="sites")
 plot(bryo.sppscores.2015$NMDS1, bryo.sppscores.2015$NMDS2, col=bryo.sppscores.2015$coloury, pch=16)
-points(bryo.nmds.2015, display="sites")#plot has done an annoying flip.  This happens with all whole-number seeds 1-5.
+points(bryo.nmds.2015, display="sites")#plot has done an annoying flip.  This happens with all whole-number seeds 1-5
 plot(vasc.sppscores.1990$NMDS1, vasc.sppscores.1990$NMDS2, col=vasc.sppscores.1990$coloury, pch=16)
 points(vasc.nmds.1990, display="sites")
 plot(vasc.sppscores.2015$NMDS1, vasc.sppscores.2015$NMDS2, col=vasc.sppscores.2015$coloury, pch=16)
