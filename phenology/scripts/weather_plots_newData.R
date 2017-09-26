@@ -1,11 +1,4 @@
 ## ---- loadWeather
-#load packages
-library("ggplot2")
-library("dplyr")
-library("tidyr")
-library("broom")
-library("zoo")
-library("lubridate")
 
 #default theme
 th <- theme()

@@ -9,11 +9,28 @@ output:
 
 ```{r setup, include=FALSE, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE, fig.height = 5.4, fig.width = 8)
-knitr::read_chunk("weather_plots_newData.R")
-knitr::read_chunk("phenology.R")
+
+#load packages
+library("tidyverse")
+library("broom")
+library("zoo")
+library("lubridate")
+library("readxl")
+library("assertthat")
+
+knitr::read_chunk("scripts/weather_plots_newData.R")
+knitr::read_chunk("scripts/load_phenology.R")
+knitr::read_chunk("scripts/phenology.R")
 
 ```
 
+```{r load_phenology, include = FALSE}
+```
+
+```{r loadWeather}
+```
+```{r seasonalVelocity, include = FALSE}
+```
 ## Outline
 
 - Climate change in Białowieża Forest
@@ -73,11 +90,6 @@ print(a + theme_inset(), vp = vp_a)
 
 ## Climate change
 
-```{r loadWeather, include = FALSE}
-```
-```{r loadPhenology}
-```
-  
 ```{r theme}
 #sets global theme for figures
 th <- theme_bw(base_size = 15)

@@ -1,11 +1,10 @@
 #load libraries
 library("readxl")
-library("tidyr")
-library("dplyr")
+library("tidyverse")
 library("lubridate")
 library("assertthat")
 
-#load phenology
+## ---- load_phenology
 
 #format
 #year 1964 - 2016 
@@ -24,13 +23,7 @@ phenfiles <- list(
   t39 = list(file = "FEN39Koncowy.xls" , names = "species list39.xlsx")
 )
                         
-   
- 
-if(interactive()){
-  path <- "phenology/data/"
-} else {
-  path <- "data/"
-}
+path <- "data/"
 
 phenology <- plyr::ldply(phenfiles, function(transect){
   message(transect$file)
@@ -92,7 +85,7 @@ as.matrix(table(phenology2$decile))
 oddities <- phenology2[!phenology2$decile %in% c(".", "+", 1:10, "x"), ]
 dim(oddities)
 if(interactive()){
-  write.csv2(oddities, "phenology/oddities.csv")
+  #write.csv2(oddities, "phenology/oddities.csv")
 }
 #replace oddities
 phenology2$decile <- plyr::revalue(phenology2$decile,

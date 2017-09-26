@@ -1,4 +1,3 @@
-## ---- loadPhenology
 #load libraries
 library("ggplot2")
 library("vegan")
@@ -6,6 +5,7 @@ library("broom")
 
 #set default theme
 th <- theme()
+## ---- loadPhenology
 
 if(interactive()){
   source("phenology/load_phenology.R")
@@ -108,7 +108,7 @@ comm %>%
 first_phenology <- phenology2 %>% 
   filter(decile > 0, stage != 6) %>% 
   group_by(year, species, stage, transect) %>% 
-  summarise(first = first(doy), last = last(doy), duration = last - first, max = max(decile), maxDate = doy[which.max(decile)]) %>%
+  summarise(first = first(doy), last = last(doy), duration = as.vector(last - first), max = max(decile), maxDate = doy[which.max(decile)]) %>%
   full_join(y = with(phenology2,
                   expand.grid(
                     year  = unique(year),
