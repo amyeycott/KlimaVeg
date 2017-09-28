@@ -3,30 +3,29 @@ library(GGally)
 names(envir)
 names(lichall.df.ss)
 
-lichpairs<-ggpairs(envir[envir$Species%in%names(lichall.df.ss),], columns=c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen"),lower = list(continuous = 'smooth_loess'),  diag = list(continuous = "barDiag"))
+envir_named<-envir %>% rename(Light=L_light, Temperature=T_temperature, Continentality=K_continentality, Moisture=F_moisture, `Soil reaction`=R_reaction, Nitrogen=N_nitrogen)
+
+lichpairs<-ggpairs(envir_named[envir$Species%in%names(lichall.df.ss),], columns=c("Light","Temperature","Continentality","Moisture","Soil reaction","Nitrogen"),lower = list(continuous = 'smooth_loess'),  diag = list(continuous = "barDiag"))
 lichpairs+theme(panel.grid=element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black", size = 1))
-  
+ggsave(filename = "Appendix 2 pairs plot.png", device = "png", width = 6, height = 6)  
 
-panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
-{
-  usr <- par("usr"); on.exit(par(usr))
-  par(usr = c(0, 1, 0, 1))
-  r <- abs(cor(x, y))
-  txt <- format(c(r, 0.123456789), digits = digits)[1]
-  txt <- paste0(prefix, txt)
-  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
-  text(0.5, 0.5, txt)
-}#adapted from help file for pairs, prints the correlation coefficient on the upper diagonals
-x11(5,6)
+#panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+#{
+#  usr <- par("usr"); on.exit(par(usr))
+#  par(usr = c(0, 1, 0, 1))
+#  r <- abs(cor(x, y))
+#  txt <- format(c(r, 0.123456789), digits = digits)[1]
+#  txt <- paste0(prefix, txt)
+#  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+#  text(0.5, 0.5, txt)
+#}#adapted from help file for pairs, prints the correlation coefficient on the upper diagonals
 
+#pairs(~L_light+T_temperature+K_continentality+F_moisture+R_reaction+N_nitrogen,data=envir[envir$Species%in%names(lichall.df.ss),], lower.panel = panel.smooth, upper.panel = panel.cor, na.action = na.omit)#panel.smooth is fitting a lowess-smoothed fit line to the lower diagonals.
 
+#pairs(sapply(envir[envir$Species%in%names(lichall.df.ss),c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=panel.cor, main="Lichens")#you can have jitter OR panel cor, not both.
 
-pairs(~L_light+T_temperature+K_continentality+F_moisture+R_reaction+N_nitrogen,data=envir[envir$Species%in%names(lichall.df.ss),], lower.panel = panel.smooth, upper.panel = panel.cor, na.action = na.omit)#panel.smooth is fitting a lowess-smoothed fit line to the lower diagonals.
-
-pairs(sapply(envir[envir$Species%in%names(lichall.df.ss),c("L_light","T_temperature","K_continentality","F_moisture","R_reaction","N_nitrogen")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=panel.cor, main="Lichens")#you can have jitter OR panel cor, not both.
-
-savePlot("Lichen_EIV_correlations.emf", type="emf")
-savePlot("Lichen_EIV_correlations.png", type="png")
+#savePlot("Lichen_EIV_correlations.emf", type="emf")
+#savePlot("Lichen_EIV_correlations.png", type="png")
 
 pairs(sapply(bryo.status[,c("L","T","K","F","R")], jitter, amount=0.1),lower.panel=panel.smooth, upper.panel=NULL, main="Bryophytes")#you can have jitter OR panel cor, not both.
 
