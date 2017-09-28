@@ -4,6 +4,7 @@ source("turnover.R")
 #I checked, and the BC dist is not dependant on the whole matrix so it is ok to subset them. It would not be ok to subset ordination scores.
 
 dodgysquares<-c("P01", "O03", "N08", "M09", "M10", "M11", "A11", "B11", "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11")
+
 summaries.ss<-Summaries[!rownames(Summaries)%in%dodgysquares,]
 
 
@@ -51,10 +52,13 @@ winners<-tail(sort(colSums(lichall.df.ss[128:254,]>0)-colSums(lichall.df.ss[1:12
 write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])==0)&(colSums(lichall.df.ss[1:127,])>1)]>0))), file="lich.extinction.csv")
 write.csv2(as.data.frame(sort(colSums(lichall.df.ss[,(colSums(lichall.df.ss[128:254,])>0)&(colSums(lichall.df.ss[1:127,])==0)]>0), decreasing = TRUE)), file="lich colonisation.csv")
 
-#post-hoc tests: cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv")
+#post-hoc tests for richness vs community:
 write.table(c(0,0), file="Posthoc of community rich etc.csv")
 mapply(function(x, name.x){model.x<-aov(x~dominant, data=summaries.ss)
 write.table(name.x, file="Posthoc of community rich etc.csv",append=TRUE)
-write.table(round(TukeyHSD(model.x)[[1]], digits=4), file="Posthoc of community rich etc.csv", append=TRUE, sep=";")},x=summaries.ss[,c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss"))#works for 'print' but not for 'write table' (cannot coerce class "c("TukeyHSD", "multicomp")" to a data.frame write.table(x="The table of post hoc tests for figure 4", file="Posthoc of community rich etc.csv"))
+write.table(round(TukeyHSD(model.x)[[1]], digits=4), file="Posthoc of community rich etc.csv", append=TRUE, sep=";")},x=summaries.ss[,c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")) 
 
-TukeyHSD(aov(vasc.BCdiss~dominant, data=summaries.ss))[[1]]
+##who got lost from the PP and where did they go?
+dim(vascall.df.ss)
+colSums(vascall.df.ss[substr(rownames(vascall.df.ss),1,3)%in%rownames(summaries.ss[summaries.ss$dominant=="PP",]),])#how to get the PP plots in a reliable but convoluted manner. trouble is that filter removed rownames (frickin hadley) so I have to use indexing.
+rownames(summaries.ss)
