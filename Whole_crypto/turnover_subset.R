@@ -58,7 +58,3 @@ mapply(function(x, name.x){model.x<-aov(x~dominant, data=summaries.ss)
 write.table(name.x, file="Posthoc of community rich etc.csv",append=TRUE)
 write.table(round(TukeyHSD(model.x)[[1]], digits=4), file="Posthoc of community rich etc.csv", append=TRUE, sep=";")},x=summaries.ss[,c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")], name.x=c("lich.rich1990","lich.rich2015","lich.extinct","lich.colonise","lich.BCdiss", "bryo.rich1990", "bryo.rich2015","bryo.extinct","bryo.colonise","bryo.BCdiss", "vasc.rich1990","vasc.rich2015","vasc.extinct","vasc.colonise","vasc.BCdiss")) 
 
-##who got lost from the PP and where did they go?
-dim(vascall.df.ss)
-colSums(vascall.df.ss[substr(rownames(vascall.df.ss),1,3)%in%rownames(summaries.ss[summaries.ss$dominant=="PP",]),])#how to get the PP plots in a reliable but convoluted manner. trouble is that filter removed rownames (frickin hadley) so I have to use indexing.
-rownames(summaries.ss)
