@@ -122,11 +122,12 @@ allthetests<-summaries.ss %>% select(-(lich.BCdiss:vasc_threatened_2015),-(TC:nc
   mutate(when=as.factor(when)) %>% 
   group_by(dominant, taxa, EIVs) %>% 
   do(glance(t.test(weightmean~when, data=., paired=TRUE))) %>% 
+  ungroup() %>% 
   mutate(adjusted_p_s = p.adjust(p.value, method = "bonferroni"))
 select(allthetests,dominant, taxa, EIVs, p.value,adjusted_p_s)  
 
 
 # . means whatever got passed by the pipe
-allthetests %>% mutate(adjustagain = p.adjust(p.value, method = "bonferroni")) %>% select(dominant, taxa, EIVs, p.value, adjusted_p_s, adjustagain)#doesn't seem to work
+
 
 
