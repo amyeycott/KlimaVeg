@@ -113,3 +113,20 @@ savePlot("Ellenbergs by community ALL.png", type="png")
                                                                                           
 #Summaries
 write.csv2(aggregate(summaries.ss, by=list(summaries.ss$dominant), FUN=mean), file="summaries for Bogdan.csv")
+
+library(broom)
+
+allthetests<-summaries.ss %>% select(-(lich.BCdiss:vasc_threatened_2015),-(TC:ncomms)) %>% 
+  gather(key=EIV, value=weightmean, -dominant) %>% 
+  separate(EIV, c("taxa", "when", "EIVs"), sep="\\.") %>% 
+  mutate(when=as.factor(when)) %>% 
+  group_by(dominant, taxa, EIVs) %>% 
+  do(glance(t.test(weightmean~when, data=., paired=TRUE))) %>% 
+  mutate(adjusted_p_s = p.adjust(p.value, method = "bonferroni"))
+select(allthetests,dominant, taxa, EIVs, p.value,adjusted_p_s)  
+
+
+# . means whatever got passed by the pipe
+allthetests %>% mutate(adjustagain = p.adjust(p.value, method = "bonferroni")) %>% select(dominant, taxa, EIVs, p.value, adjusted_p_s, adjustagain)#doesn't seem to work
+
+
